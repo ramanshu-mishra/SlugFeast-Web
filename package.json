@@ -27,6 +27,8 @@
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@repo/database": "*",
     "@wagmi/cli": "^2.10.0",
+    "motion": "^12.34.3",
+    "tailwind-merge": "^3.5.0",
     "viem": "^2.46.2",
     "wagmi": "^3.5.0"
   }

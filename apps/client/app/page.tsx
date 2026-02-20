@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@rainbow-me/rainbowkit/styles.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-
+import { Home } from './pages/home';
 
 import CreateToken from "./createToken";
 
@@ -25,8 +25,7 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <WalletOptions></WalletOptions>
-            <CreateToken></CreateToken>
+            <Home></Home>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
