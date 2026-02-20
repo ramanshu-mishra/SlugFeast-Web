@@ -1,0 +1,33 @@
+{
+  "name": "slugfeast-web",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.8.2",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@metamask/sdk": "^0.33.1",
+    "@rainbow-me/rainbowkit": "^2.2.10",
+    "@repo/database": "*",
+    "@wagmi/cli": "^2.10.0",
+    "viem": "^2.46.2",
+    "wagmi": "^3.5.0"
+  }
+}

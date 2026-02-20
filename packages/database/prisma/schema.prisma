@@ -1,0 +1,21 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model user{
+  publicKey String @id @unique 
+  tokenName String 
+  symbol String
+  imageUrl String
+  name String?
+  email String?
+  counrtyCode String?
+  contact String?
+}
