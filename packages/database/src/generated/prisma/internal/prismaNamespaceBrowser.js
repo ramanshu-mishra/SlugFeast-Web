@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.BlockTimeStampsScalarFieldEnum = exports.ApiKeysScalarFieldEnum = exports.TokenHashScalarFieldEnum = exports.CoinScalarFieldEnum = exports.SocialsScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -75,7 +75,12 @@ exports.JsonNull = runtime.JsonNull;
  */
 exports.AnyNull = runtime.AnyNull;
 exports.ModelName = {
-    user: 'user'
+    user: 'user',
+    socials: 'socials',
+    coin: 'coin',
+    tokenHash: 'tokenHash',
+    apiKeys: 'apiKeys',
+    blockTimeStamps: 'blockTimeStamps'
 };
 /*
  * Enums
@@ -88,13 +93,53 @@ exports.TransactionIsolationLevel = runtime.makeStrictEnum({
 });
 exports.UserScalarFieldEnum = {
     publicKey: 'publicKey',
+    name: 'name',
+    email: 'email',
+    countryCode: 'countryCode',
+    contact: 'contact'
+};
+exports.SocialsScalarFieldEnum = {
+    id: 'id',
+    instagram: 'instagram',
+    x: 'x',
+    telegram: 'telegram',
+    youtube: 'youtube',
+    website: 'website',
+    coinId: 'coinId'
+};
+exports.CoinScalarFieldEnum = {
+    id: 'id',
+    address: 'address',
     tokenName: 'tokenName',
     symbol: 'symbol',
     imageUrl: 'imageUrl',
-    name: 'name',
-    email: 'email',
-    counrtyCode: 'counrtyCode',
-    contact: 'contact'
+    description: 'description',
+    userId: 'userId',
+    graduated: 'graduated'
+};
+exports.TokenHashScalarFieldEnum = {
+    hash: 'hash',
+    coinId: 'coinId'
+};
+exports.ApiKeysScalarFieldEnum = {
+    id: 'id',
+    apiKey: 'apiKey',
+    userId: 'userId'
+};
+exports.BlockTimeStampsScalarFieldEnum = {
+    id: 'id',
+    tokenDeployedsTimestamp: 'tokenDeployedsTimestamp',
+    tokenDeployedsLastId: 'tokenDeployedsLastId',
+    tokenGraduatedsTimestamp: 'tokenGraduatedsTimestamp',
+    tokenGraduatedsLastId: 'tokenGraduatedsLastId',
+    tokenBoughtsTimestamp: 'tokenBoughtsTimestamp',
+    tokenBoughtsLastId: 'tokenBoughtsLastId',
+    tokenSoldsTimestamp: 'tokenSoldsTimestamp',
+    tokenSoldsLastId: 'tokenSoldsLastId',
+    poolcreatedsTimestamp: 'poolcreatedsTimestamp',
+    poolcreatedsLastId: 'poolcreatedsLastId',
+    updatedAt: 'updatedAt',
+    createdAt: 'createdAt'
 };
 exports.SortOrder = {
     asc: 'asc',

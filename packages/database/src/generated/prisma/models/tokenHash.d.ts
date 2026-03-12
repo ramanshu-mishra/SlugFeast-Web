@@ -1,0 +1,1032 @@
+import type * as runtime from "@prisma/client/runtime/client";
+import type * as Prisma from "../internal/prismaNamespace.js";
+/**
+ * Model tokenHash
+ *
+ */
+export type tokenHashModel = runtime.Types.Result.DefaultSelection<Prisma.$tokenHashPayload>;
+export type AggregateTokenHash = {
+    _count: TokenHashCountAggregateOutputType | null;
+    _min: TokenHashMinAggregateOutputType | null;
+    _max: TokenHashMaxAggregateOutputType | null;
+};
+export type TokenHashMinAggregateOutputType = {
+    hash: string | null;
+    coinId: string | null;
+};
+export type TokenHashMaxAggregateOutputType = {
+    hash: string | null;
+    coinId: string | null;
+};
+export type TokenHashCountAggregateOutputType = {
+    hash: number;
+    coinId: number;
+    _all: number;
+};
+export type TokenHashMinAggregateInputType = {
+    hash?: true;
+    coinId?: true;
+};
+export type TokenHashMaxAggregateInputType = {
+    hash?: true;
+    coinId?: true;
+};
+export type TokenHashCountAggregateInputType = {
+    hash?: true;
+    coinId?: true;
+    _all?: true;
+};
+export type TokenHashAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which tokenHash to aggregate.
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of tokenHashes to fetch.
+     */
+    orderBy?: Prisma.tokenHashOrderByWithRelationInput | Prisma.tokenHashOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: Prisma.tokenHashWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` tokenHashes from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` tokenHashes.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned tokenHashes
+    **/
+    _count?: true | TokenHashCountAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: TokenHashMinAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: TokenHashMaxAggregateInputType;
+};
+export type GetTokenHashAggregateType<T extends TokenHashAggregateArgs> = {
+    [P in keyof T & keyof AggregateTokenHash]: P extends '_count' | 'count' ? T[P] extends true ? number : Prisma.GetScalarType<T[P], AggregateTokenHash[P]> : Prisma.GetScalarType<T[P], AggregateTokenHash[P]>;
+};
+export type tokenHashGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.tokenHashWhereInput;
+    orderBy?: Prisma.tokenHashOrderByWithAggregationInput | Prisma.tokenHashOrderByWithAggregationInput[];
+    by: Prisma.TokenHashScalarFieldEnum[] | Prisma.TokenHashScalarFieldEnum;
+    having?: Prisma.tokenHashScalarWhereWithAggregatesInput;
+    take?: number;
+    skip?: number;
+    _count?: TokenHashCountAggregateInputType | true;
+    _min?: TokenHashMinAggregateInputType;
+    _max?: TokenHashMaxAggregateInputType;
+};
+export type TokenHashGroupByOutputType = {
+    hash: string;
+    coinId: string;
+    _count: TokenHashCountAggregateOutputType | null;
+    _min: TokenHashMinAggregateOutputType | null;
+    _max: TokenHashMaxAggregateOutputType | null;
+};
+type GetTokenHashGroupByPayload<T extends tokenHashGroupByArgs> = Prisma.PrismaPromise<Array<Prisma.PickEnumerable<TokenHashGroupByOutputType, T['by']> & {
+    [P in ((keyof T) & (keyof TokenHashGroupByOutputType))]: P extends '_count' ? T[P] extends boolean ? number : Prisma.GetScalarType<T[P], TokenHashGroupByOutputType[P]> : Prisma.GetScalarType<T[P], TokenHashGroupByOutputType[P]>;
+}>>;
+export type tokenHashWhereInput = {
+    AND?: Prisma.tokenHashWhereInput | Prisma.tokenHashWhereInput[];
+    OR?: Prisma.tokenHashWhereInput[];
+    NOT?: Prisma.tokenHashWhereInput | Prisma.tokenHashWhereInput[];
+    hash?: Prisma.StringFilter<"tokenHash"> | string;
+    coinId?: Prisma.StringFilter<"tokenHash"> | string;
+    coin?: Prisma.XOR<Prisma.CoinScalarRelationFilter, Prisma.coinWhereInput>;
+};
+export type tokenHashOrderByWithRelationInput = {
+    hash?: Prisma.SortOrder;
+    coinId?: Prisma.SortOrder;
+    coin?: Prisma.coinOrderByWithRelationInput;
+};
+export type tokenHashWhereUniqueInput = Prisma.AtLeast<{
+    hash?: string;
+    coinId?: string;
+    AND?: Prisma.tokenHashWhereInput | Prisma.tokenHashWhereInput[];
+    OR?: Prisma.tokenHashWhereInput[];
+    NOT?: Prisma.tokenHashWhereInput | Prisma.tokenHashWhereInput[];
+    coin?: Prisma.XOR<Prisma.CoinScalarRelationFilter, Prisma.coinWhereInput>;
+}, "hash" | "coinId">;
+export type tokenHashOrderByWithAggregationInput = {
+    hash?: Prisma.SortOrder;
+    coinId?: Prisma.SortOrder;
+    _count?: Prisma.tokenHashCountOrderByAggregateInput;
+    _max?: Prisma.tokenHashMaxOrderByAggregateInput;
+    _min?: Prisma.tokenHashMinOrderByAggregateInput;
+};
+export type tokenHashScalarWhereWithAggregatesInput = {
+    AND?: Prisma.tokenHashScalarWhereWithAggregatesInput | Prisma.tokenHashScalarWhereWithAggregatesInput[];
+    OR?: Prisma.tokenHashScalarWhereWithAggregatesInput[];
+    NOT?: Prisma.tokenHashScalarWhereWithAggregatesInput | Prisma.tokenHashScalarWhereWithAggregatesInput[];
+    hash?: Prisma.StringWithAggregatesFilter<"tokenHash"> | string;
+    coinId?: Prisma.StringWithAggregatesFilter<"tokenHash"> | string;
+};
+export type tokenHashCreateInput = {
+    hash: string;
+    coin: Prisma.coinCreateNestedOneWithoutTokenHashInput;
+};
+export type tokenHashUncheckedCreateInput = {
+    hash: string;
+    coinId: string;
+};
+export type tokenHashUpdateInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+    coin?: Prisma.coinUpdateOneRequiredWithoutTokenHashNestedInput;
+};
+export type tokenHashUncheckedUpdateInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type tokenHashCreateManyInput = {
+    hash: string;
+    coinId: string;
+};
+export type tokenHashUpdateManyMutationInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type tokenHashUncheckedUpdateManyInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type TokenHashNullableScalarRelationFilter = {
+    is?: Prisma.tokenHashWhereInput | null;
+    isNot?: Prisma.tokenHashWhereInput | null;
+};
+export type tokenHashCountOrderByAggregateInput = {
+    hash?: Prisma.SortOrder;
+    coinId?: Prisma.SortOrder;
+};
+export type tokenHashMaxOrderByAggregateInput = {
+    hash?: Prisma.SortOrder;
+    coinId?: Prisma.SortOrder;
+};
+export type tokenHashMinOrderByAggregateInput = {
+    hash?: Prisma.SortOrder;
+    coinId?: Prisma.SortOrder;
+};
+export type tokenHashCreateNestedOneWithoutCoinInput = {
+    create?: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+    connectOrCreate?: Prisma.tokenHashCreateOrConnectWithoutCoinInput;
+    connect?: Prisma.tokenHashWhereUniqueInput;
+};
+export type tokenHashUncheckedCreateNestedOneWithoutCoinInput = {
+    create?: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+    connectOrCreate?: Prisma.tokenHashCreateOrConnectWithoutCoinInput;
+    connect?: Prisma.tokenHashWhereUniqueInput;
+};
+export type tokenHashUpdateOneWithoutCoinNestedInput = {
+    create?: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+    connectOrCreate?: Prisma.tokenHashCreateOrConnectWithoutCoinInput;
+    upsert?: Prisma.tokenHashUpsertWithoutCoinInput;
+    disconnect?: Prisma.tokenHashWhereInput | boolean;
+    delete?: Prisma.tokenHashWhereInput | boolean;
+    connect?: Prisma.tokenHashWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.tokenHashUpdateToOneWithWhereWithoutCoinInput, Prisma.tokenHashUpdateWithoutCoinInput>, Prisma.tokenHashUncheckedUpdateWithoutCoinInput>;
+};
+export type tokenHashUncheckedUpdateOneWithoutCoinNestedInput = {
+    create?: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+    connectOrCreate?: Prisma.tokenHashCreateOrConnectWithoutCoinInput;
+    upsert?: Prisma.tokenHashUpsertWithoutCoinInput;
+    disconnect?: Prisma.tokenHashWhereInput | boolean;
+    delete?: Prisma.tokenHashWhereInput | boolean;
+    connect?: Prisma.tokenHashWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.tokenHashUpdateToOneWithWhereWithoutCoinInput, Prisma.tokenHashUpdateWithoutCoinInput>, Prisma.tokenHashUncheckedUpdateWithoutCoinInput>;
+};
+export type tokenHashCreateWithoutCoinInput = {
+    hash: string;
+};
+export type tokenHashUncheckedCreateWithoutCoinInput = {
+    hash: string;
+};
+export type tokenHashCreateOrConnectWithoutCoinInput = {
+    where: Prisma.tokenHashWhereUniqueInput;
+    create: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+};
+export type tokenHashUpsertWithoutCoinInput = {
+    update: Prisma.XOR<Prisma.tokenHashUpdateWithoutCoinInput, Prisma.tokenHashUncheckedUpdateWithoutCoinInput>;
+    create: Prisma.XOR<Prisma.tokenHashCreateWithoutCoinInput, Prisma.tokenHashUncheckedCreateWithoutCoinInput>;
+    where?: Prisma.tokenHashWhereInput;
+};
+export type tokenHashUpdateToOneWithWhereWithoutCoinInput = {
+    where?: Prisma.tokenHashWhereInput;
+    data: Prisma.XOR<Prisma.tokenHashUpdateWithoutCoinInput, Prisma.tokenHashUncheckedUpdateWithoutCoinInput>;
+};
+export type tokenHashUpdateWithoutCoinInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type tokenHashUncheckedUpdateWithoutCoinInput = {
+    hash?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type tokenHashSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    hash?: boolean;
+    coinId?: boolean;
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["tokenHash"]>;
+export type tokenHashSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    hash?: boolean;
+    coinId?: boolean;
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["tokenHash"]>;
+export type tokenHashSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    hash?: boolean;
+    coinId?: boolean;
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["tokenHash"]>;
+export type tokenHashSelectScalar = {
+    hash?: boolean;
+    coinId?: boolean;
+};
+export type tokenHashOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"hash" | "coinId", ExtArgs["result"]["tokenHash"]>;
+export type tokenHashInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+};
+export type tokenHashIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+};
+export type tokenHashIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
+};
+export type $tokenHashPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    name: "tokenHash";
+    objects: {
+        coin: Prisma.$coinPayload<ExtArgs>;
+    };
+    scalars: runtime.Types.Extensions.GetPayloadResult<{
+        hash: string;
+        coinId: string;
+    }, ExtArgs["result"]["tokenHash"]>;
+    composites: {};
+};
+export type tokenHashGetPayload<S extends boolean | null | undefined | tokenHashDefaultArgs> = runtime.Types.Result.GetResult<Prisma.$tokenHashPayload, S>;
+export type tokenHashCountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = Omit<tokenHashFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+    select?: TokenHashCountAggregateInputType | true;
+};
+export interface tokenHashDelegate<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: {
+        types: Prisma.TypeMap<ExtArgs>['model']['tokenHash'];
+        meta: {
+            name: 'tokenHash';
+        };
+    };
+    /**
+     * Find zero or one TokenHash that matches the filter.
+     * @param {tokenHashFindUniqueArgs} args - Arguments to find a TokenHash
+     * @example
+     * // Get one TokenHash
+     * const tokenHash = await prisma.tokenHash.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends tokenHashFindUniqueArgs>(args: Prisma.SelectSubset<T, tokenHashFindUniqueArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find one TokenHash that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {tokenHashFindUniqueOrThrowArgs} args - Arguments to find a TokenHash
+     * @example
+     * // Get one TokenHash
+     * const tokenHash = await prisma.tokenHash.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends tokenHashFindUniqueOrThrowArgs>(args: Prisma.SelectSubset<T, tokenHashFindUniqueOrThrowArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first TokenHash that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashFindFirstArgs} args - Arguments to find a TokenHash
+     * @example
+     * // Get one TokenHash
+     * const tokenHash = await prisma.tokenHash.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends tokenHashFindFirstArgs>(args?: Prisma.SelectSubset<T, tokenHashFindFirstArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first TokenHash that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashFindFirstOrThrowArgs} args - Arguments to find a TokenHash
+     * @example
+     * // Get one TokenHash
+     * const tokenHash = await prisma.tokenHash.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends tokenHashFindFirstOrThrowArgs>(args?: Prisma.SelectSubset<T, tokenHashFindFirstOrThrowArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find zero or more TokenHashes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TokenHashes
+     * const tokenHashes = await prisma.tokenHash.findMany()
+     *
+     * // Get first 10 TokenHashes
+     * const tokenHashes = await prisma.tokenHash.findMany({ take: 10 })
+     *
+     * // Only select the `hash`
+     * const tokenHashWithHashOnly = await prisma.tokenHash.findMany({ select: { hash: true } })
+     *
+     */
+    findMany<T extends tokenHashFindManyArgs>(args?: Prisma.SelectSubset<T, tokenHashFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>;
+    /**
+     * Create a TokenHash.
+     * @param {tokenHashCreateArgs} args - Arguments to create a TokenHash.
+     * @example
+     * // Create one TokenHash
+     * const TokenHash = await prisma.tokenHash.create({
+     *   data: {
+     *     // ... data to create a TokenHash
+     *   }
+     * })
+     *
+     */
+    create<T extends tokenHashCreateArgs>(args: Prisma.SelectSubset<T, tokenHashCreateArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Create many TokenHashes.
+     * @param {tokenHashCreateManyArgs} args - Arguments to create many TokenHashes.
+     * @example
+     * // Create many TokenHashes
+     * const tokenHash = await prisma.tokenHash.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends tokenHashCreateManyArgs>(args?: Prisma.SelectSubset<T, tokenHashCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Create many TokenHashes and returns the data saved in the database.
+     * @param {tokenHashCreateManyAndReturnArgs} args - Arguments to create many TokenHashes.
+     * @example
+     * // Create many TokenHashes
+     * const tokenHash = await prisma.tokenHash.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many TokenHashes and only return the `hash`
+     * const tokenHashWithHashOnly = await prisma.tokenHash.createManyAndReturn({
+     *   select: { hash: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends tokenHashCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, tokenHashCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Delete a TokenHash.
+     * @param {tokenHashDeleteArgs} args - Arguments to delete one TokenHash.
+     * @example
+     * // Delete one TokenHash
+     * const TokenHash = await prisma.tokenHash.delete({
+     *   where: {
+     *     // ... filter to delete one TokenHash
+     *   }
+     * })
+     *
+     */
+    delete<T extends tokenHashDeleteArgs>(args: Prisma.SelectSubset<T, tokenHashDeleteArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Update one TokenHash.
+     * @param {tokenHashUpdateArgs} args - Arguments to update one TokenHash.
+     * @example
+     * // Update one TokenHash
+     * const tokenHash = await prisma.tokenHash.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends tokenHashUpdateArgs>(args: Prisma.SelectSubset<T, tokenHashUpdateArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Delete zero or more TokenHashes.
+     * @param {tokenHashDeleteManyArgs} args - Arguments to filter TokenHashes to delete.
+     * @example
+     * // Delete a few TokenHashes
+     * const { count } = await prisma.tokenHash.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends tokenHashDeleteManyArgs>(args?: Prisma.SelectSubset<T, tokenHashDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more TokenHashes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TokenHashes
+     * const tokenHash = await prisma.tokenHash.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends tokenHashUpdateManyArgs>(args: Prisma.SelectSubset<T, tokenHashUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more TokenHashes and returns the data updated in the database.
+     * @param {tokenHashUpdateManyAndReturnArgs} args - Arguments to update many TokenHashes.
+     * @example
+     * // Update many TokenHashes
+     * const tokenHash = await prisma.tokenHash.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more TokenHashes and only return the `hash`
+     * const tokenHashWithHashOnly = await prisma.tokenHash.updateManyAndReturn({
+     *   select: { hash: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends tokenHashUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, tokenHashUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Create or update one TokenHash.
+     * @param {tokenHashUpsertArgs} args - Arguments to update or create a TokenHash.
+     * @example
+     * // Update or create a TokenHash
+     * const tokenHash = await prisma.tokenHash.upsert({
+     *   create: {
+     *     // ... data to create a TokenHash
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TokenHash we want to update
+     *   }
+     * })
+     */
+    upsert<T extends tokenHashUpsertArgs>(args: Prisma.SelectSubset<T, tokenHashUpsertArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Count the number of TokenHashes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashCountArgs} args - Arguments to filter TokenHashes to count.
+     * @example
+     * // Count the number of TokenHashes
+     * const count = await prisma.tokenHash.count({
+     *   where: {
+     *     // ... the filter for the TokenHashes we want to count
+     *   }
+     * })
+    **/
+    count<T extends tokenHashCountArgs>(args?: Prisma.Subset<T, tokenHashCountArgs>): Prisma.PrismaPromise<T extends runtime.Types.Utils.Record<'select', any> ? T['select'] extends true ? number : Prisma.GetScalarType<T['select'], TokenHashCountAggregateOutputType> : number>;
+    /**
+     * Allows you to perform aggregations operations on a TokenHash.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenHashAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TokenHashAggregateArgs>(args: Prisma.Subset<T, TokenHashAggregateArgs>): Prisma.PrismaPromise<GetTokenHashAggregateType<T>>;
+    /**
+     * Group by TokenHash.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {tokenHashGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<T extends tokenHashGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<T>>, Prisma.Extends<'take', Prisma.Keys<T>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? {
+        orderBy: tokenHashGroupByArgs['orderBy'];
+    } : {
+        orderBy?: tokenHashGroupByArgs['orderBy'];
+    }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<T['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<T['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<T['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends T['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True ? `Error: "by" must not be empty.` : HavingValid extends Prisma.False ? {
+        [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`
+        ];
+    }[HavingFields] : 'take' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "take", you also need to provide "orderBy"' : 'skip' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "skip", you also need to provide "orderBy"' : ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields]>(args: Prisma.SubsetIntersection<T, tokenHashGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTokenHashGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>;
+    /**
+     * Fields of the tokenHash model
+     */
+    readonly fields: tokenHashFieldRefs;
+}
+/**
+ * The delegate class that acts as a "Promise-like" for tokenHash.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export interface Prisma__tokenHashClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise";
+    coin<T extends Prisma.coinDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.coinDefaultArgs<ExtArgs>>): Prisma.Prisma__coinClient<runtime.Types.Result.GetResult<Prisma.$coinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
+}
+/**
+ * Fields of the tokenHash model
+ */
+export interface tokenHashFieldRefs {
+    readonly hash: Prisma.FieldRef<"tokenHash", 'String'>;
+    readonly coinId: Prisma.FieldRef<"tokenHash", 'String'>;
+}
+/**
+ * tokenHash findUnique
+ */
+export type tokenHashFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter, which tokenHash to fetch.
+     */
+    where: Prisma.tokenHashWhereUniqueInput;
+};
+/**
+ * tokenHash findUniqueOrThrow
+ */
+export type tokenHashFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter, which tokenHash to fetch.
+     */
+    where: Prisma.tokenHashWhereUniqueInput;
+};
+/**
+ * tokenHash findFirst
+ */
+export type tokenHashFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter, which tokenHash to fetch.
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of tokenHashes to fetch.
+     */
+    orderBy?: Prisma.tokenHashOrderByWithRelationInput | Prisma.tokenHashOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for tokenHashes.
+     */
+    cursor?: Prisma.tokenHashWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` tokenHashes from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` tokenHashes.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of tokenHashes.
+     */
+    distinct?: Prisma.TokenHashScalarFieldEnum | Prisma.TokenHashScalarFieldEnum[];
+};
+/**
+ * tokenHash findFirstOrThrow
+ */
+export type tokenHashFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter, which tokenHash to fetch.
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of tokenHashes to fetch.
+     */
+    orderBy?: Prisma.tokenHashOrderByWithRelationInput | Prisma.tokenHashOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for tokenHashes.
+     */
+    cursor?: Prisma.tokenHashWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` tokenHashes from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` tokenHashes.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of tokenHashes.
+     */
+    distinct?: Prisma.TokenHashScalarFieldEnum | Prisma.TokenHashScalarFieldEnum[];
+};
+/**
+ * tokenHash findMany
+ */
+export type tokenHashFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter, which tokenHashes to fetch.
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of tokenHashes to fetch.
+     */
+    orderBy?: Prisma.tokenHashOrderByWithRelationInput | Prisma.tokenHashOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing tokenHashes.
+     */
+    cursor?: Prisma.tokenHashWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` tokenHashes from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` tokenHashes.
+     */
+    skip?: number;
+    distinct?: Prisma.TokenHashScalarFieldEnum | Prisma.TokenHashScalarFieldEnum[];
+};
+/**
+ * tokenHash create
+ */
+export type tokenHashCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * The data needed to create a tokenHash.
+     */
+    data: Prisma.XOR<Prisma.tokenHashCreateInput, Prisma.tokenHashUncheckedCreateInput>;
+};
+/**
+ * tokenHash createMany
+ */
+export type tokenHashCreateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many tokenHashes.
+     */
+    data: Prisma.tokenHashCreateManyInput | Prisma.tokenHashCreateManyInput[];
+    skipDuplicates?: boolean;
+};
+/**
+ * tokenHash createManyAndReturn
+ */
+export type tokenHashCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelectCreateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * The data used to create many tokenHashes.
+     */
+    data: Prisma.tokenHashCreateManyInput | Prisma.tokenHashCreateManyInput[];
+    skipDuplicates?: boolean;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashIncludeCreateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * tokenHash update
+ */
+export type tokenHashUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * The data needed to update a tokenHash.
+     */
+    data: Prisma.XOR<Prisma.tokenHashUpdateInput, Prisma.tokenHashUncheckedUpdateInput>;
+    /**
+     * Choose, which tokenHash to update.
+     */
+    where: Prisma.tokenHashWhereUniqueInput;
+};
+/**
+ * tokenHash updateMany
+ */
+export type tokenHashUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to update tokenHashes.
+     */
+    data: Prisma.XOR<Prisma.tokenHashUpdateManyMutationInput, Prisma.tokenHashUncheckedUpdateManyInput>;
+    /**
+     * Filter which tokenHashes to update
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * Limit how many tokenHashes to update.
+     */
+    limit?: number;
+};
+/**
+ * tokenHash updateManyAndReturn
+ */
+export type tokenHashUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelectUpdateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * The data used to update tokenHashes.
+     */
+    data: Prisma.XOR<Prisma.tokenHashUpdateManyMutationInput, Prisma.tokenHashUncheckedUpdateManyInput>;
+    /**
+     * Filter which tokenHashes to update
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * Limit how many tokenHashes to update.
+     */
+    limit?: number;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashIncludeUpdateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * tokenHash upsert
+ */
+export type tokenHashUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * The filter to search for the tokenHash to update in case it exists.
+     */
+    where: Prisma.tokenHashWhereUniqueInput;
+    /**
+     * In case the tokenHash found by the `where` argument doesn't exist, create a new tokenHash with this data.
+     */
+    create: Prisma.XOR<Prisma.tokenHashCreateInput, Prisma.tokenHashUncheckedCreateInput>;
+    /**
+     * In case the tokenHash was found with the provided `where` argument, update it with this data.
+     */
+    update: Prisma.XOR<Prisma.tokenHashUpdateInput, Prisma.tokenHashUncheckedUpdateInput>;
+};
+/**
+ * tokenHash delete
+ */
+export type tokenHashDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+    /**
+     * Filter which tokenHash to delete.
+     */
+    where: Prisma.tokenHashWhereUniqueInput;
+};
+/**
+ * tokenHash deleteMany
+ */
+export type tokenHashDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which tokenHashes to delete
+     */
+    where?: Prisma.tokenHashWhereInput;
+    /**
+     * Limit how many tokenHashes to delete.
+     */
+    limit?: number;
+};
+/**
+ * tokenHash without action
+ */
+export type tokenHashDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tokenHash
+     */
+    select?: Prisma.tokenHashSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the tokenHash
+     */
+    omit?: Prisma.tokenHashOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.tokenHashInclude<ExtArgs> | null;
+};
+export {};
+//# sourceMappingURL=tokenHash.d.ts.map

@@ -122,6 +122,61 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get user(): Prisma.userDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    /**
+     * `prisma.socials`: Exposes CRUD operations for the **socials** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Socials
+      * const socials = await prisma.socials.findMany()
+      * ```
+      */
+    get socials(): Prisma.socialsDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.coin`: Exposes CRUD operations for the **coin** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Coins
+      * const coins = await prisma.coin.findMany()
+      * ```
+      */
+    get coin(): Prisma.coinDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.tokenHash`: Exposes CRUD operations for the **tokenHash** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more TokenHashes
+      * const tokenHashes = await prisma.tokenHash.findMany()
+      * ```
+      */
+    get tokenHash(): Prisma.tokenHashDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.apiKeys`: Exposes CRUD operations for the **apiKeys** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more ApiKeys
+      * const apiKeys = await prisma.apiKeys.findMany()
+      * ```
+      */
+    get apiKeys(): Prisma.apiKeysDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.blockTimeStamps`: Exposes CRUD operations for the **blockTimeStamps** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more BlockTimeStamps
+      * const blockTimeStamps = await prisma.blockTimeStamps.findMany()
+      * ```
+      */
+    get blockTimeStamps(): Prisma.blockTimeStampsDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;
 //# sourceMappingURL=class.d.ts.map

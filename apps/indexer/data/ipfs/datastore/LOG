@@ -1,0 +1,80 @@
+=============== Mar 2, 2026 (UTC) ===============
+06:28:09.622820 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:28:09.624536 db@open opening
+06:28:09.626160 version@stat F·[] S·0B[] Sc·[]
+06:28:09.627880 db@janitor F·2 G·0
+06:28:09.628433 db@open done T·3.868462ms
+06:28:09.690046 db@close closing
+06:28:09.690172 db@close done T·124.753µs
+=============== Mar 2, 2026 (UTC) ===============
+06:28:09.691569 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:28:09.691948 version@stat F·[] S·0B[] Sc·[]
+06:28:09.691987 db@open opening
+06:28:09.692081 journal@recovery F·1
+06:28:09.692651 journal@recovery recovering @1
+06:28:09.694055 memdb@flush created L0@2 N·12 S·1KiB "/pi..NDg,v10":"/pr..crQ,v12"
+06:28:09.704218 version@stat F·[1] S·1KiB[1KiB] Sc·[0.25]
+06:28:09.707195 db@janitor F·3 G·0
+06:28:09.707243 db@open done T·15.220323ms
+06:28:09.716137 db@close closing
+06:28:09.716232 db@close done T·94.105µs
+=============== Mar 2, 2026 (UTC) ===============
+06:28:09.752948 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:28:09.753113 version@stat F·[1] S·1KiB[1KiB] Sc·[0.25]
+06:28:09.753125 db@open opening
+06:28:09.753188 journal@recovery F·1
+06:28:09.753357 journal@recovery recovering @3
+06:28:09.754491 memdb@flush created L0@5 N·6 S·1KiB "/F5..A2I,v19":"/pi..rty,v14"
+06:28:09.756989 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+06:28:09.759305 db@janitor F·4 G·0
+06:28:09.759346 db@open done T·6.199587ms
+06:28:09.761051 db@close closing
+06:28:09.761121 db@close done T·60.282µs
+=============== Mar 2, 2026 (UTC) ===============
+06:28:09.796687 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:28:09.796892 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+06:28:09.796905 db@open opening
+06:28:09.796969 journal@recovery F·1
+06:28:09.797161 journal@recovery recovering @6
+06:28:09.801036 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+06:28:09.803398 db@janitor F·4 G·0
+06:28:09.803425 db@open done T·6.509024ms
+06:28:09.804981 db@close closing
+06:28:09.805026 db@close done T·45.235µs
+=============== Mar 2, 2026 (UTC) ===============
+06:28:09.837854 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:28:09.838039 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+06:28:09.838052 db@open opening
+06:28:09.838103 journal@recovery F·1
+06:28:09.838286 journal@recovery recovering @8
+06:28:09.840882 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+06:28:09.843227 db@janitor F·4 G·0
+06:28:09.843249 db@open done T·5.189755ms
+=============== Mar 2, 2026 (UTC) ===============
+13:54:35.447139 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:54:35.448168 version@stat F·[2] S·2KiB[2KiB] Sc·[0.50]
+13:54:35.448283 db@open opening
+13:54:35.448348 journal@recovery F·1
+13:54:35.448775 journal@recovery recovering @10
+13:54:35.450300 memdb@flush created L0@12 N·122 S·9KiB "/F5..A2I,v142":"/pr..IGS,v107"
+13:54:35.454640 version@stat F·[3] S·12KiB[12KiB] Sc·[0.75]
+13:54:35.457706 db@janitor F·5 G·0
+13:54:35.457733 db@open done T·9.435459ms
+=============== Mar 12, 2026 (UTC) ===============
+10:52:29.465797 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+10:52:29.466382 version@stat F·[3] S·12KiB[12KiB] Sc·[0.75]
+10:52:29.466511 db@open opening
+10:52:29.466586 journal@recovery F·1
+10:52:29.470422 journal@recovery recovering @13
+10:52:29.474785 memdb@flush created L0@15 N·62 S·5KiB "/F5..A2I,v145":"/pr..IGS,v149"
+10:52:29.475082 version@stat F·[4] S·17KiB[17KiB] Sc·[1.00]
+10:52:29.478071 db@janitor F·6 G·0
+10:52:29.478122 db@open done T·11.590996ms
+10:52:29.478216 table@compaction L0·4 -> L1·0 S·17KiB Q·206
+10:52:29.479406 table@build created L1@18 N·19 S·2KiB "/F5..A2I,v145":"/pi..rty,v66"
+10:52:29.479453 version@stat F·[0 1] S·2KiB[0B 2KiB] Sc·[0.00 0.00]
+10:52:29.480192 table@compaction committed F-3 S-15KiB Ke·0 D·183 T·1.922463ms
+10:52:29.480289 table@remove removed @15
+10:52:29.480343 table@remove removed @12
+10:52:29.480481 table@remove removed @5
+10:52:29.480638 table@remove removed @2

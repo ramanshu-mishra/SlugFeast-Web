@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc && node ./dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -12,15 +13,21 @@
   "type": "commonjs",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.993.0",
+    "@aws-sdk/s3-request-presigner": "^3.996.0",
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
+    "@repo/abi": "*",
+    "@repo/database": "*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@repo/database" : "*",
+    "@types/ws": "^7.4.7",
     "cors": "^2.8.6",
     "dotenv": "^16.0.3",
+    "ethers": "^6.13.5",
+    "express": "^5.2.1",
     "multer": "^2.0.2",
-    "multer-s3": "^3.0.1"
+    "multer-s3": "^3.0.1",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
     "@types/multer": "^2.0.0",

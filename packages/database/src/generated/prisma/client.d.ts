@@ -24,4 +24,29 @@ export { Prisma };
  *
  */
 export type user = Prisma.userModel;
+/**
+ * Model socials
+ *
+ */
+export type socials = Prisma.socialsModel;
+/**
+ * Model coin
+ *
+ */
+export type coin = Prisma.coinModel;
+/**
+ * Model tokenHash
+ *
+ */
+export type tokenHash = Prisma.tokenHashModel;
+/**
+ * Model apiKeys
+ *
+ */
+export type apiKeys = Prisma.apiKeysModel;
+/**
+ * Model blockTimeStamps
+ *
+ */
+export type blockTimeStamps = Prisma.blockTimeStampsModel;
 //# sourceMappingURL=client.d.ts.map

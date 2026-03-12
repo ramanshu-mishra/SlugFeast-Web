@@ -12,63 +12,45 @@ export type AggregateUser = {
 };
 export type UserMinAggregateOutputType = {
     publicKey: string | null;
-    tokenName: string | null;
-    symbol: string | null;
-    imageUrl: string | null;
     name: string | null;
     email: string | null;
-    counrtyCode: string | null;
+    countryCode: string | null;
     contact: string | null;
 };
 export type UserMaxAggregateOutputType = {
     publicKey: string | null;
-    tokenName: string | null;
-    symbol: string | null;
-    imageUrl: string | null;
     name: string | null;
     email: string | null;
-    counrtyCode: string | null;
+    countryCode: string | null;
     contact: string | null;
 };
 export type UserCountAggregateOutputType = {
     publicKey: number;
-    tokenName: number;
-    symbol: number;
-    imageUrl: number;
     name: number;
     email: number;
-    counrtyCode: number;
+    countryCode: number;
     contact: number;
     _all: number;
 };
 export type UserMinAggregateInputType = {
     publicKey?: true;
-    tokenName?: true;
-    symbol?: true;
-    imageUrl?: true;
     name?: true;
     email?: true;
-    counrtyCode?: true;
+    countryCode?: true;
     contact?: true;
 };
 export type UserMaxAggregateInputType = {
     publicKey?: true;
-    tokenName?: true;
-    symbol?: true;
-    imageUrl?: true;
     name?: true;
     email?: true;
-    counrtyCode?: true;
+    countryCode?: true;
     contact?: true;
 };
 export type UserCountAggregateInputType = {
     publicKey?: true;
-    tokenName?: true;
-    symbol?: true;
-    imageUrl?: true;
     name?: true;
     email?: true;
-    counrtyCode?: true;
+    countryCode?: true;
     contact?: true;
     _all?: true;
 };
@@ -136,12 +118,9 @@ export type userGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 };
 export type UserGroupByOutputType = {
     publicKey: string;
-    tokenName: string;
-    symbol: string;
-    imageUrl: string;
     name: string | null;
     email: string | null;
-    counrtyCode: string | null;
+    countryCode: string | null;
     contact: string | null;
     _count: UserCountAggregateOutputType | null;
     _min: UserMinAggregateOutputType | null;
@@ -155,45 +134,39 @@ export type userWhereInput = {
     OR?: Prisma.userWhereInput[];
     NOT?: Prisma.userWhereInput | Prisma.userWhereInput[];
     publicKey?: Prisma.StringFilter<"user"> | string;
-    tokenName?: Prisma.StringFilter<"user"> | string;
-    symbol?: Prisma.StringFilter<"user"> | string;
-    imageUrl?: Prisma.StringFilter<"user"> | string;
     name?: Prisma.StringNullableFilter<"user"> | string | null;
     email?: Prisma.StringNullableFilter<"user"> | string | null;
-    counrtyCode?: Prisma.StringNullableFilter<"user"> | string | null;
+    countryCode?: Prisma.StringNullableFilter<"user"> | string | null;
     contact?: Prisma.StringNullableFilter<"user"> | string | null;
+    coins?: Prisma.CoinListRelationFilter;
+    apiKeys?: Prisma.ApiKeysListRelationFilter;
 };
 export type userOrderByWithRelationInput = {
     publicKey?: Prisma.SortOrder;
-    tokenName?: Prisma.SortOrder;
-    symbol?: Prisma.SortOrder;
-    imageUrl?: Prisma.SortOrder;
     name?: Prisma.SortOrderInput | Prisma.SortOrder;
     email?: Prisma.SortOrderInput | Prisma.SortOrder;
-    counrtyCode?: Prisma.SortOrderInput | Prisma.SortOrder;
+    countryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     contact?: Prisma.SortOrderInput | Prisma.SortOrder;
+    coins?: Prisma.coinOrderByRelationAggregateInput;
+    apiKeys?: Prisma.apiKeysOrderByRelationAggregateInput;
 };
 export type userWhereUniqueInput = Prisma.AtLeast<{
     publicKey?: string;
     AND?: Prisma.userWhereInput | Prisma.userWhereInput[];
     OR?: Prisma.userWhereInput[];
     NOT?: Prisma.userWhereInput | Prisma.userWhereInput[];
-    tokenName?: Prisma.StringFilter<"user"> | string;
-    symbol?: Prisma.StringFilter<"user"> | string;
-    imageUrl?: Prisma.StringFilter<"user"> | string;
     name?: Prisma.StringNullableFilter<"user"> | string | null;
     email?: Prisma.StringNullableFilter<"user"> | string | null;
-    counrtyCode?: Prisma.StringNullableFilter<"user"> | string | null;
+    countryCode?: Prisma.StringNullableFilter<"user"> | string | null;
     contact?: Prisma.StringNullableFilter<"user"> | string | null;
+    coins?: Prisma.CoinListRelationFilter;
+    apiKeys?: Prisma.ApiKeysListRelationFilter;
 }, "publicKey" | "publicKey">;
 export type userOrderByWithAggregationInput = {
     publicKey?: Prisma.SortOrder;
-    tokenName?: Prisma.SortOrder;
-    symbol?: Prisma.SortOrder;
-    imageUrl?: Prisma.SortOrder;
     name?: Prisma.SortOrderInput | Prisma.SortOrder;
     email?: Prisma.SortOrderInput | Prisma.SortOrder;
-    counrtyCode?: Prisma.SortOrderInput | Prisma.SortOrder;
+    countryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     contact?: Prisma.SortOrderInput | Prisma.SortOrder;
     _count?: Prisma.userCountOrderByAggregateInput;
     _max?: Prisma.userMaxOrderByAggregateInput;
@@ -204,113 +177,92 @@ export type userScalarWhereWithAggregatesInput = {
     OR?: Prisma.userScalarWhereWithAggregatesInput[];
     NOT?: Prisma.userScalarWhereWithAggregatesInput | Prisma.userScalarWhereWithAggregatesInput[];
     publicKey?: Prisma.StringWithAggregatesFilter<"user"> | string;
-    tokenName?: Prisma.StringWithAggregatesFilter<"user"> | string;
-    symbol?: Prisma.StringWithAggregatesFilter<"user"> | string;
-    imageUrl?: Prisma.StringWithAggregatesFilter<"user"> | string;
     name?: Prisma.StringNullableWithAggregatesFilter<"user"> | string | null;
     email?: Prisma.StringNullableWithAggregatesFilter<"user"> | string | null;
-    counrtyCode?: Prisma.StringNullableWithAggregatesFilter<"user"> | string | null;
+    countryCode?: Prisma.StringNullableWithAggregatesFilter<"user"> | string | null;
     contact?: Prisma.StringNullableWithAggregatesFilter<"user"> | string | null;
 };
 export type userCreateInput = {
     publicKey: string;
-    tokenName: string;
-    symbol: string;
-    imageUrl: string;
     name?: string | null;
     email?: string | null;
-    counrtyCode?: string | null;
+    countryCode?: string | null;
     contact?: string | null;
+    coins?: Prisma.coinCreateNestedManyWithoutUserInput;
+    apiKeys?: Prisma.apiKeysCreateNestedManyWithoutUserInput;
 };
 export type userUncheckedCreateInput = {
     publicKey: string;
-    tokenName: string;
-    symbol: string;
-    imageUrl: string;
     name?: string | null;
     email?: string | null;
-    counrtyCode?: string | null;
+    countryCode?: string | null;
     contact?: string | null;
+    coins?: Prisma.coinUncheckedCreateNestedManyWithoutUserInput;
+    apiKeys?: Prisma.apiKeysUncheckedCreateNestedManyWithoutUserInput;
 };
 export type userUpdateInput = {
     publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
-    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
-    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
-    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    counrtyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUpdateManyWithoutUserNestedInput;
+    apiKeys?: Prisma.apiKeysUpdateManyWithoutUserNestedInput;
 };
 export type userUncheckedUpdateInput = {
     publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
-    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
-    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
-    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    counrtyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUncheckedUpdateManyWithoutUserNestedInput;
+    apiKeys?: Prisma.apiKeysUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type userCreateManyInput = {
     publicKey: string;
-    tokenName: string;
-    symbol: string;
-    imageUrl: string;
     name?: string | null;
     email?: string | null;
-    counrtyCode?: string | null;
+    countryCode?: string | null;
     contact?: string | null;
 };
 export type userUpdateManyMutationInput = {
     publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
-    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
-    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
-    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    counrtyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type userUncheckedUpdateManyInput = {
     publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
-    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
-    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
-    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    counrtyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type userCountOrderByAggregateInput = {
     publicKey?: Prisma.SortOrder;
-    tokenName?: Prisma.SortOrder;
-    symbol?: Prisma.SortOrder;
-    imageUrl?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     email?: Prisma.SortOrder;
-    counrtyCode?: Prisma.SortOrder;
+    countryCode?: Prisma.SortOrder;
     contact?: Prisma.SortOrder;
 };
 export type userMaxOrderByAggregateInput = {
     publicKey?: Prisma.SortOrder;
-    tokenName?: Prisma.SortOrder;
-    symbol?: Prisma.SortOrder;
-    imageUrl?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     email?: Prisma.SortOrder;
-    counrtyCode?: Prisma.SortOrder;
+    countryCode?: Prisma.SortOrder;
     contact?: Prisma.SortOrder;
 };
 export type userMinOrderByAggregateInput = {
     publicKey?: Prisma.SortOrder;
-    tokenName?: Prisma.SortOrder;
-    symbol?: Prisma.SortOrder;
-    imageUrl?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     email?: Prisma.SortOrder;
-    counrtyCode?: Prisma.SortOrder;
+    countryCode?: Prisma.SortOrder;
     contact?: Prisma.SortOrder;
+};
+export type UserScalarRelationFilter = {
+    is?: Prisma.userWhereInput;
+    isNot?: Prisma.userWhereInput;
 };
 export type StringFieldUpdateOperationsInput = {
     set?: string;
@@ -318,58 +270,202 @@ export type StringFieldUpdateOperationsInput = {
 export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null;
 };
+export type userCreateNestedOneWithoutCoinsInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutCoinsInput, Prisma.userUncheckedCreateWithoutCoinsInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutCoinsInput;
+    connect?: Prisma.userWhereUniqueInput;
+};
+export type userUpdateOneRequiredWithoutCoinsNestedInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutCoinsInput, Prisma.userUncheckedCreateWithoutCoinsInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutCoinsInput;
+    upsert?: Prisma.userUpsertWithoutCoinsInput;
+    connect?: Prisma.userWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.userUpdateToOneWithWhereWithoutCoinsInput, Prisma.userUpdateWithoutCoinsInput>, Prisma.userUncheckedUpdateWithoutCoinsInput>;
+};
+export type userCreateNestedOneWithoutApiKeysInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutApiKeysInput, Prisma.userUncheckedCreateWithoutApiKeysInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutApiKeysInput;
+    connect?: Prisma.userWhereUniqueInput;
+};
+export type userUpdateOneRequiredWithoutApiKeysNestedInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutApiKeysInput, Prisma.userUncheckedCreateWithoutApiKeysInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutApiKeysInput;
+    upsert?: Prisma.userUpsertWithoutApiKeysInput;
+    connect?: Prisma.userWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.userUpdateToOneWithWhereWithoutApiKeysInput, Prisma.userUpdateWithoutApiKeysInput>, Prisma.userUncheckedUpdateWithoutApiKeysInput>;
+};
+export type userCreateWithoutCoinsInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    apiKeys?: Prisma.apiKeysCreateNestedManyWithoutUserInput;
+};
+export type userUncheckedCreateWithoutCoinsInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    apiKeys?: Prisma.apiKeysUncheckedCreateNestedManyWithoutUserInput;
+};
+export type userCreateOrConnectWithoutCoinsInput = {
+    where: Prisma.userWhereUniqueInput;
+    create: Prisma.XOR<Prisma.userCreateWithoutCoinsInput, Prisma.userUncheckedCreateWithoutCoinsInput>;
+};
+export type userUpsertWithoutCoinsInput = {
+    update: Prisma.XOR<Prisma.userUpdateWithoutCoinsInput, Prisma.userUncheckedUpdateWithoutCoinsInput>;
+    create: Prisma.XOR<Prisma.userCreateWithoutCoinsInput, Prisma.userUncheckedCreateWithoutCoinsInput>;
+    where?: Prisma.userWhereInput;
+};
+export type userUpdateToOneWithWhereWithoutCoinsInput = {
+    where?: Prisma.userWhereInput;
+    data: Prisma.XOR<Prisma.userUpdateWithoutCoinsInput, Prisma.userUncheckedUpdateWithoutCoinsInput>;
+};
+export type userUpdateWithoutCoinsInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    apiKeys?: Prisma.apiKeysUpdateManyWithoutUserNestedInput;
+};
+export type userUncheckedUpdateWithoutCoinsInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    apiKeys?: Prisma.apiKeysUncheckedUpdateManyWithoutUserNestedInput;
+};
+export type userCreateWithoutApiKeysInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    coins?: Prisma.coinCreateNestedManyWithoutUserInput;
+};
+export type userUncheckedCreateWithoutApiKeysInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    coins?: Prisma.coinUncheckedCreateNestedManyWithoutUserInput;
+};
+export type userCreateOrConnectWithoutApiKeysInput = {
+    where: Prisma.userWhereUniqueInput;
+    create: Prisma.XOR<Prisma.userCreateWithoutApiKeysInput, Prisma.userUncheckedCreateWithoutApiKeysInput>;
+};
+export type userUpsertWithoutApiKeysInput = {
+    update: Prisma.XOR<Prisma.userUpdateWithoutApiKeysInput, Prisma.userUncheckedUpdateWithoutApiKeysInput>;
+    create: Prisma.XOR<Prisma.userCreateWithoutApiKeysInput, Prisma.userUncheckedCreateWithoutApiKeysInput>;
+    where?: Prisma.userWhereInput;
+};
+export type userUpdateToOneWithWhereWithoutApiKeysInput = {
+    where?: Prisma.userWhereInput;
+    data: Prisma.XOR<Prisma.userUpdateWithoutApiKeysInput, Prisma.userUncheckedUpdateWithoutApiKeysInput>;
+};
+export type userUpdateWithoutApiKeysInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUpdateManyWithoutUserNestedInput;
+};
+export type userUncheckedUpdateWithoutApiKeysInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUncheckedUpdateManyWithoutUserNestedInput;
+};
+/**
+ * Count Type UserCountOutputType
+ */
+export type UserCountOutputType = {
+    coins: number;
+    apiKeys: number;
+};
+export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    coins?: boolean | UserCountOutputTypeCountCoinsArgs;
+    apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs;
+};
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     */
+    select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null;
+};
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCoinsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.coinWhereInput;
+};
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApiKeysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.apiKeysWhereInput;
+};
 export type userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     publicKey?: boolean;
-    tokenName?: boolean;
-    symbol?: boolean;
-    imageUrl?: boolean;
     name?: boolean;
     email?: boolean;
-    counrtyCode?: boolean;
+    countryCode?: boolean;
     contact?: boolean;
+    coins?: boolean | Prisma.user$coinsArgs<ExtArgs>;
+    apiKeys?: boolean | Prisma.user$apiKeysArgs<ExtArgs>;
+    _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["user"]>;
 export type userSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     publicKey?: boolean;
-    tokenName?: boolean;
-    symbol?: boolean;
-    imageUrl?: boolean;
     name?: boolean;
     email?: boolean;
-    counrtyCode?: boolean;
+    countryCode?: boolean;
     contact?: boolean;
 }, ExtArgs["result"]["user"]>;
 export type userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     publicKey?: boolean;
-    tokenName?: boolean;
-    symbol?: boolean;
-    imageUrl?: boolean;
     name?: boolean;
     email?: boolean;
-    counrtyCode?: boolean;
+    countryCode?: boolean;
     contact?: boolean;
 }, ExtArgs["result"]["user"]>;
 export type userSelectScalar = {
     publicKey?: boolean;
-    tokenName?: boolean;
-    symbol?: boolean;
-    imageUrl?: boolean;
     name?: boolean;
     email?: boolean;
-    counrtyCode?: boolean;
+    countryCode?: boolean;
     contact?: boolean;
 };
-export type userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"publicKey" | "tokenName" | "symbol" | "imageUrl" | "name" | "email" | "counrtyCode" | "contact", ExtArgs["result"]["user"]>;
+export type userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"publicKey" | "name" | "email" | "countryCode" | "contact", ExtArgs["result"]["user"]>;
+export type userInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    coins?: boolean | Prisma.user$coinsArgs<ExtArgs>;
+    apiKeys?: boolean | Prisma.user$apiKeysArgs<ExtArgs>;
+    _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
+};
+export type userIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
+export type userIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
 export type $userPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "user";
-    objects: {};
+    objects: {
+        coins: Prisma.$coinPayload<ExtArgs>[];
+        apiKeys: Prisma.$apiKeysPayload<ExtArgs>[];
+    };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         publicKey: string;
-        tokenName: string;
-        symbol: string;
-        imageUrl: string;
         name: string | null;
         email: string | null;
-        counrtyCode: string | null;
+        countryCode: string | null;
         contact: string | null;
     }, ExtArgs["result"]["user"]>;
     composites: {};
@@ -700,6 +796,8 @@ export interface userDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
  */
 export interface Prisma__userClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    coins<T extends Prisma.user$coinsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.user$coinsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$coinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    apiKeys<T extends Prisma.user$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.user$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$apiKeysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -726,12 +824,9 @@ export interface Prisma__userClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface userFieldRefs {
     readonly publicKey: Prisma.FieldRef<"user", 'String'>;
-    readonly tokenName: Prisma.FieldRef<"user", 'String'>;
-    readonly symbol: Prisma.FieldRef<"user", 'String'>;
-    readonly imageUrl: Prisma.FieldRef<"user", 'String'>;
     readonly name: Prisma.FieldRef<"user", 'String'>;
     readonly email: Prisma.FieldRef<"user", 'String'>;
-    readonly counrtyCode: Prisma.FieldRef<"user", 'String'>;
+    readonly countryCode: Prisma.FieldRef<"user", 'String'>;
     readonly contact: Prisma.FieldRef<"user", 'String'>;
 }
 /**
@@ -746,6 +841,10 @@ export type userFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
      * Omit specific fields from the user
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
     /**
      * Filter, which user to fetch.
      */
@@ -764,6 +863,10 @@ export type userFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
+    /**
      * Filter, which user to fetch.
      */
     where: Prisma.userWhereUniqueInput;
@@ -780,6 +883,10 @@ export type userFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
      * Omit specific fields from the user
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
     /**
      * Filter, which user to fetch.
      */
@@ -828,6 +935,10 @@ export type userFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
+    /**
      * Filter, which user to fetch.
      */
     where?: Prisma.userWhereInput;
@@ -875,6 +986,10 @@ export type userFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
+    /**
      * Filter, which users to fetch.
      */
     where?: Prisma.userWhereInput;
@@ -916,6 +1031,10 @@ export type userCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
      * Omit specific fields from the user
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
     /**
      * The data needed to create a user.
      */
@@ -961,6 +1080,10 @@ export type userUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
      * Omit specific fields from the user
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
     /**
      * The data needed to update a user.
      */
@@ -1025,6 +1148,10 @@ export type userUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
+    /**
      * The filter to search for the user to update in case it exists.
      */
     where: Prisma.userWhereUniqueInput;
@@ -1050,6 +1177,10 @@ export type userDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
+    /**
      * Filter which user to delete.
      */
     where: Prisma.userWhereUniqueInput;
@@ -1068,6 +1199,52 @@ export type userDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
     limit?: number;
 };
 /**
+ * user.coins
+ */
+export type user$coinsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coin
+     */
+    select?: Prisma.coinSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the coin
+     */
+    omit?: Prisma.coinOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.coinInclude<ExtArgs> | null;
+    where?: Prisma.coinWhereInput;
+    orderBy?: Prisma.coinOrderByWithRelationInput | Prisma.coinOrderByWithRelationInput[];
+    cursor?: Prisma.coinWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.CoinScalarFieldEnum | Prisma.CoinScalarFieldEnum[];
+};
+/**
+ * user.apiKeys
+ */
+export type user$apiKeysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the apiKeys
+     */
+    select?: Prisma.apiKeysSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the apiKeys
+     */
+    omit?: Prisma.apiKeysOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.apiKeysInclude<ExtArgs> | null;
+    where?: Prisma.apiKeysWhereInput;
+    orderBy?: Prisma.apiKeysOrderByWithRelationInput | Prisma.apiKeysOrderByWithRelationInput[];
+    cursor?: Prisma.apiKeysWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.ApiKeysScalarFieldEnum | Prisma.ApiKeysScalarFieldEnum[];
+};
+/**
  * user without action
  */
 export type userDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1079,6 +1256,10 @@ export type userDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
      * Omit specific fields from the user
      */
     omit?: Prisma.userOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.userInclude<ExtArgs> | null;
 };
 export {};
 //# sourceMappingURL=user.d.ts.map

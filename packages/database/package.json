@@ -7,12 +7,18 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev" : "npx prisma generate && tsc"
   },
   "devDependencies": {
-    "prisma": "^7.4.0"
+    "prisma": "^7.4.0",
+    "ts-node": "^10.9.2"
   },
-  "exports":{
-    "./client": "./client.ts"
+  "exports": {
+    "./client": "./src/client.js"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
   }
 }

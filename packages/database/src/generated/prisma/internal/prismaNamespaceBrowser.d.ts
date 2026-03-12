@@ -27,6 +27,11 @@ export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullCl
 export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
 export declare const ModelName: {
     readonly user: "user";
+    readonly socials: "socials";
+    readonly coin: "coin";
+    readonly tokenHash: "tokenHash";
+    readonly apiKeys: "apiKeys";
+    readonly blockTimeStamps: "blockTimeStamps";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -38,15 +43,60 @@ export declare const TransactionIsolationLevel: {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
 export declare const UserScalarFieldEnum: {
     readonly publicKey: "publicKey";
-    readonly tokenName: "tokenName";
-    readonly symbol: "symbol";
-    readonly imageUrl: "imageUrl";
     readonly name: "name";
     readonly email: "email";
-    readonly counrtyCode: "counrtyCode";
+    readonly countryCode: "countryCode";
     readonly contact: "contact";
 };
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
+export declare const SocialsScalarFieldEnum: {
+    readonly id: "id";
+    readonly instagram: "instagram";
+    readonly x: "x";
+    readonly telegram: "telegram";
+    readonly youtube: "youtube";
+    readonly website: "website";
+    readonly coinId: "coinId";
+};
+export type SocialsScalarFieldEnum = (typeof SocialsScalarFieldEnum)[keyof typeof SocialsScalarFieldEnum];
+export declare const CoinScalarFieldEnum: {
+    readonly id: "id";
+    readonly address: "address";
+    readonly tokenName: "tokenName";
+    readonly symbol: "symbol";
+    readonly imageUrl: "imageUrl";
+    readonly description: "description";
+    readonly userId: "userId";
+    readonly graduated: "graduated";
+};
+export type CoinScalarFieldEnum = (typeof CoinScalarFieldEnum)[keyof typeof CoinScalarFieldEnum];
+export declare const TokenHashScalarFieldEnum: {
+    readonly hash: "hash";
+    readonly coinId: "coinId";
+};
+export type TokenHashScalarFieldEnum = (typeof TokenHashScalarFieldEnum)[keyof typeof TokenHashScalarFieldEnum];
+export declare const ApiKeysScalarFieldEnum: {
+    readonly id: "id";
+    readonly apiKey: "apiKey";
+    readonly userId: "userId";
+};
+export type ApiKeysScalarFieldEnum = (typeof ApiKeysScalarFieldEnum)[keyof typeof ApiKeysScalarFieldEnum];
+export declare const BlockTimeStampsScalarFieldEnum: {
+    readonly id: "id";
+    readonly tokenDeployedsTimestamp: "tokenDeployedsTimestamp";
+    readonly tokenDeployedsLastId: "tokenDeployedsLastId";
+    readonly tokenGraduatedsTimestamp: "tokenGraduatedsTimestamp";
+    readonly tokenGraduatedsLastId: "tokenGraduatedsLastId";
+    readonly tokenBoughtsTimestamp: "tokenBoughtsTimestamp";
+    readonly tokenBoughtsLastId: "tokenBoughtsLastId";
+    readonly tokenSoldsTimestamp: "tokenSoldsTimestamp";
+    readonly tokenSoldsLastId: "tokenSoldsLastId";
+    readonly poolcreatedsTimestamp: "poolcreatedsTimestamp";
+    readonly poolcreatedsLastId: "poolcreatedsLastId";
+    readonly updatedAt: "updatedAt";
+    readonly createdAt: "createdAt";
+};
+export type BlockTimeStampsScalarFieldEnum = (typeof BlockTimeStampsScalarFieldEnum)[keyof typeof BlockTimeStampsScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

@@ -1,7 +1,8 @@
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "commonjs"
 }
 
 datasource db {
@@ -11,11 +12,78 @@ datasource db {
 
 model user{
   publicKey String @id @unique 
+  name String?
+  email String?
+  countryCode String?
+  contact String?
+  coins coin[]
+  apiKeys apiKeys[]
+}
+
+model socials{
+  id String @id @unique @default(cuid())
+  instagram String?
+  x String?
+  telegram String?
+  youtube String?
+  website String?
+  coin coin @relation(fields: [coinId], references: [id])
+  coinId String @unique 
+}
+
+
+model coin{
+  id String @id @default(cuid())
+  address String? @unique 
   tokenName String 
   symbol String
   imageUrl String
-  name String?
-  email String?
-  counrtyCode String?
-  contact String?
+  description String
+  
+  user user @relation(fields: [userId], references: [publicKey])
+  userId String
+  graduated Boolean @default(false)
+  socials socials?
+  tokenHash tokenHash? 
 }
+
+
+model tokenHash{
+  hash String  @id
+  coinId String @unique 
+  coin coin @relation(fields: [coinId], references: [id])
+}
+
+
+
+model apiKeys{
+  id String @id @default(cuid())
+  apiKey String @unique
+  userId String 
+  user user @relation(fields: [userId], references: [publicKey])
+}
+
+model blockTimeStamps {
+  id String @id @default("singleton")
+
+  tokenDeployedsTimestamp  Int @default(0)
+  tokenDeployedsLastId     Int @default(0)
+
+  tokenGraduatedsTimestamp Int @default(0)
+  tokenGraduatedsLastId    Int @default(0)
+
+  tokenBoughtsTimestamp    Int @default(0)
+  tokenBoughtsLastId       Int @default(0)
+
+  tokenSoldsTimestamp      Int @default(0)
+  tokenSoldsLastId         Int @default(0)
+
+  poolcreatedsTimestamp    Int @default(0)
+  poolcreatedsLastId       Int @default(0)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+
+
