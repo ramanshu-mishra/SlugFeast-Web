@@ -313,8 +313,7 @@ export default function Page() {
       }
     });
     
-
-    }
+    } 
     catch(e){
       const errorMessage = e instanceof Error ? e.message : "Something went Wrong";
       console.log(errorMessage);

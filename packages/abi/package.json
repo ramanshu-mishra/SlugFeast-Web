@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "exports":{
-    "./abi": "./abi.json"
+    "./abi": "./abi.json",
+    "./erc20Abi": "./erc20Abi.json"
   }
 }

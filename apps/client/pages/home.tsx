@@ -6,7 +6,7 @@ export function     Home({children}:{children: React.ReactNode}){
             <Sidebar></Sidebar>
             <div className="flex-1 flex flex-col h-screen m-0 p-0">
                 <Navbar></Navbar>
-                <div className="flex-1 overflow-auto">
+                <div className="flex flex-1 overflow-auto ">
                     {children}
                 </div>
             </div>           

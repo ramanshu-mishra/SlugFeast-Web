@@ -8,28 +8,7 @@ import Image from "next/image";
 import {motion} from "motion/react"
 import { useRouter } from "next/navigation";
 
-interface Coin {
-    id: string;
-    address: string;
-    tokenName: string;
-    symbol: string;
-    imageUrl: string;
-    description: string;
-    userId: string;
-    graduated: boolean;
-    user: {
-        publicKey: string;
-        name: string | null;
-        email: string | null;
-    };
-    socials: {
-        instagram: string | null;
-        x: string | null;
-        telegram: string | null;
-        youtube: string | null;
-        website: string | null;
-    } | null;
-}
+import { Coin } from "../interfaces/coinInterface";
 
 export default function CoinDisplay() {
     const [page, setPage] = useState<number>(1);
@@ -37,7 +16,7 @@ export default function CoinDisplay() {
     
     return (
         <>
-            <div className="flex flex-wrap p-4 gap-6">
+            <div className="flex flex-1 flex-wrap p-4 gap-6 ">
                 {
                     isLoading &&
                     Array.from({ length: 10 }).map((e, i) => {

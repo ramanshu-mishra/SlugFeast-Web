@@ -113,6 +113,7 @@ async function handleTokenCreateds(rows: any[]) {
             console.log(JSON.stringify({ event: "TokenCreated", status: "coin_not_found", id: row.internal_id }));
             continue;
         }
+        console.log("\n\n__got the coin__ : ", row.internal_id), "\n\n";
         await prisma.coin.update({
             where: { id: row.internal_id },
             data: { address: row.token },

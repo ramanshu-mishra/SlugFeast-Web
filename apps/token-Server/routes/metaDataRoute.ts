@@ -11,6 +11,10 @@ router.get("/metaData", async(req:Request,res:Response)=>{
     const coin= await prisma.coin.findFirst({
         where:{
             address: address as string
+        },
+        include:{
+            tokenHash: true,
+            user: true
         }
     });
 
@@ -78,7 +82,7 @@ router.get("/coin/:hash", async(req:Request, res:Response)=>{
     }
 })
 
-const pageSize = 48;
+const pageSize = 48;     
 
 
 router.get("/getAllCoins", async(req:Request, res:Response)=>{

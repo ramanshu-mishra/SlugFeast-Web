@@ -88,7 +88,7 @@ router.post("/createToken", checkPublicKey, checkCoinMetadata, async(req: Reques
         }
 
         const signature = await signTransaction(publicKey as `0x${string}`, Number(nonce));
-        const hash = jwt.sign({address: coinData?.address}, jwtSecret as string);
+          const hash = jwt.sign({address: coinData?.id}, jwtSecret as string);
 
         const hashAdded = await prisma.tokenHash.create({
             data:{
@@ -96,8 +96,10 @@ router.post("/createToken", checkPublicKey, checkCoinMetadata, async(req: Reques
                 coinId: coinData?.id as string
             }
         });
-
-        if(!hashAdded) throw new Error("Server SIde Error");
+        console.log(hashAdded);
+        console.log("_____________________________________________");
+        if(!hashAdded) throw new Error("Server Side Error");
+        
 
         res.status(201).json({
             success: true,
@@ -131,6 +133,9 @@ router.get("/updateAddress", async(req:Request, res:Response)=>{
         });
         return;
     }
+    try{
+
+    
     const updatedCoin =  await prisma.coin.update({
         where:{
             id
@@ -147,6 +152,18 @@ router.get("/updateAddress", async(req:Request, res:Response)=>{
         });
         return;
     }
+
+  
+    }
+    catch(e){
+        console.log("Error while token address updation");
+        res.status(500).json({
+            success: false,
+            message: "Error in token address updation"
+        })
+        return;
+    }
+
     res.status(200).json({
         success: true,
         message: "address of coin updated"
