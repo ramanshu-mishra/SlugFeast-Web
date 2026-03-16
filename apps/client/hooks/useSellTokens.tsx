@@ -2,12 +2,12 @@
 import { useWriteContract, usePublicClient } from "wagmi"
 import abi from "@repo/abi/abi"
 
-export function useSellTokens({address, amount, nonce}:{address: `0x${string}`, amount: number, nonce:number}){
+export function useSellTokens(){
     const {mutateAsync, data, error, isPending} = useWriteContract();
     const publicClient = usePublicClient();
-    const contractAdress = process.env.NEXT_ENV_CONTRACT_ADDRESS as `0x${string}`;
+    const contractAdress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
 
-    async function sellTokens(){
+    async function sellTokens({address, amount, nonce}:{address: `0x${string}`, amount: number, nonce:number}){
         const txHash = await mutateAsync({
             abi,
             address: contractAdress,

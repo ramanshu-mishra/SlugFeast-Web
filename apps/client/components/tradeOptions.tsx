@@ -9,6 +9,9 @@ import { useGetWalletBalance } from "../hooks/useGetWalletBalance";
 import { cn } from "../utility/cn";
 import eth_symbol from "../public/eth_symbol.png";
 import { useDebounce } from "../hooks/useDebounce";
+import { useBuyTokens } from "../hooks/useBuyTokens";
+import { useSellTokens } from "../hooks/useSellTokens";
+import { useGetNonce } from "../hooks/useGetNonce";
 
 
 interface tradeInterface{
@@ -26,9 +29,12 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
         value: "",
         active: false
     });
-    
+    const {data:nonce, error, isPending, refetch:getNonce} = useGetNonce(address);
+    const [processing, setProcessing] = useState<boolean>(false);
+
     const [debouncedValue, setDebouncedValue] = useDebounce(trade.value, 300);
-    
+    const {buyTokens, buyLoading, buyError, buyHash} = useBuyTokens();
+    const {sellTokens, sellLoading, sellError, sellHash} = useSellTokens();
     
     
     const balance = useGetTokenBalance({
@@ -40,6 +46,50 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
     const walletAddress = (address as `0x${string}` | undefined) ?? zeroAddress;
     const {data:ethBalance} = useGetWalletBalance({address: walletAddress});
     // const ethBalance = {value: 45*10**18}
+
+
+    async function _buyTokens(){
+        if (!trade.active || buyLoading || sellLoading || !address) return;
+
+        const inputValue = Number(trade.value);
+        if (!Number.isFinite(inputValue) || inputValue <= 0) return;
+
+        const nonceResult = await getNonce();
+        const txNonce = Number(nonceResult.data ?? nonce ?? 0);
+        if (!Number.isFinite(txNonce)) return;
+
+        setProcessing(true);
+         await buyTokens({
+            address: coin.address as `0x${string}`,
+            nonce: txNonce,
+            value: inputValue,
+        });
+        setProcessing(false);
+
+        setTrade({ value: "", active: false });
+    }
+
+    async function _sellTokens(){
+        if (!trade.active || buyLoading || sellLoading || !address) return;
+
+        const inputValue = Number(trade.value);
+        if (!Number.isFinite(inputValue) || inputValue <= 0) return;
+
+        const nonceResult = await getNonce();
+        const txNonce = Number(nonceResult.data ?? nonce ?? 0);
+        if (!Number.isFinite(txNonce)) return;
+
+        const tokenAmount = Math.floor(inputValue * 10**6);
+        if (tokenAmount <= 0) return;
+
+        await sellTokens({
+            address: coin.address as `0x${string}`,
+            amount: tokenAmount,
+            nonce: txNonce,
+        });
+
+        setTrade({ value: "", active: false });
+    }
 
     return (
         <div className="select-none flex flex-1 h-100 flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4">
@@ -86,7 +136,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
             </div>
             <div className="flex justify-between px-2">
                         <span>Balance</span>
-                        <span>{pov=="Eth" ? ((Number(ethBalance?.value ?? 0))/Number(10**18)) : balance?  balance.data ? balance.data.toString() : "0" : "0"}</span>
+                        <span>{pov=="Eth" ? ((Number(ethBalance?.value ?? 0))/Number(10**18)) : balance?  balance.data ? ((Number(balance.data)/10**6).toFixed(5)).toString() : "0" : "0"}</span>
             </div>
             <div className="relative">
                 <input
@@ -100,8 +150,11 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
                 <TokenLogo symbol={pov == "Eth" ? "Eth" : symbol} coin={coin} className="absolute right-5 top-1" />
             </div>
             <Quote value={Number(trade.value)} coin={coin} symbol={symbol} pov={pov} option={option} setTrade={setTrade} balance={Number(ethBalance?.value ?? 0) / 10**18} tokenBalance={Number(balance?.data ?? 0)} walletAddress={walletAddress} ></Quote>
-            <div className={cn("flex justify-center items-center w-full h-10 rounded-xl text-neutral-800 font-bold border border-neutral-900", option=="Buy"? trade.active ? "bg-emerald-400 cursor-pointer" : "bg-emerald-800 cursor-not-allowed" : trade.active ? "bg-red-400 cursor-pointer" : "bg-red-900 cursor-not-allowed")}>
-                {option} {coin.symbol.slice(0,1).toUpperCase()+coin.symbol.slice(1).toLocaleLowerCase()}
+            <div
+                onClick={option === "Buy" ? _buyTokens : _sellTokens}
+                className={cn("flex justify-center items-center w-full h-10 rounded-xl text-neutral-800 font-bold border border-neutral-900", option=="Buy"? trade.active ? "bg-emerald-400 cursor-pointer" : "bg-emerald-800 cursor-not-allowed" : trade.active ? "bg-red-400 cursor-pointer" : "bg-red-900 cursor-not-allowed")}
+            >
+                {(buyLoading || processing) || (sellLoading || processing) ? "Processing..." : `${option} ${coin.symbol.slice(0,1).toUpperCase()+coin.symbol.slice(1).toLocaleLowerCase()}`}
             </div>
             
         </div>
@@ -210,7 +263,7 @@ const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBa
             } else if (balance < requiredEth) {
                 nextAllowTrade.buyMessage = `Insufficient Eth. You have ${balance.toFixed(5)} Eth`;
             } 
-            else if(requiredEth > eth_in_token ){
+            else if(pov == "Eth" && value > vEthReserve ){
                 nextAllowTrade.buyMessage = `Max Buy limit : ${eth_in_token}`
             }
             else {
