@@ -1,40 +1,45 @@
 "use client"
 
 import { useReadContracts } from 'wagmi'
-import { useAccount } from 'wagmi';
 import abi from '@repo/abi/abi'
+import { isAddress } from 'viem';
 
 
-export default function useGetTokenReserves({key}: {key:string}){
+export default function useGetTokenReserves({key, address}: {key:`0x${string}`, address: `0x${string}`}){
+    const zeroAddress = "0x0000000000000000000000000000000000000000" as `0x${string}`;
+    const validKey = isAddress(key) ? key : zeroAddress;
+    const validAccount = isAddress(address) ? address : zeroAddress;
+    const envContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+    const contractAddress = envContractAddress && isAddress(envContractAddress)
+      ? (envContractAddress as `0x${string}`)
+      : zeroAddress;
+    const enabled = validKey !== zeroAddress && validAccount !== zeroAddress && contractAddress !== zeroAddress;
 
-    const {address, isConnected} = useAccount();
-    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
-    if(!isConnected)return;
-
-     const result = useReadContracts({
+     const {data, error , isLoading} = useReadContracts({
         contracts: [
             {
     abi,
     address: contractAddress ,
     functionName: 'getTokenReserves',
-    args: ['0x6b175474e89094c44da98b954eedeac495271d0f'],
+              args: [validKey],
     
   },
   {
     abi,
     address: contractAddress ,
     functionName: 'getVEthReserves',
-    args: ['0x6b175474e89094c44da98b954eedeac495271d0f'],
+    args: [validKey],
     
   }
     ],
-    account: address as `0x${string}`,
+    account: validAccount,
     query:{
+      enabled,
         refetchInterval: 2000,
         refetchOnReconnect: true,
         refetchOnWindowFocus: true,
     }
      });
-
-  return result;
+    
+  return {data,error,isLoading};
 }
