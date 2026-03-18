@@ -1,14 +1,16 @@
 export enum EventType{
-    "TokenCreated" = "TokenCreated",
-     "tokenDeployed" = "tokenDeployed",
      "tokenGraduated" = "tokenGraduated",
-     "TokenBought" = "TokenBought",
-     "TokenSold" = "TokenSold",
-     "poolcreated" = "poolcreated"
+     "tokenCreated" = "tokenCreated"
+}
+
+export enum TransactionEvents{
+    "tokenBought" = "tokenBought",
+     "tokenSold" = "tokenSold",
 }
 
 export enum ActionEnum {
     SUBSCRIBE   = "SUBSCRIBE",
     UNSUBSCRIBE = "UNSUBSCRIBE",
-    SUBSCRIBE_ALL = "SUBSCRIBE_ALL"
+    SUBSCRIBE_ALL = "SUBSCRIBE_ALL",
+    UNSUBSCRIBE_ALL = "UNSUBSCRIBE_ALL"
 }

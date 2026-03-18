@@ -1,11 +1,11 @@
 import { prisma } from "@repo/database/client";
 import { broadcast } from "../wsLayer/transactions.js";
-import { EventType } from "../share/enums.js";
+import { EventType, TransactionEvents } from "../share/enums.js";
 
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_HEADER = `Bearer ${process.env.SUBGRAPH_API_KEY}`;
 const POLL_INTERVAL_MS = 2_000;
-const SAVE_INTERVAL = 20_000; //20 seconds 
+const SAVE_INTERVAL = 20_000; // 20 seconds
 
 // ─── In-memory cursors ───────────────────────────────────────────────────────
 // lastTimestamp: advance only when the batch has fewer than PAGE_SIZE rows
@@ -22,7 +22,16 @@ const cursor: Record<string, Cursor> = {
     poolcreateds:    { lastTimestamp: "0", lastId: "" },
 };
 
-const prevCursor  = cursor; // used to compare in timeStampSaver whether timeStamp update to db needs to happen or not;
+const CURSOR_DB_ENTITIES = [
+    "tokenCreateds",
+    "tokenDeployeds",
+    "tokenGraduateds",
+    "tokenBoughts",
+    "tokenSolds",
+    "poolcreateds",
+] as const;
+
+type CursorDbEntity = (typeof CURSOR_DB_ENTITIES)[number];
 
 // ─── GraphQL fetch helper ────────────────────────────────────────────────────
 async function gql<T>(query: string): Promise<T> {
@@ -42,9 +51,16 @@ async function gql<T>(query: string): Promise<T> {
 // ─── Query builders ──────────────────────────────────────────────────────────
 // Uses blockTimestamp_gte + id_gt to safely page through events in the same block
 
+function normalizeCursorId(value: string): string {
+    const id = value.trim();
+    if (id === "" || id === "0") return "";
+    return /^0x(?:[a-fA-F0-9]{2})+$/.test(id) ? id : "";
+}
+
 function whereClause(c: Cursor): string {
-    if (c.lastId === "") return `blockTimestamp_gt: "${c.lastTimestamp}"`;
-    return `blockTimestamp_gte: "${c.lastTimestamp}", id_gt: "${c.lastId}"`;
+    const safeId = normalizeCursorId(c.lastId);
+    if (safeId === "") return `blockTimestamp_gt: "${c.lastTimestamp}"`;
+    return `blockTimestamp_gte: "${c.lastTimestamp}", id_gt: "${safeId}"`;
 }
 
 const queries = {
@@ -118,14 +134,14 @@ async function handleTokenCreateds(rows: any[]) {
             where: { id: row.internal_id },
             data: { address: row.token },
         });
-        broadcast(EventType.TokenCreated, row);
+        broadcast(EventType.tokenCreated, row);
         console.log(JSON.stringify({ event: "TokenCreated", id: row.internal_id, address: row.token }));
     }
 }
 
 async function handleTokenDeployeds(rows: any[]) {
     for (const row of rows) {
-        broadcast(EventType.tokenDeployed, row);
+        // broadcast(EventType.tokenDeployed, row);
         console.log(JSON.stringify({ event: "tokenDeployed", token: row.token, block: row.blockNumber }));
     }
 }
@@ -149,7 +165,7 @@ async function handleTokenGraduateds(rows: any[]) {
 
 async function handleTokenBoughts(rows: any[]) {
     for (const row of rows) {
-        broadcast(EventType.TokenBought, row);
+        broadcast(TransactionEvents.tokenBought, row);
         console.log(JSON.stringify({
             event: "TokenBought",
             token: row.token,
@@ -163,7 +179,7 @@ async function handleTokenBoughts(rows: any[]) {
 
 async function handleTokenSolds(rows: any[]) {
     for (const row of rows) {
-        broadcast(EventType.TokenSold, row);
+        broadcast(TransactionEvents.tokenSold, row);
         console.log(JSON.stringify({
             event: "TokenSold",
             token: row.token,
@@ -177,7 +193,7 @@ async function handleTokenSolds(rows: any[]) {
 
 async function handlePoolcreateds(rows: any[]) {
     for (const row of rows) {
-        broadcast(EventType.poolcreated, row);
+        // broadcast(EventType.poolcreated, row);
         console.log(JSON.stringify({ event: "poolcreated", tokenA: row.tokenA, block: row.blockNumber }));
     }
 }
@@ -227,68 +243,126 @@ async function poll() {
 }
 
 
-// compare two maps
+function getPersistedCursorSnapshot(): Record<CursorDbEntity, Cursor> {
+    return Object.fromEntries(
+        CURSOR_DB_ENTITIES.map((entity) => [entity, { ...cursor[entity] }])
+    ) as Record<CursorDbEntity, Cursor>;
+}
 
-function comapreMaps(mp1: Record<string, Cursor>, mp2 : Record<string,Cursor>){
-    for(const [key, value] of Object.entries(mp1)){
-        if(mp2[key] != value){
+function areCursorMapsEqual(mp1: Record<CursorDbEntity, Cursor>, mp2: Record<CursorDbEntity, Cursor>) {
+    for (const key of CURSOR_DB_ENTITIES) {
+        if (mp1[key].lastTimestamp !== mp2[key].lastTimestamp || mp1[key].lastId !== mp2[key].lastId) {
             return false;
         }
     }
     return true;
 }
 
+function toCursorNumber(value?: string): number {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
 
 // --- TimeStampSaver
 
 function saveTimeStamp(){
-    const prev = cursor;
+    let prev = getPersistedCursorSnapshot();
+    let isSaving = false;
 
     async function updateTimeStamps(){
 
         const updatedTimeStamp = {
-             tokenDeployedsTimestamp  :cursor["tokenDeployeds"]?.lastTimestamp as string,
-  tokenDeployedsLastId  : cursor["tokenDeployeds"]?.lastId as string,
+            tokenDeployedsTimestamp: toCursorNumber(cursor["tokenDeployeds"]?.lastTimestamp),
+            tokenDeployedsLastId: toCursorNumber(cursor["tokenDeployeds"]?.lastId),
 
-  tokenGraduatedsTimestamp: cursor["tokenGraduateds"]?.lastTimestamp as string,
-  tokenGraduatedsLastId    :cursor["tokenGraduateds"]?.lastId as string,
+            tokenGraduatedsTimestamp: toCursorNumber(cursor["tokenGraduateds"]?.lastTimestamp),
+            tokenGraduatedsLastId: toCursorNumber(cursor["tokenGraduateds"]?.lastId),
 
-  tokenBoughtsTimestamp    :cursor["tokenBoughts"]?.lastTimestamp as string,
-  tokenBoughtsLastId       :cursor["tokenBoughts"]?.lastId as string,
+            tokenBoughtsTimestamp: toCursorNumber(cursor["tokenBoughts"]?.lastTimestamp),
+            tokenBoughtsLastId: toCursorNumber(cursor["tokenBoughts"]?.lastId),
 
-  tokenSoldsTimestamp      :cursor["tokenSolds"]?.lastTimestamp as string,
-  tokenSoldsLastId         :cursor["tokenSolds"]?.lastId as string,
+            tokenSoldsTimestamp: toCursorNumber(cursor["tokenSolds"]?.lastTimestamp),
+            tokenSoldsLastId: toCursorNumber(cursor["tokenSolds"]?.lastId),
 
-  poolcreatedsTimestamp    :cursor["tokenCreateds"]?.lastTimestamp as string,
-  poolcreatedsLastId       :cursor["tokenCreateds"]?.lastId as string
+            poolcreatedsTimestamp: toCursorNumber(cursor["poolcreateds"]?.lastTimestamp),
+            poolcreatedsLastId: toCursorNumber(cursor["poolcreateds"]?.lastId),
+
+            tokencreatedsTimestamp : toCursorNumber(cursor["tokenCreateds"]?.lastTimestamp),
+            tokencreatedLastId : toCursorNumber(cursor["tokenCreateds"]?.lastId)
         }
 
         await prisma.blockTimeStamps.upsert({
             where:{
                 id: "singleton"
             },
-            update: updateTimeStamps,
-            create: updateTimeStamps
+            update: updatedTimeStamp,
+            create: { id: "singleton", ...updatedTimeStamp }
         });
+
+        prev = getPersistedCursorSnapshot();
     }
 
     setInterval(async()=>{
-        const cmp = comapreMaps(cursor, prev);
-        if(!cmp){
-            await updateTimeStamps();
+        if (isSaving) return;
+
+        const unchanged = areCursorMapsEqual(getPersistedCursorSnapshot(), prev);
+        if (!unchanged) {
+            isSaving = true;
+            try {
+                await updateTimeStamps();
+            } catch (error) {
+                console.error("[SubgraphPoller] saveTimeStamp error:", error);
+            } finally {
+                isSaving = false;
+            }
         }
     }, SAVE_INTERVAL) // I think this function may lead to some performance issues. lets say update didn't happen and another async request came, then prev request must cancel. I dont know if this is implicitly being handled by nodejs.
 }
 
 
+// fetching the timestamp from which indexing should start , instead of starting from the epoch everytime
+
+async function fetchCursors(){
+    const tmstpms = await prisma.blockTimeStamps.findUnique({ where: { id: "singleton" } });
+    if(!tmstpms)return;
+
+    cursor.tokenCreateds = {
+        lastTimestamp: String(tmstpms.tokencreatedsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.tokencreatedLastId)),
+    };
+
+    cursor.tokenDeployeds = {
+        lastTimestamp: String(tmstpms.tokenDeployedsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.tokenDeployedsLastId)),
+    };
+    cursor.tokenGraduateds = {
+        lastTimestamp: String(tmstpms.tokenGraduatedsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.tokenGraduatedsLastId)),
+    };
+    cursor.tokenBoughts = {
+        lastTimestamp: String(tmstpms.tokenBoughtsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.tokenBoughtsLastId)),
+    };
+    cursor.tokenSolds = {
+        lastTimestamp: String(tmstpms.tokenSoldsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.tokenSoldsLastId)),
+    };
+    cursor.poolcreateds = {
+        lastTimestamp: String(tmstpms.poolcreatedsTimestamp),
+        lastId: normalizeCursorId(String(tmstpms.poolcreatedsLastId)),
+    };
+}
+
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
-export function startSubgraphPoller() {
+export async function startSubgraphPoller() {
     if (!SUBGRAPH_URL) {
         console.error("[SubgraphPoller] SUBGRAPH_URL not set — poller disabled");
         return;
     }
-
+    await fetchCursors();
+    console.log("mai pass ho gaya HEHEHEHEHEHE"); 
     console.log(`[SubgraphPoller] starting — polling every ${POLL_INTERVAL_MS}ms`);
     poll().catch((e) => console.error("[SubgraphPoller] initial poll error:", e));
     setInterval(() => {
@@ -297,3 +371,27 @@ export function startSubgraphPoller() {
     }, POLL_INTERVAL_MS);
     saveTimeStamp();
 }
+
+
+
+
+// kaam to do right now: --> write endpoints to fetch trading history indexed by the indexer according to dates sorted according to timestams.
+// fetched data should be converted to whether in terms of Eth or Token is needed or send both at the same time . only one extra column required.
+// 
+
+// add support different timeZone view on the timeline
+
+// add comment section
+
+// I dont want frontend to poll server for this kind of stuff 
+// so create a simple WebSocket connection between server and client to fetch transaction data and tokenPool status to display the bonding curve. 
+
+
+// after all this is completed ad support of all the small things on frontend that remain for goo UX .
+
+// after all this real thing begins that makes the project long term .
+// 
+// allowing all this from the uniswap contract. which means indexging and allowing trades after graduation from the platform itself. 
+
+// after this deploy and allow public to trade. 
+

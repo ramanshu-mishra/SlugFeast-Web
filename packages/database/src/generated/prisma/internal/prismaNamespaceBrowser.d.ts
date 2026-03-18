@@ -93,6 +93,8 @@ export declare const BlockTimeStampsScalarFieldEnum: {
     readonly tokenSoldsLastId: "tokenSoldsLastId";
     readonly poolcreatedsTimestamp: "poolcreatedsTimestamp";
     readonly poolcreatedsLastId: "poolcreatedsLastId";
+    readonly tokencreatedsTimestamp: "tokencreatedsTimestamp";
+    readonly tokencreatedLastId: "tokencreatedLastId";
     readonly updatedAt: "updatedAt";
     readonly createdAt: "createdAt";
 };

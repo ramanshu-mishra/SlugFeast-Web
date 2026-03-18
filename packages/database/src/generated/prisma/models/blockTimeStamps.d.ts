@@ -23,6 +23,8 @@ export type BlockTimeStampsAvgAggregateOutputType = {
     tokenSoldsLastId: number | null;
     poolcreatedsTimestamp: number | null;
     poolcreatedsLastId: number | null;
+    tokencreatedsTimestamp: number | null;
+    tokencreatedLastId: number | null;
 };
 export type BlockTimeStampsSumAggregateOutputType = {
     tokenDeployedsTimestamp: number | null;
@@ -35,6 +37,8 @@ export type BlockTimeStampsSumAggregateOutputType = {
     tokenSoldsLastId: number | null;
     poolcreatedsTimestamp: number | null;
     poolcreatedsLastId: number | null;
+    tokencreatedsTimestamp: number | null;
+    tokencreatedLastId: number | null;
 };
 export type BlockTimeStampsMinAggregateOutputType = {
     id: string | null;
@@ -48,6 +52,8 @@ export type BlockTimeStampsMinAggregateOutputType = {
     tokenSoldsLastId: number | null;
     poolcreatedsTimestamp: number | null;
     poolcreatedsLastId: number | null;
+    tokencreatedsTimestamp: number | null;
+    tokencreatedLastId: number | null;
     updatedAt: Date | null;
     createdAt: Date | null;
 };
@@ -63,6 +69,8 @@ export type BlockTimeStampsMaxAggregateOutputType = {
     tokenSoldsLastId: number | null;
     poolcreatedsTimestamp: number | null;
     poolcreatedsLastId: number | null;
+    tokencreatedsTimestamp: number | null;
+    tokencreatedLastId: number | null;
     updatedAt: Date | null;
     createdAt: Date | null;
 };
@@ -78,6 +86,8 @@ export type BlockTimeStampsCountAggregateOutputType = {
     tokenSoldsLastId: number;
     poolcreatedsTimestamp: number;
     poolcreatedsLastId: number;
+    tokencreatedsTimestamp: number;
+    tokencreatedLastId: number;
     updatedAt: number;
     createdAt: number;
     _all: number;
@@ -93,6 +103,8 @@ export type BlockTimeStampsAvgAggregateInputType = {
     tokenSoldsLastId?: true;
     poolcreatedsTimestamp?: true;
     poolcreatedsLastId?: true;
+    tokencreatedsTimestamp?: true;
+    tokencreatedLastId?: true;
 };
 export type BlockTimeStampsSumAggregateInputType = {
     tokenDeployedsTimestamp?: true;
@@ -105,6 +117,8 @@ export type BlockTimeStampsSumAggregateInputType = {
     tokenSoldsLastId?: true;
     poolcreatedsTimestamp?: true;
     poolcreatedsLastId?: true;
+    tokencreatedsTimestamp?: true;
+    tokencreatedLastId?: true;
 };
 export type BlockTimeStampsMinAggregateInputType = {
     id?: true;
@@ -118,6 +132,8 @@ export type BlockTimeStampsMinAggregateInputType = {
     tokenSoldsLastId?: true;
     poolcreatedsTimestamp?: true;
     poolcreatedsLastId?: true;
+    tokencreatedsTimestamp?: true;
+    tokencreatedLastId?: true;
     updatedAt?: true;
     createdAt?: true;
 };
@@ -133,6 +149,8 @@ export type BlockTimeStampsMaxAggregateInputType = {
     tokenSoldsLastId?: true;
     poolcreatedsTimestamp?: true;
     poolcreatedsLastId?: true;
+    tokencreatedsTimestamp?: true;
+    tokencreatedLastId?: true;
     updatedAt?: true;
     createdAt?: true;
 };
@@ -148,6 +166,8 @@ export type BlockTimeStampsCountAggregateInputType = {
     tokenSoldsLastId?: true;
     poolcreatedsTimestamp?: true;
     poolcreatedsLastId?: true;
+    tokencreatedsTimestamp?: true;
+    tokencreatedLastId?: true;
     updatedAt?: true;
     createdAt?: true;
     _all?: true;
@@ -240,6 +260,8 @@ export type BlockTimeStampsGroupByOutputType = {
     tokenSoldsLastId: number;
     poolcreatedsTimestamp: number;
     poolcreatedsLastId: number;
+    tokencreatedsTimestamp: number;
+    tokencreatedLastId: number;
     updatedAt: Date;
     createdAt: Date;
     _count: BlockTimeStampsCountAggregateOutputType | null;
@@ -266,6 +288,8 @@ export type blockTimeStampsWhereInput = {
     tokenSoldsLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
     poolcreatedsTimestamp?: Prisma.IntFilter<"blockTimeStamps"> | number;
     poolcreatedsLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
+    tokencreatedsTimestamp?: Prisma.IntFilter<"blockTimeStamps"> | number;
+    tokencreatedLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
     updatedAt?: Prisma.DateTimeFilter<"blockTimeStamps"> | Date | string;
     createdAt?: Prisma.DateTimeFilter<"blockTimeStamps"> | Date | string;
 };
@@ -281,6 +305,8 @@ export type blockTimeStampsOrderByWithRelationInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
 };
@@ -299,6 +325,8 @@ export type blockTimeStampsWhereUniqueInput = Prisma.AtLeast<{
     tokenSoldsLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
     poolcreatedsTimestamp?: Prisma.IntFilter<"blockTimeStamps"> | number;
     poolcreatedsLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
+    tokencreatedsTimestamp?: Prisma.IntFilter<"blockTimeStamps"> | number;
+    tokencreatedLastId?: Prisma.IntFilter<"blockTimeStamps"> | number;
     updatedAt?: Prisma.DateTimeFilter<"blockTimeStamps"> | Date | string;
     createdAt?: Prisma.DateTimeFilter<"blockTimeStamps"> | Date | string;
 }, "id">;
@@ -314,6 +342,8 @@ export type blockTimeStampsOrderByWithAggregationInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     _count?: Prisma.blockTimeStampsCountOrderByAggregateInput;
@@ -337,6 +367,8 @@ export type blockTimeStampsScalarWhereWithAggregatesInput = {
     tokenSoldsLastId?: Prisma.IntWithAggregatesFilter<"blockTimeStamps"> | number;
     poolcreatedsTimestamp?: Prisma.IntWithAggregatesFilter<"blockTimeStamps"> | number;
     poolcreatedsLastId?: Prisma.IntWithAggregatesFilter<"blockTimeStamps"> | number;
+    tokencreatedsTimestamp?: Prisma.IntWithAggregatesFilter<"blockTimeStamps"> | number;
+    tokencreatedLastId?: Prisma.IntWithAggregatesFilter<"blockTimeStamps"> | number;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"blockTimeStamps"> | Date | string;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"blockTimeStamps"> | Date | string;
 };
@@ -352,6 +384,8 @@ export type blockTimeStampsCreateInput = {
     tokenSoldsLastId?: number;
     poolcreatedsTimestamp?: number;
     poolcreatedsLastId?: number;
+    tokencreatedsTimestamp?: number;
+    tokencreatedLastId?: number;
     updatedAt?: Date | string;
     createdAt?: Date | string;
 };
@@ -367,6 +401,8 @@ export type blockTimeStampsUncheckedCreateInput = {
     tokenSoldsLastId?: number;
     poolcreatedsTimestamp?: number;
     poolcreatedsLastId?: number;
+    tokencreatedsTimestamp?: number;
+    tokencreatedLastId?: number;
     updatedAt?: Date | string;
     createdAt?: Date | string;
 };
@@ -382,6 +418,8 @@ export type blockTimeStampsUpdateInput = {
     tokenSoldsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -397,6 +435,8 @@ export type blockTimeStampsUncheckedUpdateInput = {
     tokenSoldsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -412,6 +452,8 @@ export type blockTimeStampsCreateManyInput = {
     tokenSoldsLastId?: number;
     poolcreatedsTimestamp?: number;
     poolcreatedsLastId?: number;
+    tokencreatedsTimestamp?: number;
+    tokencreatedLastId?: number;
     updatedAt?: Date | string;
     createdAt?: Date | string;
 };
@@ -427,6 +469,8 @@ export type blockTimeStampsUpdateManyMutationInput = {
     tokenSoldsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -442,6 +486,8 @@ export type blockTimeStampsUncheckedUpdateManyInput = {
     tokenSoldsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
     poolcreatedsLastId?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedsTimestamp?: Prisma.IntFieldUpdateOperationsInput | number;
+    tokencreatedLastId?: Prisma.IntFieldUpdateOperationsInput | number;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -457,6 +503,8 @@ export type blockTimeStampsCountOrderByAggregateInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
 };
@@ -471,6 +519,8 @@ export type blockTimeStampsAvgOrderByAggregateInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
 };
 export type blockTimeStampsMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -484,6 +534,8 @@ export type blockTimeStampsMaxOrderByAggregateInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
 };
@@ -499,6 +551,8 @@ export type blockTimeStampsMinOrderByAggregateInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
 };
@@ -513,6 +567,8 @@ export type blockTimeStampsSumOrderByAggregateInput = {
     tokenSoldsLastId?: Prisma.SortOrder;
     poolcreatedsTimestamp?: Prisma.SortOrder;
     poolcreatedsLastId?: Prisma.SortOrder;
+    tokencreatedsTimestamp?: Prisma.SortOrder;
+    tokencreatedLastId?: Prisma.SortOrder;
 };
 export type IntFieldUpdateOperationsInput = {
     set?: number;
@@ -536,6 +592,8 @@ export type blockTimeStampsSelect<ExtArgs extends runtime.Types.Extensions.Inter
     tokenSoldsLastId?: boolean;
     poolcreatedsTimestamp?: boolean;
     poolcreatedsLastId?: boolean;
+    tokencreatedsTimestamp?: boolean;
+    tokencreatedLastId?: boolean;
     updatedAt?: boolean;
     createdAt?: boolean;
 }, ExtArgs["result"]["blockTimeStamps"]>;
@@ -551,6 +609,8 @@ export type blockTimeStampsSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
     tokenSoldsLastId?: boolean;
     poolcreatedsTimestamp?: boolean;
     poolcreatedsLastId?: boolean;
+    tokencreatedsTimestamp?: boolean;
+    tokencreatedLastId?: boolean;
     updatedAt?: boolean;
     createdAt?: boolean;
 }, ExtArgs["result"]["blockTimeStamps"]>;
@@ -566,6 +626,8 @@ export type blockTimeStampsSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
     tokenSoldsLastId?: boolean;
     poolcreatedsTimestamp?: boolean;
     poolcreatedsLastId?: boolean;
+    tokencreatedsTimestamp?: boolean;
+    tokencreatedLastId?: boolean;
     updatedAt?: boolean;
     createdAt?: boolean;
 }, ExtArgs["result"]["blockTimeStamps"]>;
@@ -581,10 +643,12 @@ export type blockTimeStampsSelectScalar = {
     tokenSoldsLastId?: boolean;
     poolcreatedsTimestamp?: boolean;
     poolcreatedsLastId?: boolean;
+    tokencreatedsTimestamp?: boolean;
+    tokencreatedLastId?: boolean;
     updatedAt?: boolean;
     createdAt?: boolean;
 };
-export type blockTimeStampsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tokenDeployedsTimestamp" | "tokenDeployedsLastId" | "tokenGraduatedsTimestamp" | "tokenGraduatedsLastId" | "tokenBoughtsTimestamp" | "tokenBoughtsLastId" | "tokenSoldsTimestamp" | "tokenSoldsLastId" | "poolcreatedsTimestamp" | "poolcreatedsLastId" | "updatedAt" | "createdAt", ExtArgs["result"]["blockTimeStamps"]>;
+export type blockTimeStampsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tokenDeployedsTimestamp" | "tokenDeployedsLastId" | "tokenGraduatedsTimestamp" | "tokenGraduatedsLastId" | "tokenBoughtsTimestamp" | "tokenBoughtsLastId" | "tokenSoldsTimestamp" | "tokenSoldsLastId" | "poolcreatedsTimestamp" | "poolcreatedsLastId" | "tokencreatedsTimestamp" | "tokencreatedLastId" | "updatedAt" | "createdAt", ExtArgs["result"]["blockTimeStamps"]>;
 export type $blockTimeStampsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "blockTimeStamps";
     objects: {};
@@ -600,6 +664,8 @@ export type $blockTimeStampsPayload<ExtArgs extends runtime.Types.Extensions.Int
         tokenSoldsLastId: number;
         poolcreatedsTimestamp: number;
         poolcreatedsLastId: number;
+        tokencreatedsTimestamp: number;
+        tokencreatedLastId: number;
         updatedAt: Date;
         createdAt: Date;
     }, ExtArgs["result"]["blockTimeStamps"]>;
@@ -967,6 +1033,8 @@ export interface blockTimeStampsFieldRefs {
     readonly tokenSoldsLastId: Prisma.FieldRef<"blockTimeStamps", 'Int'>;
     readonly poolcreatedsTimestamp: Prisma.FieldRef<"blockTimeStamps", 'Int'>;
     readonly poolcreatedsLastId: Prisma.FieldRef<"blockTimeStamps", 'Int'>;
+    readonly tokencreatedsTimestamp: Prisma.FieldRef<"blockTimeStamps", 'Int'>;
+    readonly tokencreatedLastId: Prisma.FieldRef<"blockTimeStamps", 'Int'>;
     readonly updatedAt: Prisma.FieldRef<"blockTimeStamps", 'DateTime'>;
     readonly createdAt: Prisma.FieldRef<"blockTimeStamps", 'DateTime'>;
 }

@@ -166,6 +166,8 @@ exports.BlockTimeStampsScalarFieldEnum = {
     tokenSoldsLastId: 'tokenSoldsLastId',
     poolcreatedsTimestamp: 'poolcreatedsTimestamp',
     poolcreatedsLastId: 'poolcreatedsLastId',
+    tokencreatedsTimestamp: 'tokencreatedsTimestamp',
+    tokencreatedLastId: 'tokencreatedLastId',
     updatedAt: 'updatedAt',
     createdAt: 'createdAt'
 };

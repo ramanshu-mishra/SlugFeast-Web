@@ -81,6 +81,9 @@ model blockTimeStamps {
   poolcreatedsTimestamp    Int @default(0)
   poolcreatedsLastId       Int @default(0)
 
+  tokencreatedsTimestamp   Int @default(0)
+  tokencreatedLastId       Int @default(0)
+
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
