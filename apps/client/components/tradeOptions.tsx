@@ -4,7 +4,7 @@ import { useState , memo, useEffect, SetStateAction, Dispatch} from "react";
 import { Coin } from "../interfaces/coinInterface";
 import useGetTokenReserves from "../hooks/useGetTokenReserves";
 import { useGetTokenBalance } from "../hooks/useGetTokenBalance";
-import { useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import { useGetWalletBalance } from "../hooks/useGetWalletBalance";
 import { cn } from "../utility/cn";
 import eth_symbol from "../public/eth_symbol.png";
@@ -12,6 +12,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { useBuyTokens } from "../hooks/useBuyTokens";
 import { useSellTokens } from "../hooks/useSellTokens";
 import { useGetNonce } from "../hooks/useGetNonce";
+import { parseUnits } from "viem";
 
 
 interface tradeInterface{
@@ -24,7 +25,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
     const zeroAddress = "0x0000000000000000000000000000000000000000" as `0x${string}`;
     const [option, setOption] = useState<"Sell" | "Buy">("Buy");
     const [pov, setPov] = useState<"Eth" | string>("Eth");
-    const { address } = useConnection();
+    const { address } = useAccount();
     const [trade,setTrade] = useState<tradeInterface>({
         value: "",
         active: false
@@ -49,7 +50,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
 
 
     async function _buyTokens(){
-        if (!trade.active || buyLoading || sellLoading || !address) return;
+        if (!trade.active || buyLoading || sellLoading || processing || !address) return;
 
         const inputValue = Number(trade.value);
         if (!Number.isFinite(inputValue) || inputValue <= 0) return;
@@ -59,18 +60,22 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
         if (!Number.isFinite(txNonce)) return;
 
         setProcessing(true);
-         await buyTokens({
-            address: coin.address as `0x${string}`,
-            nonce: txNonce,
-            value: inputValue,
-        });
-        setProcessing(false);
+        try {
+            await buyTokens({
+                address: coin.address as `0x${string}`,
+                nonce: txNonce,
+                value: inputValue,
+            });
 
-        setTrade({ value: "", active: false });
+            setTrade({ value: "", active: false });
+        }
+        finally {
+            setProcessing(false);
+        }
     }
 
     async function _sellTokens(){
-        if (!trade.active || buyLoading || sellLoading || !address) return;
+        if (!trade.active || buyLoading || sellLoading || processing || !address) return;
 
         const inputValue = Number(trade.value);
         if (!Number.isFinite(inputValue) || inputValue <= 0) return;
@@ -79,20 +84,31 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
         const txNonce = Number(nonceResult.data ?? nonce ?? 0);
         if (!Number.isFinite(txNonce)) return;
 
-        const tokenAmount = Math.floor(inputValue * 10**6);
-        if (tokenAmount <= 0) return;
+        let tokenAmount: bigint;
+        try {
+            tokenAmount = parseUnits(trade.value, 6);
+        } catch {
+            return;
+        }
+        if (tokenAmount <= 0n) return;
 
-        await sellTokens({
-            address: coin.address as `0x${string}`,
-            amount: tokenAmount,
-            nonce: txNonce,
-        });
+        setProcessing(true);
+        try {
+            await sellTokens({
+                address: coin.address as `0x${string}`,
+                amount: tokenAmount,
+                nonce: txNonce,
+            });
 
-        setTrade({ value: "", active: false });
+            setTrade({ value: "", active: false });
+        }
+        finally {
+            setProcessing(false);
+        }
     }
 
     return (
-        <div className="select-none flex flex-1 h-100 flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+        <div className="select-none flex flex-1 h-fit flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4">
             <div className="w-full">
                 <LayoutGroup id="trade-option-tabs">
                     <div className="relative grid grid-cols-2 rounded-lg border border-neutral-700 bg-neutral-800/60 p-1">
@@ -136,7 +152,11 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
             </div>
             <div className="flex justify-between px-2">
                         <span>Balance</span>
-                        <span>{pov=="Eth" ? ((Number(ethBalance?.value ?? 0))/Number(10**18)) : balance?  balance.data ? ((Number(balance.data)/10**6).toFixed(5)).toString() : "0" : "0"}</span>
+                        {option=="Buy" && <span>{pov=="Eth" ? `${((Number(ethBalance?.value ?? 0))/Number(10**18)).toFixed(5)} ETH` : balance?  balance.data ? `${((Number(balance.data)/10**6).toFixed(5)).toString()} ${symbol.trim().slice(0,6)}${symbol.length > 6 ? "..." : ""}` : `0 ${symbol.trim().slice(0,6)}${symbol.length > 6 ? "..." : ""}` : `0 ${symbol.trim().slice(0,6)}${symbol.length > 6 ? "..." : ""}`}</span>}
+                        {
+                            option == "Sell" && 
+                            <span>{`${((Number(balance?.data)/10**6).toFixed(5)).toString()} ${symbol.trim().slice(0,6)}${symbol.length > 6 ? "..." : ""}` }</span>
+                        }
             </div>
             <div className="relative">
                 <input
@@ -147,7 +167,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
                     className="w-full h-10 rounded-xl bg-neutral-700 px-2"
                     onChange={(e)=>setTrade(tr=>({...tr, value : e.target.value}))}
                 />
-                <TokenLogo symbol={pov == "Eth" ? "Eth" : symbol} coin={coin} className="absolute right-5 top-1" />
+                <TokenLogo symbol={option == "Sell" ? symbol : pov == "Eth" ? "Eth" : symbol} coin={coin} className="absolute right-5 top-1" />
             </div>
             <Quote value={Number(trade.value)} coin={coin} symbol={symbol} pov={pov} option={option} setTrade={setTrade} balance={Number(ethBalance?.value ?? 0) / 10**18} tokenBalance={Number(balance?.data ?? 0)} walletAddress={walletAddress} ></Quote>
             <div
@@ -270,10 +290,15 @@ const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBa
                 nextAllowTrade.allowBuy = true;
             }
         } else {
-            const requiredToken = pov === "Eth" ? token_in_eth : value;
-            const availableToken = tokenBalance / 10**6;
+            const requiredToken =  value*10**6;
+            const availableToken = tokenBalance;
 
-            if (availableToken < requiredToken) {
+   
+            if(requiredToken.toString().includes(".")){
+                nextAllowTrade.sellMessage = "Max decimal points digits can be 6";
+                nextAllowTrade.allowSell = false
+            }
+            else if (availableToken < requiredToken) {
                 nextAllowTrade.sellMessage = `Insufficient Coins. You have ${availableToken.toFixed(5)} coins`;
                 nextAllowTrade.allowSell = false;
             } else {
@@ -290,7 +315,8 @@ const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBa
 
         setTrade(t=>({
             ...t, active: option == "Buy" ? nextAllowTrade.allowBuy : nextAllowTrade.allowSell
-        }))
+        }));
+
     }, [value, data, option, pov, balance, tokenBalance, setTrade]);
     
     if(!value){
