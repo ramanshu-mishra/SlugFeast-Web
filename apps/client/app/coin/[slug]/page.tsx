@@ -21,7 +21,7 @@ export default function Page() {
             <Link  href={"/"}><ArrowLeft className=" hover:scale-110 active:scale-90 transition-all duration-75 absolute -top-7 left-10 text-neutral-300 "></ArrowLeft></Link>
             <div className="flex flex-col gap-3 basis-[70%] py-1 text-neutral-50">
                 <CardBanner coin={data.metaData} ></CardBanner>
-                <ChartComponent></ChartComponent>
+                <ChartComponent token={data.metaData.address ?? slug}></ChartComponent>
             </div>
             <div className="basis-[30%]  py-1">
                 <TradeOptions coin={data.metaData}></TradeOptions>

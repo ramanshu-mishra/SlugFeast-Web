@@ -134,7 +134,7 @@ function get1hView(transactions: Transaction[]): OHLCCandle[] {
 }
 
 // Create daily candles for 1 month view
-function getMonthlyView(transactions: Transaction[]): OHLCCandle[] {
+function getDailyView(transactions: Transaction[]): OHLCCandle[] {
     const candles: Map<number, OHLCCandle> = new Map();
     const INTERVAL = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
@@ -193,8 +193,8 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
             return res.status(400).json({ success: false, error: "Start and end timestamps are required" });
         }
 
-        if (!["1h", "1month"].includes(timeframe as string)) {
-            return res.status(400).json({ success: false, error: "Timeframe must be '1h' or '1month'" });
+        if (!["1h", "1d"].includes(timeframe as string)) {
+            return res.status(400).json({ success: false, error: "Timeframe must be '1h' or '1d'" });
         }
 
         // Fetch transactions from subgraph
@@ -213,7 +213,7 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
         // Aggregate based on timeframe
         const candles = timeframe === "1h" 
             ? get1hView(transactions) 
-            : getMonthlyView(transactions);
+            : getDailyView(transactions);
 
         res.json({
             success: true,
