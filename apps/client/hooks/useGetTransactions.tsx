@@ -16,6 +16,8 @@ interface Transaction {
     blockTimestamp: string;
 }
 
+export type QuoteOption = 'eth' | 'usdt';
+
 export interface OHLCCandle {
     timestamp: number;
     open: number;
@@ -37,12 +39,12 @@ interface TransactionsResponse {
 
 const serverAdress = process.env.NEXT_PUBLIC_SERVER_ADDRESS as string;
 
-async function getTransactions(token: string, period: PeriodInterface, timeframe: "1h"|"1d"){
+async function getTransactions(token: string, period: PeriodInterface, timeframe: "1h"|"1d", quote: QuoteOption){
     if (!serverAdress) {
         throw new Error("NEXT_PUBLIC_SERVER_ADDRESS is not configured");
     }
 
-    const res = await fetch(`${serverAdress}/transactions/${token}/${timeframe}`, {
+    const res = await fetch(`${serverAdress}/transactions/${token}/${timeframe}?quote=${quote}`, {
         method: "GET",
         headers:{
             "period" : JSON.stringify(period)
@@ -59,7 +61,7 @@ async function getTransactions(token: string, period: PeriodInterface, timeframe
     return payload;
 }
 
-export function useGetTransactions(token: string, timeframe: "1h"|"1d", windowSeconds: number){
+export function useGetTransactions(token: string, timeframe: "1h"|"1d", windowSeconds: number, quote: QuoteOption){
     
     const isValid = isAddress(token);
     const nowSeconds = Math.floor(Date.now() / 1000);
@@ -69,8 +71,8 @@ export function useGetTransactions(token: string, timeframe: "1h"|"1d", windowSe
     };
 
     const query =  useInfiniteQuery({
-        queryKey : ["transactions", token, timeframe, windowSeconds],
-        queryFn: ({ pageParam }) => getTransactions(token, pageParam, timeframe),
+        queryKey : ["transactions", token, timeframe, windowSeconds, quote],
+        queryFn: ({ pageParam }) => getTransactions(token, pageParam, timeframe, quote),
         initialPageParam: initialPeriod,
         getNextPageParam: (lastPage) => {
             const nextEnd = Number(lastPage.period.start) - 1;

@@ -6,6 +6,7 @@ import { useGetToken } from "../../../hooks/useGetToken";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { ChartComponent } from "../../../components/chart";
+import { BondingCurve } from "../../../components/bondingCurve";
 import Link from "next/link";
 
 export default function Page() {
@@ -23,8 +24,9 @@ export default function Page() {
                 <CardBanner coin={data.metaData} ></CardBanner>
                 <ChartComponent token={data.metaData.address ?? slug}></ChartComponent>
             </div>
-            <div className="basis-[30%]  py-1">
+            <div className="flex basis-[30%]  py-1 flex-col  gap-2 ">
                 <TradeOptions coin={data.metaData}></TradeOptions>
+                <BondingCurve address={slug as `0x${string}`}></BondingCurve>
             </div>
         </div>
 }

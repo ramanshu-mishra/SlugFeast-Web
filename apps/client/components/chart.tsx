@@ -11,12 +11,15 @@ import {
     MouseEventParams,
     Time,
     UTCTimestamp,
+    WhitespaceData,
 } from 'lightweight-charts';
 import { candleStyleConfig, chartConfig } from '../share/config/chartConfig';
-import { useGetTransactions } from '../hooks/useGetTransactions';
+import { QuoteOption, useGetTransactions } from '../hooks/useGetTransactions';
 
 type CandlePoint = CandlestickData<Time>;
 type VolumePoint = HistogramData<Time>;
+type CandleSeriesPoint = CandlePoint | WhitespaceData<Time>;
+type VolumeSeriesPoint = VolumePoint | WhitespaceData<Time>;
 type RangeOption = '1D' | '5D' | '1M';
 
 interface HeaderState {
@@ -47,6 +50,8 @@ const rangeToHookTimeframe: Record<RangeOption, '1h' | '1d'> = {
     '1M': '1d',
 };
 
+const CHART_EDGE_PADDING_SECONDS = 5 * 24 * 60 * 60;
+
 export function ChartComponent({ token }: { token: string }) {
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
@@ -59,6 +64,7 @@ export function ChartComponent({ token }: { token: string }) {
     const backfillAttemptsRef = useRef(0);
 
     const [selectedRange, setSelectedRange] = useState<RangeOption>('1D');
+    const [selectedQuote, setSelectedQuote] = useState<QuoteOption>('eth');
 
     const hookTimeframe = rangeToHookTimeframe[selectedRange];
     const windowSeconds = rangeToWindowSeconds[selectedRange];
@@ -70,7 +76,7 @@ export function ChartComponent({ token }: { token: string }) {
         transactionIsFetchingMore,
         loadMore,
         hasMore,
-    } = useGetTransactions(token, hookTimeframe, windowSeconds);
+    } = useGetTransactions(token, hookTimeframe, windowSeconds, selectedQuote);
 
     const candles = useMemo<CandlePoint[]>(() => {
         return historicalCandles.map((candle) => ({
@@ -88,6 +94,20 @@ export function ChartComponent({ token }: { token: string }) {
             value: candle.volume,
             color: candle.close >= candle.open ? 'rgba(20, 184, 166, 0.45)' : 'rgba(239, 68, 68, 0.45)',
         }));
+    }, [historicalCandles]);
+
+    const paddedVisibleRange = useMemo<{ from: Time; to: Time } | null>(() => {
+        const firstCandle = historicalCandles[0];
+        const lastCandle = historicalCandles[historicalCandles.length - 1];
+
+        if (!firstCandle || !lastCandle) {
+            return null;
+        }
+
+        return {
+            from: (firstCandle.timestamp - CHART_EDGE_PADDING_SECONDS) as UTCTimestamp,
+            to: (lastCandle.timestamp + CHART_EDGE_PADDING_SECONDS) as UTCTimestamp,
+        };
     }, [historicalCandles]);
 
     const [headerState, setHeaderState] = useState<HeaderState>(() => {
@@ -147,7 +167,7 @@ export function ChartComponent({ token }: { token: string }) {
     useEffect(() => {
         fitOnNextUpdateRef.current = true;
         backfillAttemptsRef.current = 0;
-    }, [selectedRange]);
+    }, [selectedQuote, selectedRange]);
 
     useEffect(() => {
         if (transactionIsLoading || transactionIsFetchingMore) {
@@ -267,11 +287,11 @@ export function ChartComponent({ token }: { token: string }) {
         candlestickSeriesRef.current.setData(candles);
         volumeSeriesRef.current.setData(volumes);
 
-        if (fitOnNextUpdateRef.current && candles.length > 0) {
-            chartRef.current.timeScale().fitContent();
+        if (fitOnNextUpdateRef.current && paddedVisibleRange) {
+            chartRef.current.timeScale().setVisibleRange(paddedVisibleRange);
             fitOnNextUpdateRef.current = false;
         }
-    }, [candles, volumes]);
+    }, [candles, paddedVisibleRange, volumes]);
 
     const changeText = `${headerState.change >= 0 ? '+' : ''}${headerState.change.toFixed(2)}%`;
     const changeColor = headerState.change >= 0 ? 'text-emerald-400' : 'text-red-400';
@@ -295,7 +315,23 @@ export function ChartComponent({ token }: { token: string }) {
                         );
                     })}
                 </div>
-                <span className='text-neutral-100'>SLUG/ETH Market Cap (USD)</span>
+                <div className='flex items-center gap-2'>
+                    {(['eth', 'usdt'] as const).map((quote) => {
+                        const isActive = selectedQuote === quote;
+
+                        return (
+                            <button
+                                key={quote}
+                                type='button'
+                                onClick={() => setSelectedQuote(quote)}
+                                className={`px-1 py-0.5 uppercase ${isActive ? 'text-emerald-400' : 'text-neutral-500 hover:text-neutral-300'}`}
+                            >
+                                {quote}
+                            </button>
+                        );
+                    })}
+                </div>
+                <span className='text-neutral-100'>SLUG/ETH Price</span>
                 <span className='text-neutral-400'>O <span className='text-neutral-200'>{formatCompact(headerState.open)}</span></span>
                 <span className='text-neutral-400'>H <span className='text-neutral-200'>{formatCompact(headerState.high)}</span></span>
                 <span className='text-neutral-400'>L <span className='text-neutral-200'>{formatCompact(headerState.low)}</span></span>

@@ -108,7 +108,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
     }
 
     return (
-        <div className="select-none flex flex-1 h-fit flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+        <div className="select-none flex  h-fit flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4">
             <div className="w-full">
                 <LayoutGroup id="trade-option-tabs">
                     <div className="relative grid grid-cols-2 rounded-lg border border-neutral-700 bg-neutral-800/60 p-1">

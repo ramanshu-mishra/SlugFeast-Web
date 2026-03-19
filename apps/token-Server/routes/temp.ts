@@ -1,6 +1,6 @@
+"use client"
 import { Request, Response } from "express";
 import { router } from "./SingleRouter";
-import Big from "big.js";
 
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_API_KEY = process.env.SUBGRAPH_API_KEY;
@@ -244,7 +244,7 @@ async function fetchTransactions(
 
         allTransactions.push(...boughtBatch, ...soldBatch);
 
-        if (boughtBatch.length ==0 && soldBatch.length == 0) {
+        if (boughtBatch.length < PAGE_SIZE && soldBatch.length < PAGE_SIZE) {
             break;
         }
 
@@ -261,18 +261,18 @@ async function fetchTransactions(
 
 // Convert transactions to price values (VETH per token)
 function getPrice(transaction: Transaction): number | null {
-    const veth = new Big(transaction.VETH);
-    const amount = new Big(transaction.amount);
+    const veth = Number(transaction.VETH);
+    const amount = Number(transaction.amount);
 
-    if (amount.lte(0) || veth.lt(0)) {
+    if (!Number.isFinite(veth) || !Number.isFinite(amount)) {
         return null;
     }
 
-    try {
-        return veth.div(amount).toNumber();
-    } catch {
+    if (amount <= 0 || veth < 0) {
         return null;
     }
+
+    return veth / amount;
 }
 
 // Create 15-minute candles for 1h view
@@ -422,7 +422,7 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
         const transactions = await fetchTransactions(token as `0x${string}`, period.start, period.end);
 
         if (transactions.length === 0) {
-             res.status(200).json({
+            return res.json({
                 success: true,
                 token,
                 timeframe,
@@ -432,7 +432,6 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
                 candles: [],
                 count: 0,
             });
-            return;
         }
 
         // Aggregate based on timeframe
@@ -443,7 +442,7 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
         const quoteMultiplier = quoteCurrency === "usdt" ? await getEthUsdtPrice() : 1;
         const marketCapCandles = toMarketCapCandles(candles, TOTAL_SUPPLY * quoteMultiplier);
 
-        res.status(200).json({
+        res.json({
             success: true,
             token,
             timeframe,
@@ -453,7 +452,6 @@ router.get("/transactions/:token/:timeframe", async (req: Request, res: Response
             candles: marketCapCandles,
             count: marketCapCandles.length,
         });
-        return;
     } catch (error) {
         console.error("Error fetching transactions:", error);
         res.status(500).json({

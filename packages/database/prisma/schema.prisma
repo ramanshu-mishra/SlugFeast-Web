@@ -17,7 +17,17 @@ model user{
   countryCode String?
   contact String?
   coins coin[]
+  coinsHeld holding[]
   apiKeys apiKeys[]
+}
+
+model holding{
+  id String @id @default(cuid())
+  coinId String
+  amount Int
+  userAddress String
+  user user @relation(fields: [userAddress], references: [publicKey])
+  coin coin @relation(fields: [coinId], references: [id])
 }
 
 model socials{
@@ -41,6 +51,7 @@ model coin{
   description String
   
   user user @relation(fields: [userId], references: [publicKey])
+  holdings holding[]
   userId String
   graduated Boolean @default(false)
   socials socials?
