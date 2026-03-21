@@ -97,7 +97,7 @@ const queries = {
             orderBy: blockTimestamp
             orderDirection: asc
             first: ${PAGE_SIZE}
-        ) { id token VETH amount blockNumber blockTimestamp transactionHash }
+        ) { id token VETH amount buyer blockNumber blockTimestamp transactionHash }
     }`,
 
     tokenSolds: (c: Cursor) => `{
@@ -106,7 +106,7 @@ const queries = {
             orderBy: blockTimestamp
             orderDirection: asc
             first: ${PAGE_SIZE}
-        ) { id token VETH amount blockNumber blockTimestamp transactionHash }
+        ) { id token VETH amount seller blockNumber blockTimestamp transactionHash }
     }`,
 
     poolcreateds: (c: Cursor) => `{
@@ -171,9 +171,11 @@ async function handleTokenBoughts(rows: any[]) {
             token: row.token,
             VETH: row.VETH,
             amount: row.amount,
+            buyer: row.buyer,
             block: row.blockNumber,
             txHash: row.transactionHash,
         }));
+        await updateHoldingInfo(row.seller, row.token, row.amount, "buy", row.blockNumber, row.transactionHash);
     }
 }
 
@@ -185,10 +187,13 @@ async function handleTokenSolds(rows: any[]) {
             token: row.token,
             VETH: row.VETH,
             amount: row.amount,
+            seller: row.seller,
             block: row.blockNumber,
             txHash: row.transactionHash,
         }));
+        await updateHoldingInfo(row.seller, row.token, row.amount, "sell", row.blockNumber, row.transactionHash);
     }
+    
 }
 
 async function handlePoolcreateds(rows: any[]) {
@@ -264,6 +269,9 @@ function toCursorNumber(value?: string): number {
 }
 
 
+
+
+
 // --- TimeStampSaver
 
 function saveTimeStamp(){
@@ -278,12 +286,6 @@ function saveTimeStamp(){
 
             tokenGraduatedsTimestamp: toCursorNumber(cursor["tokenGraduateds"]?.lastTimestamp),
             tokenGraduatedsLastId: toCursorNumber(cursor["tokenGraduateds"]?.lastId),
-
-            tokenBoughtsTimestamp: toCursorNumber(cursor["tokenBoughts"]?.lastTimestamp),
-            tokenBoughtsLastId: toCursorNumber(cursor["tokenBoughts"]?.lastId),
-
-            tokenSoldsTimestamp: toCursorNumber(cursor["tokenSolds"]?.lastTimestamp),
-            tokenSoldsLastId: toCursorNumber(cursor["tokenSolds"]?.lastId),
 
             poolcreatedsTimestamp: toCursorNumber(cursor["poolcreateds"]?.lastTimestamp),
             poolcreatedsLastId: toCursorNumber(cursor["poolcreateds"]?.lastId),
@@ -353,6 +355,55 @@ async function fetchCursors(){
         lastId: normalizeCursorId(String(tmstpms.poolcreatedsLastId)),
     };
 }
+
+
+async function updateHoldingInfo(userAddress: string, tokenAddress: string, amount: number, action: "buy" | "sell", blockTimestamp: number, lastId: number) {
+    
+    const change = action === "buy" ? Number(amount) : -Number(amount);
+
+    try {
+        prisma.$transaction([
+            prisma.holding.upsert({
+            where: {
+                // @ts-ignore
+                coinId_userAddress: {
+                    userAddress,
+                    coinId: tokenAddress
+                }
+            },
+            create: {
+                userAddress,
+                coinId: tokenAddress,
+                amount: action === "buy" ? Number(amount) : 0 // Don't create negative holdings on first sell
+            },
+            update: {
+                amount: {
+                    increment: change 
+                }
+            }
+        }),
+        action == "buy"?
+        prisma.blockTimeStamps.update({
+            where: { id: "singleton" },
+            data: {
+                tokenBoughtsTimestamp: blockTimestamp,
+                tokenBoughtsLastId: lastId
+            }
+        }):
+        prisma.blockTimeStamps.update({
+            where: { id: "singleton" },
+            data: {
+                tokenSoldsTimestamp: blockTimestamp,
+                tokenSoldsLastId: lastId
+            }
+        })
+        ]);
+    } catch (e) {
+        console.error(`Update failed for ${tokenAddress}:`, e instanceof Error ? e.message : e);
+    }
+}
+
+
 
 
 // ─── Entry point ──────────────────────────────────────────────────────────────

@@ -232,6 +232,7 @@ export type FieldRef<Model, FieldType> = runtime.FieldRef<Model, FieldType>;
 type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRef<Model, FieldType>;
 export declare const ModelName: {
     readonly user: "user";
+    readonly holding: "holding";
     readonly socials: "socials";
     readonly coin: "coin";
     readonly tokenHash: "tokenHash";
@@ -249,7 +250,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "user" | "socials" | "coin" | "tokenHash" | "apiKeys" | "blockTimeStamps";
+        modelProps: "user" | "holding" | "socials" | "coin" | "tokenHash" | "apiKeys" | "blockTimeStamps";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -324,6 +325,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 count: {
                     args: Prisma.userCountArgs<ExtArgs>;
                     result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number;
+                };
+            };
+        };
+        holding: {
+            payload: Prisma.$holdingPayload<ExtArgs>;
+            fields: Prisma.holdingFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.holdingFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.holdingFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                findFirst: {
+                    args: Prisma.holdingFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.holdingFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                findMany: {
+                    args: Prisma.holdingFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>[];
+                };
+                create: {
+                    args: Prisma.holdingCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                createMany: {
+                    args: Prisma.holdingCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.holdingCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>[];
+                };
+                delete: {
+                    args: Prisma.holdingDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                update: {
+                    args: Prisma.holdingUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.holdingDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.holdingUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.holdingUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>[];
+                };
+                upsert: {
+                    args: Prisma.holdingUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$holdingPayload>;
+                };
+                aggregate: {
+                    args: Prisma.HoldingAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateHolding>;
+                };
+                groupBy: {
+                    args: Prisma.holdingGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.HoldingGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.holdingCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.HoldingCountAggregateOutputType> | number;
                 };
             };
         };
@@ -739,6 +814,13 @@ export declare const UserScalarFieldEnum: {
     readonly contact: "contact";
 };
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
+export declare const HoldingScalarFieldEnum: {
+    readonly id: "id";
+    readonly coinId: "coinId";
+    readonly amount: "amount";
+    readonly userAddress: "userAddress";
+};
+export type HoldingScalarFieldEnum = (typeof HoldingScalarFieldEnum)[keyof typeof HoldingScalarFieldEnum];
 export declare const SocialsScalarFieldEnum: {
     readonly id: "id";
     readonly instagram: "instagram";
@@ -816,10 +898,6 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>;
 /**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
-/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
@@ -827,6 +905,10 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
 /**
  * Reference to a field of type 'DateTime'
  */
@@ -938,6 +1020,7 @@ export type PrismaClientOptions = ({
 };
 export type GlobalOmitConfig = {
     user?: Prisma.userOmit;
+    holding?: Prisma.holdingOmit;
     socials?: Prisma.socialsOmit;
     coin?: Prisma.coinOmit;
     tokenHash?: Prisma.tokenHashOmit;

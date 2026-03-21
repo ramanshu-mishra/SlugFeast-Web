@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.BlockTimeStampsScalarFieldEnum = exports.ApiKeysScalarFieldEnum = exports.TokenHashScalarFieldEnum = exports.CoinScalarFieldEnum = exports.SocialsScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.BlockTimeStampsScalarFieldEnum = exports.ApiKeysScalarFieldEnum = exports.TokenHashScalarFieldEnum = exports.CoinScalarFieldEnum = exports.SocialsScalarFieldEnum = exports.HoldingScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -76,6 +76,7 @@ exports.JsonNull = runtime.JsonNull;
 exports.AnyNull = runtime.AnyNull;
 exports.ModelName = {
     user: 'user',
+    holding: 'holding',
     socials: 'socials',
     coin: 'coin',
     tokenHash: 'tokenHash',
@@ -97,6 +98,12 @@ exports.UserScalarFieldEnum = {
     email: 'email',
     countryCode: 'countryCode',
     contact: 'contact'
+};
+exports.HoldingScalarFieldEnum = {
+    id: 'id',
+    coinId: 'coinId',
+    amount: 'amount',
+    userAddress: 'userAddress'
 };
 exports.SocialsScalarFieldEnum = {
     id: 'id',

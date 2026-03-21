@@ -8,7 +8,7 @@ dataSources:
     name: SlugDex
     network: sepolia
     source:
-      address: "0x5EdA8A3e23304b66BdEBa78942F3c8aE78fcac26"
+      address: "0xD77368f2d018628aE85D73e7759E032b2591C358"
       abi: SlugDex
       startBlock: 10445650
     mapping:

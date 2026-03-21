@@ -123,6 +123,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
+     * `prisma.holding`: Exposes CRUD operations for the **holding** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Holdings
+      * const holdings = await prisma.holding.findMany()
+      * ```
+      */
+    get holding(): Prisma.holdingDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
      * `prisma.socials`: Exposes CRUD operations for the **socials** model.
       * Example usage:
       * ```ts

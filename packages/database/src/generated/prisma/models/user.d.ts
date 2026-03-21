@@ -139,6 +139,7 @@ export type userWhereInput = {
     countryCode?: Prisma.StringNullableFilter<"user"> | string | null;
     contact?: Prisma.StringNullableFilter<"user"> | string | null;
     coins?: Prisma.CoinListRelationFilter;
+    coinsHeld?: Prisma.HoldingListRelationFilter;
     apiKeys?: Prisma.ApiKeysListRelationFilter;
 };
 export type userOrderByWithRelationInput = {
@@ -148,6 +149,7 @@ export type userOrderByWithRelationInput = {
     countryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     contact?: Prisma.SortOrderInput | Prisma.SortOrder;
     coins?: Prisma.coinOrderByRelationAggregateInput;
+    coinsHeld?: Prisma.holdingOrderByRelationAggregateInput;
     apiKeys?: Prisma.apiKeysOrderByRelationAggregateInput;
 };
 export type userWhereUniqueInput = Prisma.AtLeast<{
@@ -160,6 +162,7 @@ export type userWhereUniqueInput = Prisma.AtLeast<{
     countryCode?: Prisma.StringNullableFilter<"user"> | string | null;
     contact?: Prisma.StringNullableFilter<"user"> | string | null;
     coins?: Prisma.CoinListRelationFilter;
+    coinsHeld?: Prisma.HoldingListRelationFilter;
     apiKeys?: Prisma.ApiKeysListRelationFilter;
 }, "publicKey" | "publicKey">;
 export type userOrderByWithAggregationInput = {
@@ -189,6 +192,7 @@ export type userCreateInput = {
     countryCode?: string | null;
     contact?: string | null;
     coins?: Prisma.coinCreateNestedManyWithoutUserInput;
+    coinsHeld?: Prisma.holdingCreateNestedManyWithoutUserInput;
     apiKeys?: Prisma.apiKeysCreateNestedManyWithoutUserInput;
 };
 export type userUncheckedCreateInput = {
@@ -198,6 +202,7 @@ export type userUncheckedCreateInput = {
     countryCode?: string | null;
     contact?: string | null;
     coins?: Prisma.coinUncheckedCreateNestedManyWithoutUserInput;
+    coinsHeld?: Prisma.holdingUncheckedCreateNestedManyWithoutUserInput;
     apiKeys?: Prisma.apiKeysUncheckedCreateNestedManyWithoutUserInput;
 };
 export type userUpdateInput = {
@@ -207,6 +212,7 @@ export type userUpdateInput = {
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coins?: Prisma.coinUpdateManyWithoutUserNestedInput;
+    coinsHeld?: Prisma.holdingUpdateManyWithoutUserNestedInput;
     apiKeys?: Prisma.apiKeysUpdateManyWithoutUserNestedInput;
 };
 export type userUncheckedUpdateInput = {
@@ -216,6 +222,7 @@ export type userUncheckedUpdateInput = {
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coins?: Prisma.coinUncheckedUpdateManyWithoutUserNestedInput;
+    coinsHeld?: Prisma.holdingUncheckedUpdateManyWithoutUserNestedInput;
     apiKeys?: Prisma.apiKeysUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type userCreateManyInput = {
@@ -270,6 +277,18 @@ export type StringFieldUpdateOperationsInput = {
 export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null;
 };
+export type userCreateNestedOneWithoutCoinsHeldInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutCoinsHeldInput, Prisma.userUncheckedCreateWithoutCoinsHeldInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutCoinsHeldInput;
+    connect?: Prisma.userWhereUniqueInput;
+};
+export type userUpdateOneRequiredWithoutCoinsHeldNestedInput = {
+    create?: Prisma.XOR<Prisma.userCreateWithoutCoinsHeldInput, Prisma.userUncheckedCreateWithoutCoinsHeldInput>;
+    connectOrCreate?: Prisma.userCreateOrConnectWithoutCoinsHeldInput;
+    upsert?: Prisma.userUpsertWithoutCoinsHeldInput;
+    connect?: Prisma.userWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.userUpdateToOneWithWhereWithoutCoinsHeldInput, Prisma.userUpdateWithoutCoinsHeldInput>, Prisma.userUncheckedUpdateWithoutCoinsHeldInput>;
+};
 export type userCreateNestedOneWithoutCoinsInput = {
     create?: Prisma.XOR<Prisma.userCreateWithoutCoinsInput, Prisma.userUncheckedCreateWithoutCoinsInput>;
     connectOrCreate?: Prisma.userCreateOrConnectWithoutCoinsInput;
@@ -294,12 +313,62 @@ export type userUpdateOneRequiredWithoutApiKeysNestedInput = {
     connect?: Prisma.userWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.userUpdateToOneWithWhereWithoutApiKeysInput, Prisma.userUpdateWithoutApiKeysInput>, Prisma.userUncheckedUpdateWithoutApiKeysInput>;
 };
+export type userCreateWithoutCoinsHeldInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    coins?: Prisma.coinCreateNestedManyWithoutUserInput;
+    apiKeys?: Prisma.apiKeysCreateNestedManyWithoutUserInput;
+};
+export type userUncheckedCreateWithoutCoinsHeldInput = {
+    publicKey: string;
+    name?: string | null;
+    email?: string | null;
+    countryCode?: string | null;
+    contact?: string | null;
+    coins?: Prisma.coinUncheckedCreateNestedManyWithoutUserInput;
+    apiKeys?: Prisma.apiKeysUncheckedCreateNestedManyWithoutUserInput;
+};
+export type userCreateOrConnectWithoutCoinsHeldInput = {
+    where: Prisma.userWhereUniqueInput;
+    create: Prisma.XOR<Prisma.userCreateWithoutCoinsHeldInput, Prisma.userUncheckedCreateWithoutCoinsHeldInput>;
+};
+export type userUpsertWithoutCoinsHeldInput = {
+    update: Prisma.XOR<Prisma.userUpdateWithoutCoinsHeldInput, Prisma.userUncheckedUpdateWithoutCoinsHeldInput>;
+    create: Prisma.XOR<Prisma.userCreateWithoutCoinsHeldInput, Prisma.userUncheckedCreateWithoutCoinsHeldInput>;
+    where?: Prisma.userWhereInput;
+};
+export type userUpdateToOneWithWhereWithoutCoinsHeldInput = {
+    where?: Prisma.userWhereInput;
+    data: Prisma.XOR<Prisma.userUpdateWithoutCoinsHeldInput, Prisma.userUncheckedUpdateWithoutCoinsHeldInput>;
+};
+export type userUpdateWithoutCoinsHeldInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUpdateManyWithoutUserNestedInput;
+    apiKeys?: Prisma.apiKeysUpdateManyWithoutUserNestedInput;
+};
+export type userUncheckedUpdateWithoutCoinsHeldInput = {
+    publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coins?: Prisma.coinUncheckedUpdateManyWithoutUserNestedInput;
+    apiKeys?: Prisma.apiKeysUncheckedUpdateManyWithoutUserNestedInput;
+};
 export type userCreateWithoutCoinsInput = {
     publicKey: string;
     name?: string | null;
     email?: string | null;
     countryCode?: string | null;
     contact?: string | null;
+    coinsHeld?: Prisma.holdingCreateNestedManyWithoutUserInput;
     apiKeys?: Prisma.apiKeysCreateNestedManyWithoutUserInput;
 };
 export type userUncheckedCreateWithoutCoinsInput = {
@@ -308,6 +377,7 @@ export type userUncheckedCreateWithoutCoinsInput = {
     email?: string | null;
     countryCode?: string | null;
     contact?: string | null;
+    coinsHeld?: Prisma.holdingUncheckedCreateNestedManyWithoutUserInput;
     apiKeys?: Prisma.apiKeysUncheckedCreateNestedManyWithoutUserInput;
 };
 export type userCreateOrConnectWithoutCoinsInput = {
@@ -329,6 +399,7 @@ export type userUpdateWithoutCoinsInput = {
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coinsHeld?: Prisma.holdingUpdateManyWithoutUserNestedInput;
     apiKeys?: Prisma.apiKeysUpdateManyWithoutUserNestedInput;
 };
 export type userUncheckedUpdateWithoutCoinsInput = {
@@ -337,6 +408,7 @@ export type userUncheckedUpdateWithoutCoinsInput = {
     email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coinsHeld?: Prisma.holdingUncheckedUpdateManyWithoutUserNestedInput;
     apiKeys?: Prisma.apiKeysUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type userCreateWithoutApiKeysInput = {
@@ -346,6 +418,7 @@ export type userCreateWithoutApiKeysInput = {
     countryCode?: string | null;
     contact?: string | null;
     coins?: Prisma.coinCreateNestedManyWithoutUserInput;
+    coinsHeld?: Prisma.holdingCreateNestedManyWithoutUserInput;
 };
 export type userUncheckedCreateWithoutApiKeysInput = {
     publicKey: string;
@@ -354,6 +427,7 @@ export type userUncheckedCreateWithoutApiKeysInput = {
     countryCode?: string | null;
     contact?: string | null;
     coins?: Prisma.coinUncheckedCreateNestedManyWithoutUserInput;
+    coinsHeld?: Prisma.holdingUncheckedCreateNestedManyWithoutUserInput;
 };
 export type userCreateOrConnectWithoutApiKeysInput = {
     where: Prisma.userWhereUniqueInput;
@@ -375,6 +449,7 @@ export type userUpdateWithoutApiKeysInput = {
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coins?: Prisma.coinUpdateManyWithoutUserNestedInput;
+    coinsHeld?: Prisma.holdingUpdateManyWithoutUserNestedInput;
 };
 export type userUncheckedUpdateWithoutApiKeysInput = {
     publicKey?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -383,16 +458,19 @@ export type userUncheckedUpdateWithoutApiKeysInput = {
     countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     contact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coins?: Prisma.coinUncheckedUpdateManyWithoutUserNestedInput;
+    coinsHeld?: Prisma.holdingUncheckedUpdateManyWithoutUserNestedInput;
 };
 /**
  * Count Type UserCountOutputType
  */
 export type UserCountOutputType = {
     coins: number;
+    coinsHeld: number;
     apiKeys: number;
 };
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     coins?: boolean | UserCountOutputTypeCountCoinsArgs;
+    coinsHeld?: boolean | UserCountOutputTypeCountCoinsHeldArgs;
     apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs;
 };
 /**
@@ -413,6 +491,12 @@ export type UserCountOutputTypeCountCoinsArgs<ExtArgs extends runtime.Types.Exte
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCoinsHeldArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.holdingWhereInput;
+};
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountApiKeysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.apiKeysWhereInput;
 };
@@ -423,6 +507,7 @@ export type userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     countryCode?: boolean;
     contact?: boolean;
     coins?: boolean | Prisma.user$coinsArgs<ExtArgs>;
+    coinsHeld?: boolean | Prisma.user$coinsHeldArgs<ExtArgs>;
     apiKeys?: boolean | Prisma.user$apiKeysArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["user"]>;
@@ -450,6 +535,7 @@ export type userSelectScalar = {
 export type userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"publicKey" | "name" | "email" | "countryCode" | "contact", ExtArgs["result"]["user"]>;
 export type userInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     coins?: boolean | Prisma.user$coinsArgs<ExtArgs>;
+    coinsHeld?: boolean | Prisma.user$coinsHeldArgs<ExtArgs>;
     apiKeys?: boolean | Prisma.user$apiKeysArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
@@ -459,6 +545,7 @@ export type $userPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: "user";
     objects: {
         coins: Prisma.$coinPayload<ExtArgs>[];
+        coinsHeld: Prisma.$holdingPayload<ExtArgs>[];
         apiKeys: Prisma.$apiKeysPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -797,6 +884,7 @@ export interface userDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
 export interface Prisma__userClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
     coins<T extends Prisma.user$coinsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.user$coinsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$coinPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    coinsHeld<T extends Prisma.user$coinsHeldArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.user$coinsHeldArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$holdingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     apiKeys<T extends Prisma.user$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.user$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$apiKeysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1220,6 +1308,29 @@ export type user$coinsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
     take?: number;
     skip?: number;
     distinct?: Prisma.CoinScalarFieldEnum | Prisma.CoinScalarFieldEnum[];
+};
+/**
+ * user.coinsHeld
+ */
+export type user$coinsHeldArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the holding
+     */
+    select?: Prisma.holdingSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the holding
+     */
+    omit?: Prisma.holdingOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.holdingInclude<ExtArgs> | null;
+    where?: Prisma.holdingWhereInput;
+    orderBy?: Prisma.holdingOrderByWithRelationInput | Prisma.holdingOrderByWithRelationInput[];
+    cursor?: Prisma.holdingWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.HoldingScalarFieldEnum | Prisma.HoldingScalarFieldEnum[];
 };
 /**
  * user.apiKeys

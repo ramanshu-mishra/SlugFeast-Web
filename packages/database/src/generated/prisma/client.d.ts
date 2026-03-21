@@ -25,6 +25,11 @@ export { Prisma };
  */
 export type user = Prisma.userModel;
 /**
+ * Model holding
+ *
+ */
+export type holding = Prisma.holdingModel;
+/**
  * Model socials
  *
  */
