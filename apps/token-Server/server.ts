@@ -7,7 +7,7 @@ import "./routes/metaDataRoute.js";
 import "./routes/getUser.js";
 import "./routes/ImageRouter.js";
 import "./routes/transactions.js";
-import "./routes/updateHoldingInfo.js";
+import "./routes/getHoldingPattern.js";
 import "./eventListeners/tokenDeployed.js";
 import { startSubgraphPoller } from "./eventListeners/subgraphPoller.js";
 import { startWsServer } from "./wsLayer/transactions.js";

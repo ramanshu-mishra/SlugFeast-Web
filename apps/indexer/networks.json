@@ -1,8 +1,8 @@
 {
   "sepolia": {
     "SlugDex": {
-      "address": "0xD77368f2d018628aE85D73e7759E032b2591C358",
-      "startBlock": 10445650
+      "address": "0x8B6DaEDC21C50043EB14a266012aF92bE74361fD",
+      "startBlock": 10490251
     }
   }
 }

@@ -175,7 +175,7 @@ async function handleTokenBoughts(rows: any[]) {
             block: row.blockNumber,
             txHash: row.transactionHash,
         }));
-        await updateHoldingInfo(row.seller, row.token, row.amount, "buy", row.blockNumber, row.transactionHash);
+        await updateHoldingInfo(row.buyer, row.token, row.amount, "buy", row.blockNumber, row.transactionHash);
     }
 }
 

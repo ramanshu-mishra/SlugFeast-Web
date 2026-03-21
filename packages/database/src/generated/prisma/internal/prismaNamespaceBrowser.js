@@ -100,7 +100,6 @@ exports.UserScalarFieldEnum = {
     contact: 'contact'
 };
 exports.HoldingScalarFieldEnum = {
-    id: 'id',
     coinId: 'coinId',
     amount: 'amount',
     userAddress: 'userAddress'

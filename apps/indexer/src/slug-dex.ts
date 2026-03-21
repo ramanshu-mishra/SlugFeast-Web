@@ -40,6 +40,7 @@ export function handleTokenBought(event: TokenBoughtEvent): void {
   entity.token = event.params.token
   entity.VETH = event.params.VETH
   entity.amount = event.params.amount
+  entity.buyer = event.params.sender
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -69,6 +70,7 @@ export function handleTokenSold(event: TokenSoldEvent): void {
   entity.token = event.params.token
   entity.VETH = event.params.VETH
   entity.amount = event.params.amount
+  entity.seller = event.params.sender
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
