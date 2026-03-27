@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { ChartComponent } from "../../../components/chart";
 import { BondingCurve } from "../../../components/bondingCurve";
 import Link from "next/link";
+import { TopHolders } from "../../../components/topHolders";
 
 export default function Page() {
     const params = useParams<{ slug: string }>();
@@ -27,6 +28,7 @@ export default function Page() {
             <div className="flex basis-[30%]  py-1 flex-col  gap-2 ">
                 <TradeOptions coin={data.metaData}></TradeOptions>
                 <BondingCurve address={slug as `0x${string}`}></BondingCurve>
+                <TopHolders coinAddress={slug as `0x${string}`}></TopHolders>
             </div>
         </div>
 }

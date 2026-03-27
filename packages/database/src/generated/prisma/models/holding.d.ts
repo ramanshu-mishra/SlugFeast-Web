@@ -16,20 +16,20 @@ export type HoldingAvgAggregateOutputType = {
     amount: number | null;
 };
 export type HoldingSumAggregateOutputType = {
-    amount: number | null;
+    amount: bigint | null;
 };
 export type HoldingMinAggregateOutputType = {
-    coinId: string | null;
-    amount: number | null;
+    coinAddress: string | null;
+    amount: bigint | null;
     userAddress: string | null;
 };
 export type HoldingMaxAggregateOutputType = {
-    coinId: string | null;
-    amount: number | null;
+    coinAddress: string | null;
+    amount: bigint | null;
     userAddress: string | null;
 };
 export type HoldingCountAggregateOutputType = {
-    coinId: number;
+    coinAddress: number;
     amount: number;
     userAddress: number;
     _all: number;
@@ -41,17 +41,17 @@ export type HoldingSumAggregateInputType = {
     amount?: true;
 };
 export type HoldingMinAggregateInputType = {
-    coinId?: true;
+    coinAddress?: true;
     amount?: true;
     userAddress?: true;
 };
 export type HoldingMaxAggregateInputType = {
-    coinId?: true;
+    coinAddress?: true;
     amount?: true;
     userAddress?: true;
 };
 export type HoldingCountAggregateInputType = {
-    coinId?: true;
+    coinAddress?: true;
     amount?: true;
     userAddress?: true;
     _all?: true;
@@ -133,8 +133,8 @@ export type holdingGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
     _max?: HoldingMaxAggregateInputType;
 };
 export type HoldingGroupByOutputType = {
-    coinId: string;
-    amount: number;
+    coinAddress: string;
+    amount: bigint;
     userAddress: string;
     _count: HoldingCountAggregateOutputType | null;
     _avg: HoldingAvgAggregateOutputType | null;
@@ -149,32 +149,32 @@ export type holdingWhereInput = {
     AND?: Prisma.holdingWhereInput | Prisma.holdingWhereInput[];
     OR?: Prisma.holdingWhereInput[];
     NOT?: Prisma.holdingWhereInput | Prisma.holdingWhereInput[];
-    coinId?: Prisma.StringFilter<"holding"> | string;
-    amount?: Prisma.IntFilter<"holding"> | number;
+    coinAddress?: Prisma.StringFilter<"holding"> | string;
+    amount?: Prisma.BigIntFilter<"holding"> | bigint | number;
     userAddress?: Prisma.StringFilter<"holding"> | string;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
     coin?: Prisma.XOR<Prisma.CoinScalarRelationFilter, Prisma.coinWhereInput>;
 };
 export type holdingOrderByWithRelationInput = {
-    coinId?: Prisma.SortOrder;
+    coinAddress?: Prisma.SortOrder;
     amount?: Prisma.SortOrder;
     userAddress?: Prisma.SortOrder;
     user?: Prisma.userOrderByWithRelationInput;
     coin?: Prisma.coinOrderByWithRelationInput;
 };
 export type holdingWhereUniqueInput = Prisma.AtLeast<{
-    coinId_userAddress?: Prisma.holdingCoinIdUserAddressCompoundUniqueInput;
+    coinAddress_userAddress?: Prisma.holdingCoinAddressUserAddressCompoundUniqueInput;
     AND?: Prisma.holdingWhereInput | Prisma.holdingWhereInput[];
     OR?: Prisma.holdingWhereInput[];
     NOT?: Prisma.holdingWhereInput | Prisma.holdingWhereInput[];
-    coinId?: Prisma.StringFilter<"holding"> | string;
-    amount?: Prisma.IntFilter<"holding"> | number;
+    coinAddress?: Prisma.StringFilter<"holding"> | string;
+    amount?: Prisma.BigIntFilter<"holding"> | bigint | number;
     userAddress?: Prisma.StringFilter<"holding"> | string;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
     coin?: Prisma.XOR<Prisma.CoinScalarRelationFilter, Prisma.coinWhereInput>;
-}, "coinId_userAddress">;
+}, "coinAddress_userAddress">;
 export type holdingOrderByWithAggregationInput = {
-    coinId?: Prisma.SortOrder;
+    coinAddress?: Prisma.SortOrder;
     amount?: Prisma.SortOrder;
     userAddress?: Prisma.SortOrder;
     _count?: Prisma.holdingCountOrderByAggregateInput;
@@ -187,41 +187,41 @@ export type holdingScalarWhereWithAggregatesInput = {
     AND?: Prisma.holdingScalarWhereWithAggregatesInput | Prisma.holdingScalarWhereWithAggregatesInput[];
     OR?: Prisma.holdingScalarWhereWithAggregatesInput[];
     NOT?: Prisma.holdingScalarWhereWithAggregatesInput | Prisma.holdingScalarWhereWithAggregatesInput[];
-    coinId?: Prisma.StringWithAggregatesFilter<"holding"> | string;
-    amount?: Prisma.IntWithAggregatesFilter<"holding"> | number;
+    coinAddress?: Prisma.StringWithAggregatesFilter<"holding"> | string;
+    amount?: Prisma.BigIntWithAggregatesFilter<"holding"> | bigint | number;
     userAddress?: Prisma.StringWithAggregatesFilter<"holding"> | string;
 };
 export type holdingCreateInput = {
-    amount: number;
+    amount: bigint | number;
     user: Prisma.userCreateNestedOneWithoutCoinsHeldInput;
     coin: Prisma.coinCreateNestedOneWithoutHoldingsInput;
 };
 export type holdingUncheckedCreateInput = {
-    coinId: string;
-    amount: number;
+    coinAddress: string;
+    amount: bigint | number;
     userAddress: string;
 };
 export type holdingUpdateInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsHeldNestedInput;
     coin?: Prisma.coinUpdateOneRequiredWithoutHoldingsNestedInput;
 };
 export type holdingUncheckedUpdateInput = {
-    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    coinAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     userAddress?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 export type holdingCreateManyInput = {
-    coinId: string;
-    amount: number;
+    coinAddress: string;
+    amount: bigint | number;
     userAddress: string;
 };
 export type holdingUpdateManyMutationInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
 };
 export type holdingUncheckedUpdateManyInput = {
-    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    coinAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     userAddress?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 export type HoldingListRelationFilter = {
@@ -232,12 +232,12 @@ export type HoldingListRelationFilter = {
 export type holdingOrderByRelationAggregateInput = {
     _count?: Prisma.SortOrder;
 };
-export type holdingCoinIdUserAddressCompoundUniqueInput = {
-    coinId: string;
+export type holdingCoinAddressUserAddressCompoundUniqueInput = {
+    coinAddress: string;
     userAddress: string;
 };
 export type holdingCountOrderByAggregateInput = {
-    coinId?: Prisma.SortOrder;
+    coinAddress?: Prisma.SortOrder;
     amount?: Prisma.SortOrder;
     userAddress?: Prisma.SortOrder;
 };
@@ -245,12 +245,12 @@ export type holdingAvgOrderByAggregateInput = {
     amount?: Prisma.SortOrder;
 };
 export type holdingMaxOrderByAggregateInput = {
-    coinId?: Prisma.SortOrder;
+    coinAddress?: Prisma.SortOrder;
     amount?: Prisma.SortOrder;
     userAddress?: Prisma.SortOrder;
 };
 export type holdingMinOrderByAggregateInput = {
-    coinId?: Prisma.SortOrder;
+    coinAddress?: Prisma.SortOrder;
     amount?: Prisma.SortOrder;
     userAddress?: Prisma.SortOrder;
 };
@@ -295,12 +295,12 @@ export type holdingUncheckedUpdateManyWithoutUserNestedInput = {
     updateMany?: Prisma.holdingUpdateManyWithWhereWithoutUserInput | Prisma.holdingUpdateManyWithWhereWithoutUserInput[];
     deleteMany?: Prisma.holdingScalarWhereInput | Prisma.holdingScalarWhereInput[];
 };
-export type IntFieldUpdateOperationsInput = {
-    set?: number;
-    increment?: number;
-    decrement?: number;
-    multiply?: number;
-    divide?: number;
+export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number;
+    increment?: bigint | number;
+    decrement?: bigint | number;
+    multiply?: bigint | number;
+    divide?: bigint | number;
 };
 export type holdingCreateNestedManyWithoutCoinInput = {
     create?: Prisma.XOR<Prisma.holdingCreateWithoutCoinInput, Prisma.holdingUncheckedCreateWithoutCoinInput> | Prisma.holdingCreateWithoutCoinInput[] | Prisma.holdingUncheckedCreateWithoutCoinInput[];
@@ -341,12 +341,12 @@ export type holdingUncheckedUpdateManyWithoutCoinNestedInput = {
     deleteMany?: Prisma.holdingScalarWhereInput | Prisma.holdingScalarWhereInput[];
 };
 export type holdingCreateWithoutUserInput = {
-    amount: number;
+    amount: bigint | number;
     coin: Prisma.coinCreateNestedOneWithoutHoldingsInput;
 };
 export type holdingUncheckedCreateWithoutUserInput = {
-    coinId: string;
-    amount: number;
+    coinAddress: string;
+    amount: bigint | number;
 };
 export type holdingCreateOrConnectWithoutUserInput = {
     where: Prisma.holdingWhereUniqueInput;
@@ -373,16 +373,16 @@ export type holdingScalarWhereInput = {
     AND?: Prisma.holdingScalarWhereInput | Prisma.holdingScalarWhereInput[];
     OR?: Prisma.holdingScalarWhereInput[];
     NOT?: Prisma.holdingScalarWhereInput | Prisma.holdingScalarWhereInput[];
-    coinId?: Prisma.StringFilter<"holding"> | string;
-    amount?: Prisma.IntFilter<"holding"> | number;
+    coinAddress?: Prisma.StringFilter<"holding"> | string;
+    amount?: Prisma.BigIntFilter<"holding"> | bigint | number;
     userAddress?: Prisma.StringFilter<"holding"> | string;
 };
 export type holdingCreateWithoutCoinInput = {
-    amount: number;
+    amount: bigint | number;
     user: Prisma.userCreateNestedOneWithoutCoinsHeldInput;
 };
 export type holdingUncheckedCreateWithoutCoinInput = {
-    amount: number;
+    amount: bigint | number;
     userAddress: string;
 };
 export type holdingCreateOrConnectWithoutCoinInput = {
@@ -407,64 +407,64 @@ export type holdingUpdateManyWithWhereWithoutCoinInput = {
     data: Prisma.XOR<Prisma.holdingUpdateManyMutationInput, Prisma.holdingUncheckedUpdateManyWithoutCoinInput>;
 };
 export type holdingCreateManyUserInput = {
-    coinId: string;
-    amount: number;
+    coinAddress: string;
+    amount: bigint | number;
 };
 export type holdingUpdateWithoutUserInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     coin?: Prisma.coinUpdateOneRequiredWithoutHoldingsNestedInput;
 };
 export type holdingUncheckedUpdateWithoutUserInput = {
-    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    coinAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
 };
 export type holdingUncheckedUpdateManyWithoutUserInput = {
-    coinId?: Prisma.StringFieldUpdateOperationsInput | string;
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    coinAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
 };
 export type holdingCreateManyCoinInput = {
-    amount: number;
+    amount: bigint | number;
     userAddress: string;
 };
 export type holdingUpdateWithoutCoinInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsHeldNestedInput;
 };
 export type holdingUncheckedUpdateWithoutCoinInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     userAddress?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 export type holdingUncheckedUpdateManyWithoutCoinInput = {
-    amount?: Prisma.IntFieldUpdateOperationsInput | number;
+    amount?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number;
     userAddress?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 export type holdingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-    coinId?: boolean;
+    coinAddress?: boolean;
     amount?: boolean;
     userAddress?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["holding"]>;
 export type holdingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-    coinId?: boolean;
+    coinAddress?: boolean;
     amount?: boolean;
     userAddress?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["holding"]>;
 export type holdingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-    coinId?: boolean;
+    coinAddress?: boolean;
     amount?: boolean;
     userAddress?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["holding"]>;
 export type holdingSelectScalar = {
-    coinId?: boolean;
+    coinAddress?: boolean;
     amount?: boolean;
     userAddress?: boolean;
 };
-export type holdingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"coinId" | "amount" | "userAddress", ExtArgs["result"]["holding"]>;
+export type holdingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"coinAddress" | "amount" | "userAddress", ExtArgs["result"]["holding"]>;
 export type holdingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     coin?: boolean | Prisma.coinDefaultArgs<ExtArgs>;
@@ -484,8 +484,8 @@ export type $holdingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
         coin: Prisma.$coinPayload<ExtArgs>;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
-        coinId: string;
-        amount: number;
+        coinAddress: string;
+        amount: bigint;
         userAddress: string;
     }, ExtArgs["result"]["holding"]>;
     composites: {};
@@ -567,8 +567,8 @@ export interface holdingDelegate<ExtArgs extends runtime.Types.Extensions.Intern
      * // Get first 10 Holdings
      * const holdings = await prisma.holding.findMany({ take: 10 })
      *
-     * // Only select the `coinId`
-     * const holdingWithCoinIdOnly = await prisma.holding.findMany({ select: { coinId: true } })
+     * // Only select the `coinAddress`
+     * const holdingWithCoinAddressOnly = await prisma.holding.findMany({ select: { coinAddress: true } })
      *
      */
     findMany<T extends holdingFindManyArgs>(args?: Prisma.SelectSubset<T, holdingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$holdingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>;
@@ -609,9 +609,9 @@ export interface holdingDelegate<ExtArgs extends runtime.Types.Extensions.Intern
      *   ]
      * })
      *
-     * // Create many Holdings and only return the `coinId`
-     * const holdingWithCoinIdOnly = await prisma.holding.createManyAndReturn({
-     *   select: { coinId: true },
+     * // Create many Holdings and only return the `coinAddress`
+     * const holdingWithCoinAddressOnly = await prisma.holding.createManyAndReturn({
+     *   select: { coinAddress: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -695,9 +695,9 @@ export interface holdingDelegate<ExtArgs extends runtime.Types.Extensions.Intern
      *   ]
      * })
      *
-     * // Update zero or more Holdings and only return the `coinId`
-     * const holdingWithCoinIdOnly = await prisma.holding.updateManyAndReturn({
-     *   select: { coinId: true },
+     * // Update zero or more Holdings and only return the `coinAddress`
+     * const holdingWithCoinAddressOnly = await prisma.holding.updateManyAndReturn({
+     *   select: { coinAddress: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -843,8 +843,8 @@ export interface Prisma__holdingClient<T, Null = never, ExtArgs extends runtime.
  * Fields of the holding model
  */
 export interface holdingFieldRefs {
-    readonly coinId: Prisma.FieldRef<"holding", 'String'>;
-    readonly amount: Prisma.FieldRef<"holding", 'Int'>;
+    readonly coinAddress: Prisma.FieldRef<"holding", 'String'>;
+    readonly amount: Prisma.FieldRef<"holding", 'BigInt'>;
     readonly userAddress: Prisma.FieldRef<"holding", 'String'>;
 }
 /**

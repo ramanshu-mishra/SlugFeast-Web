@@ -51,7 +51,7 @@ export declare const UserScalarFieldEnum: {
 };
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
 export declare const HoldingScalarFieldEnum: {
-    readonly coinId: "coinId";
+    readonly coinAddress: "coinAddress";
     readonly amount: "amount";
     readonly userAddress: "userAddress";
 };

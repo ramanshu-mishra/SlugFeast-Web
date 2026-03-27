@@ -7,7 +7,7 @@ import { Spinner } from "./spinner";
 
 
 function calculateProgress(tokenReserves: number){
-    const total = 1*10**9*10**6
+    const total = 800*10**6*10**6
     const sold = total - tokenReserves;
     const percentage = Math.floor((sold/total)*100);
     return percentage;

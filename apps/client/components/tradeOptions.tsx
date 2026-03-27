@@ -266,9 +266,14 @@ const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBa
         if (tokenReserve === 0 || vEthReserve === 0) return;
 
         const token_in_eth =  ((tokenReserve/vEthReserve)*value*10**18)/10**6;
-        const eth_in_token =  (vEthReserve/tokenReserve*value*10**6)/10**18; //assuming contract never sends that we have 0 tokens remaining, because ideally in that case contract should contact with the uniswap dex or frontend should contact with the uniswap dex to perform all these trade related activities. Well its better if client directly does it to avoid gas fees.
+        const eth_in_token =  (vEthReserve/tokenReserve*value*10**6)/10**18;
+        
+        //assuming contract never sends that we have 0 tokens remaining, because ideally in that case contract should contact with the uniswap dex or frontend should contact with the uniswap dex to perform all these trade related activities. Well its better if client directly does it to avoid gas fees. 
 
-        const nextAllowTrade: AllowTradeInterface = {
+        
+
+        const nextAllowTrade: AllowTradeInterface = 
+        {
             allowBuy: false,
             allowSell: false,
             buyMessage: "",

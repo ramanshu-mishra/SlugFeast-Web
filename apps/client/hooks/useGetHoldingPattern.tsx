@@ -2,6 +2,20 @@
 
 import {  useQuery } from "@tanstack/react-query"
 
+interface holdingReturnTypeInterface{
+    success: boolean,
+    coinId: `0x${string}`,
+    holding: holdingInterface[]
+}
+
+interface holdingInterface{
+    
+        userAddress: `0x${string}`
+        amount: number,
+        percentageofHolding: number ,
+    
+}
+
 async function getHoldingPattern(coinAddress: `0x${string}`){
     const serverAddress = process.env.NEXT_PUBLIC_SERVER_ADDRESS as string;
     const res = await fetch(`${serverAddress}/getHoldings/${coinAddress}`);
@@ -10,10 +24,11 @@ async function getHoldingPattern(coinAddress: `0x${string}`){
         return;
     }
     const data  = await res.json();
+    console.log("whatup bro : ",data);
     return data;
 }
 
-export function useGetHoldingPatter({coinAddress}:{coinAddress: `0x${string}`}){
+export function useGetHoldingPattern({coinAddress}:{coinAddress: `0x${string}`}){
     const {data, error, isLoading} = useQuery({
         queryKey: ["HoldingPattern"],
         queryFn : ()=>getHoldingPattern(coinAddress),
@@ -21,5 +36,5 @@ export function useGetHoldingPatter({coinAddress}:{coinAddress: `0x${string}`}){
         refetchOnReconnect: true
     });
 
-    return {holdingData:data, holdingError: error, holdingLoading: isLoading}
+    return {holdingData:data as holdingReturnTypeInterface, holdingError: error, holdingLoading: isLoading}
 }

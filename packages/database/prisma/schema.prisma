@@ -22,12 +22,12 @@ model user{
 }
 
 model holding{
-  coinId String 
-  amount Int
+  coinAddress String 
+  amount BigInt 
   userAddress String 
   user user @relation(fields: [userAddress], references: [publicKey])
-  coin coin @relation(fields: [coinId], references: [id])
-  @@id([coinId, userAddress])
+  coin coin @relation(fields: [coinAddress], references: [address])
+  @@id([coinAddress, userAddress])
 }
 
 model socials{

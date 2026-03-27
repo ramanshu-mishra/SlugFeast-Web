@@ -1,6 +1,7 @@
 import { prisma } from "@repo/database/client";
 import { broadcast } from "../wsLayer/transactions.js";
 import { EventType, TransactionEvents } from "../share/enums.js";
+import { normalizeAddress } from "../utility/normalizeAddress.js";
 
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_HEADER = `Bearer ${process.env.SUBGRAPH_API_KEY}`;
@@ -175,7 +176,14 @@ async function handleTokenBoughts(rows: any[]) {
             block: row.blockNumber,
             txHash: row.transactionHash,
         }));
-        await updateHoldingInfo(row.buyer, row.token, row.amount, "buy", row.blockNumber, row.transactionHash);
+        await updateHoldingInfo(
+            row.buyer,
+            row.token,
+            BigInt(row.amount),
+            "buy",
+            Number(row.blockTimestamp ?? row.blockNumber ?? 0),
+            Number(row.blockNumber ?? 0),
+        );
     }
 }
 
@@ -191,10 +199,19 @@ async function handleTokenSolds(rows: any[]) {
             block: row.blockNumber,
             txHash: row.transactionHash,
         }));
-        await updateHoldingInfo(row.seller, row.token, row.amount, "sell", row.blockNumber, row.transactionHash);
+        await updateHoldingInfo(
+            row.seller,
+            row.token,
+            row.amount,
+            "sell",
+            Number(row.blockTimestamp ?? row.blockNumber ?? 0),
+            Number(row.blockNumber ?? 0),
+        );
     }
     
 }
+
+
 
 async function handlePoolcreateds(rows: any[]) {
     for (const row of rows) {
@@ -357,51 +374,68 @@ async function fetchCursors(){
 }
 
 
-async function updateHoldingInfo(userAddress: string, tokenAddress: string, amount: number, action: "buy" | "sell", blockTimestamp: number, lastId: number) {
-    
-    const change = action === "buy" ? Number(amount) : -Number(amount);
 
-    try {
-        prisma.$transaction([
+async function updateHoldingInfo(userAddress:`0x${string}`, tokenAddress: `0x${string}`, amount: BigInt, action:"buy"|"sell" ,blockTimestamp : number, lastId : number){
+    const normalizedTokenAddress = normalizeAddress(tokenAddress);
+    const normalizedUserAddress = normalizeAddress(userAddress);
+    const updateAmount = action == "buy" ? amount : -amount;
+
+    try{
+    const tsx = await prisma.$transaction([
+            prisma.user.upsert({
+                where: {
+                    publicKey: normalizedUserAddress
+                },
+                create:{
+                    publicKey: normalizedUserAddress
+                },
+                update:{}
+            }),
+
             prisma.holding.upsert({
-            where: {
-                // @ts-ignore
-                coinId_userAddress: {
-                    userAddress,
-                    coinId: tokenAddress
+                where:{
+                    // @ts-ignore
+                   coinAddress_userAddress:{
+                        coinAddress: normalizedTokenAddress,
+                        userAddress: normalizedUserAddress
+                   }
+                },
+                create:{
+                    // @ts-ignore
+                    coinAddress: normalizedTokenAddress,
+                    userAddress: normalizedUserAddress,
+                    amount: (amount) as bigint
+                },
+                update:{
+                    amount:{
+                        increment: amount as bigint
+                    }
                 }
-            },
-            create: {
-                userAddress,
-                coinId: tokenAddress,
-                amount: action === "buy" ? Number(amount) : 0 // Don't create negative holdings on first sell
-            },
-            update: {
-                amount: {
-                    increment: change 
+            }),
+            prisma.blockTimeStamps.update({
+                where:{
+                    id: "singleton"
+                },
+                data: action == "buy" ?{
+                    tokenBoughtsTimestamp: blockTimestamp,
+                    tokenBoughtsLastId: lastId
+                }:
+                {
+                    tokenSoldsTimestamp: blockTimestamp,
+                    tokenSoldsLastId: lastId
                 }
-            }
-        }),
-        action == "buy"?
-        prisma.blockTimeStamps.update({
-            where: { id: "singleton" },
-            data: {
-                tokenBoughtsTimestamp: blockTimestamp,
-                tokenBoughtsLastId: lastId
-            }
-        }):
-        prisma.blockTimeStamps.update({
-            where: { id: "singleton" },
-            data: {
-                tokenSoldsTimestamp: blockTimestamp,
-                tokenSoldsLastId: lastId
-            }
-        })
-        ]);
-    } catch (e) {
-        console.error(`Update failed for ${tokenAddress}:`, e instanceof Error ? e.message : e);
-    }
+            })
+    ]);
 }
+catch(e){
+    console.log("[Subgraph Poller] Token updation failed");
+    console.log("[Holding Info updation Error] ", e);
+}
+console.log("Holding Info updated succefully");
+}
+
+
+
 
 
 
@@ -418,8 +452,9 @@ export async function startSubgraphPoller() {
     poll().catch((e) => console.error("[SubgraphPoller] initial poll error:", e));
     setInterval(() => {
         poll().catch((e) => console.error("[SubgraphPoller] poll error:", e));
-        console.log("____yo___fetched_something______");
+        // console.log("____yo___fetched_something______");
     }, POLL_INTERVAL_MS);
+
     saveTimeStamp();
 }
 

@@ -3,10 +3,11 @@ import { router } from "./SingleRouter";
 import { prisma } from "@repo/database/client";
 import { isAddress } from "ethers";
 
+
 interface holdingInterface{
     coinId: string,
-    amount: number,
-    userAddress: string
+    amount: number | bigint,
+    userAddress: string,
 }
 
 router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
@@ -18,7 +19,7 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
         })
         return;
     }
-    const holdings = await prisma.coin.findFirst({
+    const coinWithHoldings = await prisma.coin.findFirst({
         where:{
             address : tokenAddress as string
         },
@@ -27,7 +28,7 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
         }
     });
 
-    if(!holdings){
+    if(!coinWithHoldings){
         res.status(400).json({
             success: false,
             message: "Coin not found"
@@ -35,8 +36,7 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
         return;
     }
 
-    // @ts-ignore
-    const mapping = generateHoldingMapping(holdings as holdingInterface[]);
+    const mapping = generateHoldingMapping(coinWithHoldings.holdings as holdingInterface[]);
 
     return res.status(200).json({
         success : true,
@@ -50,13 +50,15 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
 
 
 function generateHoldingMapping(holding : holdingInterface[]){
-    const TOTAL_COINS = 10 ** 9 * 10 ** 6;
+    const TOTAL_COINS = 800 * 10 ** 6 * 10 ** 6;
+    const distributedSupply = holding.reduce((acc, entry) => acc + Number(entry.amount ?? 0), 0);
+    const liquidityPoolAmount = Math.max(0, TOTAL_COINS - distributedSupply);
 
-    return [...holding]
-        .sort((a, b) => b.amount - a.amount)
+    return [...holding, {coinId: "liquidity-pool", userAddress: "Liquidity Pool", amount: liquidityPoolAmount}]
+        .sort((a, b) => Number(b.amount) - Number(a.amount))
         .map((entry) => ({
             userAddress: entry.userAddress,
-            amount: entry.amount,
-            percentageofHolding: (entry.amount / TOTAL_COINS) * 100,
+            amount: Number(entry.amount),
+            percentageofHolding: (Number(entry.amount) / TOTAL_COINS) * 100,
         }));
 }
