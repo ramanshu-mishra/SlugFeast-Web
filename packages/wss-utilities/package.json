@@ -11,6 +11,6 @@
   "license": "ISC",
   "type": "commonjs",
   "exports": {
-    "./utilities" : "./utilities.ts"
+    "./utilities" : "./dist/utilities.js"
   }
 }

@@ -102,6 +102,13 @@ wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
         }
         
     });
+    
+    ws.on("error", ()=>{
+        sendMessage(ws, {
+            success: false,
+            message: "Server Side Error"
+        });
+    })
 
     ws.on("close", ()=>{
         tokenRpc.unsubscribeAll(ws);
