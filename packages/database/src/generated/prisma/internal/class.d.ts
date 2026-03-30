@@ -188,6 +188,28 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get blockTimeStamps(): Prisma.blockTimeStampsDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    /**
+     * `prisma.message`: Exposes CRUD operations for the **message** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Messages
+      * const messages = await prisma.message.findMany()
+      * ```
+      */
+    get message(): Prisma.messageDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.messageImage`: Exposes CRUD operations for the **messageImage** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more MessageImages
+      * const messageImages = await prisma.messageImage.findMany()
+      * ```
+      */
+    get messageImage(): Prisma.messageImageDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;
 //# sourceMappingURL=class.d.ts.map

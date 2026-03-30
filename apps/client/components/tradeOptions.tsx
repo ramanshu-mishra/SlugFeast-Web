@@ -25,7 +25,9 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
     const zeroAddress = "0x0000000000000000000000000000000000000000" as `0x${string}`;
     const [option, setOption] = useState<"Sell" | "Buy">("Buy");
     const [pov, setPov] = useState<"Eth" | string>("Eth");
+    const [requiredEth, setRequiredEth] = useState(0);
     const { address } = useAccount();
+
     const [trade,setTrade] = useState<tradeInterface>({
         value: "",
         active: false
@@ -64,7 +66,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
             await buyTokens({
                 address: coin.address as `0x${string}`,
                 nonce: txNonce,
-                value: inputValue,
+                value: pov=="Eth"? inputValue : requiredEth,
             });
 
             setTrade({ value: "", active: false });
@@ -169,7 +171,7 @@ export const TradeOptions = memo(({coin}:{coin:Coin})=> {
                 />
                 <TokenLogo symbol={option == "Sell" ? symbol : pov == "Eth" ? "Eth" : symbol} coin={coin} className="absolute right-5 top-1" />
             </div>
-            <Quote value={Number(trade.value)} coin={coin} symbol={symbol} pov={pov} option={option} setTrade={setTrade} balance={Number(ethBalance?.value ?? 0) / 10**18} tokenBalance={Number(balance?.data ?? 0)} walletAddress={walletAddress} ></Quote>
+            <Quote value={Number(trade.value)} coin={coin} symbol={symbol} pov={pov} option={option} setTrade={setTrade} setRequiredEth={setRequiredEth} balance={Number(ethBalance?.value ?? 0) / 10**18} tokenBalance={Number(balance?.data ?? 0)} walletAddress={walletAddress} ></Quote>
             <div
                 onClick={option === "Buy" ? _buyTokens : _sellTokens}
                 className={cn("flex justify-center items-center w-full h-10 rounded-xl text-neutral-800 font-bold border border-neutral-900", option=="Buy"? trade.active ? "bg-emerald-400 cursor-pointer" : "bg-emerald-800 cursor-not-allowed" : trade.active ? "bg-red-400 cursor-pointer" : "bg-red-900 cursor-not-allowed")}
@@ -226,7 +228,7 @@ interface AllowTradeInterface{
     sellMessage: string
 }
 
-const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBalance, walletAddress}:{value:number, coin:Coin, symbol:string,pov:"Eth"|string ,option:"Sell" | "Buy", setTrade : Dispatch<SetStateAction<tradeInterface>>, balance: number, tokenBalance: number, walletAddress: `0x${string}`})=>{
+const Quote = memo(({value, coin, symbol,pov, option, setTrade,setRequiredEth ,balance, tokenBalance, walletAddress}:{value:number, coin:Coin, symbol:string,pov:"Eth"|string ,option:"Sell" | "Buy", setTrade : Dispatch<SetStateAction<tradeInterface>>,setRequiredEth: Dispatch<SetStateAction<number>> ,balance: number, tokenBalance: number, walletAddress: `0x${string}`})=>{
     const {data,isLoading, error} = useGetTokenReserves({key: coin.address as `0x${string}`, address: walletAddress});
     const [price,setPrice] = useState<priceInterface>({
         token_in_eth: 0,
@@ -267,6 +269,9 @@ const Quote = memo(({value, coin, symbol,pov, option, setTrade, balance, tokenBa
 
         const token_in_eth =  ((tokenReserve/vEthReserve)*value*10**18)/10**6;
         const eth_in_token =  (vEthReserve/tokenReserve*value*10**6)/10**18;
+
+        setRequiredEth(eth_in_token);
+        
         
         //assuming contract never sends that we have 0 tokens remaining, because ideally in that case contract should contact with the uniswap dex or frontend should contact with the uniswap dex to perform all these trade related activities. Well its better if client directly does it to avoid gas fees. 
 

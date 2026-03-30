@@ -9,6 +9,7 @@ import { ChartComponent } from "../../../components/chart";
 import { BondingCurve } from "../../../components/bondingCurve";
 import Link from "next/link";
 import { TopHolders } from "../../../components/topHolders";
+import { Chat_n_Trade } from "../../../components/chat_n_trade";
 
 export default function Page() {
     const params = useParams<{ slug: string }>();
@@ -19,11 +20,12 @@ export default function Page() {
         <>
         {
             !isLoading && data &&
-        <div className="flex flex-1 mx-2 my-10 justify-center relative gap-5">
+        <div className="flex flex-1 mx-2 my-10 justify-center relative gap-5 ">
             <Link  href={"/"}><ArrowLeft className=" hover:scale-110 active:scale-90 transition-all duration-75 absolute -top-7 left-10 text-neutral-300 "></ArrowLeft></Link>
-            <div className="flex flex-col gap-3 basis-[70%] py-1 text-neutral-50">
+            <div className="flex flex-col gap-3 basis-[70%] py-1 text-neutral-50 ">
                 <CardBanner coin={data.metaData} ></CardBanner>
                 <ChartComponent token={data.metaData.address ?? slug}></ChartComponent>
+                <Chat_n_Trade coinAddress={slug as `0x${string}`}></Chat_n_Trade>
             </div>
             <div className="flex basis-[30%]  py-1 flex-col  gap-2 ">
                 <TradeOptions coin={data.metaData}></TradeOptions>

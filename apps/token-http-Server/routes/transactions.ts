@@ -269,7 +269,7 @@ function getPrice(transaction: Transaction): number | null {
     }
 
     try {
-        return veth.div(amount).toNumber();
+        return (veth.div(amount)).div(10**12).toNumber();
     } catch {
         return null;
     }

@@ -33,6 +33,8 @@ export declare const ModelName: {
     readonly tokenHash: "tokenHash";
     readonly apiKeys: "apiKeys";
     readonly blockTimeStamps: "blockTimeStamps";
+    readonly message: "message";
+    readonly messageImage: "messageImage";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -106,6 +108,21 @@ export declare const BlockTimeStampsScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type BlockTimeStampsScalarFieldEnum = (typeof BlockTimeStampsScalarFieldEnum)[keyof typeof BlockTimeStampsScalarFieldEnum];
+export declare const MessageScalarFieldEnum: {
+    readonly id: "id";
+    readonly message: "message";
+    readonly userKey: "userKey";
+    readonly coinId: "coinId";
+    readonly referencedMessageId: "referencedMessageId";
+    readonly dateTime: "dateTime";
+};
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum];
+export declare const MessageImageScalarFieldEnum: {
+    readonly id: "id";
+    readonly address: "address";
+    readonly messageId: "messageId";
+};
+export type MessageImageScalarFieldEnum = (typeof MessageImageScalarFieldEnum)[keyof typeof MessageImageScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

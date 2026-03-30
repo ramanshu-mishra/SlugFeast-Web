@@ -164,6 +164,7 @@ export type coinWhereInput = {
     graduated?: Prisma.BoolFilter<"coin"> | boolean;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
     holdings?: Prisma.HoldingListRelationFilter;
+    messages?: Prisma.MessageListRelationFilter;
     socials?: Prisma.XOR<Prisma.SocialsNullableScalarRelationFilter, Prisma.socialsWhereInput> | null;
     tokenHash?: Prisma.XOR<Prisma.TokenHashNullableScalarRelationFilter, Prisma.tokenHashWhereInput> | null;
 };
@@ -178,6 +179,7 @@ export type coinOrderByWithRelationInput = {
     graduated?: Prisma.SortOrder;
     user?: Prisma.userOrderByWithRelationInput;
     holdings?: Prisma.holdingOrderByRelationAggregateInput;
+    messages?: Prisma.messageOrderByRelationAggregateInput;
     socials?: Prisma.socialsOrderByWithRelationInput;
     tokenHash?: Prisma.tokenHashOrderByWithRelationInput;
 };
@@ -195,6 +197,7 @@ export type coinWhereUniqueInput = Prisma.AtLeast<{
     graduated?: Prisma.BoolFilter<"coin"> | boolean;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
     holdings?: Prisma.HoldingListRelationFilter;
+    messages?: Prisma.MessageListRelationFilter;
     socials?: Prisma.XOR<Prisma.SocialsNullableScalarRelationFilter, Prisma.socialsWhereInput> | null;
     tokenHash?: Prisma.XOR<Prisma.TokenHashNullableScalarRelationFilter, Prisma.tokenHashWhereInput> | null;
 }, "id" | "address">;
@@ -234,6 +237,7 @@ export type coinCreateInput = {
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashCreateNestedOneWithoutCoinInput;
 };
@@ -247,6 +251,7 @@ export type coinUncheckedCreateInput = {
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsUncheckedCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashUncheckedCreateNestedOneWithoutCoinInput;
 };
@@ -260,6 +265,7 @@ export type coinUpdateInput = {
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUpdateOneWithoutCoinNestedInput;
 };
@@ -273,6 +279,7 @@ export type coinUncheckedUpdateInput = {
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUncheckedUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUncheckedUpdateOneWithoutCoinNestedInput;
 };
@@ -424,6 +431,18 @@ export type coinUpdateOneRequiredWithoutTokenHashNestedInput = {
     connect?: Prisma.coinWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.coinUpdateToOneWithWhereWithoutTokenHashInput, Prisma.coinUpdateWithoutTokenHashInput>, Prisma.coinUncheckedUpdateWithoutTokenHashInput>;
 };
+export type coinCreateNestedOneWithoutMessagesInput = {
+    create?: Prisma.XOR<Prisma.coinCreateWithoutMessagesInput, Prisma.coinUncheckedCreateWithoutMessagesInput>;
+    connectOrCreate?: Prisma.coinCreateOrConnectWithoutMessagesInput;
+    connect?: Prisma.coinWhereUniqueInput;
+};
+export type coinUpdateOneRequiredWithoutMessagesNestedInput = {
+    create?: Prisma.XOR<Prisma.coinCreateWithoutMessagesInput, Prisma.coinUncheckedCreateWithoutMessagesInput>;
+    connectOrCreate?: Prisma.coinCreateOrConnectWithoutMessagesInput;
+    upsert?: Prisma.coinUpsertWithoutMessagesInput;
+    connect?: Prisma.coinWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.coinUpdateToOneWithWhereWithoutMessagesInput, Prisma.coinUpdateWithoutMessagesInput>, Prisma.coinUncheckedUpdateWithoutMessagesInput>;
+};
 export type coinCreateWithoutUserInput = {
     id?: string;
     address?: string | null;
@@ -433,6 +452,7 @@ export type coinCreateWithoutUserInput = {
     description: string;
     graduated?: boolean;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashCreateNestedOneWithoutCoinInput;
 };
@@ -445,6 +465,7 @@ export type coinUncheckedCreateWithoutUserInput = {
     description: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsUncheckedCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashUncheckedCreateNestedOneWithoutCoinInput;
 };
@@ -491,6 +512,7 @@ export type coinCreateWithoutHoldingsInput = {
     description: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
+    messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashCreateNestedOneWithoutCoinInput;
 };
@@ -503,6 +525,7 @@ export type coinUncheckedCreateWithoutHoldingsInput = {
     description: string;
     userId: string;
     graduated?: boolean;
+    messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsUncheckedCreateNestedOneWithoutCoinInput;
     tokenHash?: Prisma.tokenHashUncheckedCreateNestedOneWithoutCoinInput;
 };
@@ -528,6 +551,7 @@ export type coinUpdateWithoutHoldingsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
+    messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUpdateOneWithoutCoinNestedInput;
 };
@@ -540,6 +564,7 @@ export type coinUncheckedUpdateWithoutHoldingsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUncheckedUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUncheckedUpdateOneWithoutCoinNestedInput;
 };
@@ -553,6 +578,7 @@ export type coinCreateWithoutSocialsInput = {
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
     tokenHash?: Prisma.tokenHashCreateNestedOneWithoutCoinInput;
 };
 export type coinUncheckedCreateWithoutSocialsInput = {
@@ -565,6 +591,7 @@ export type coinUncheckedCreateWithoutSocialsInput = {
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
     tokenHash?: Prisma.tokenHashUncheckedCreateNestedOneWithoutCoinInput;
 };
 export type coinCreateOrConnectWithoutSocialsInput = {
@@ -590,6 +617,7 @@ export type coinUpdateWithoutSocialsInput = {
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUpdateOneWithoutCoinNestedInput;
 };
 export type coinUncheckedUpdateWithoutSocialsInput = {
@@ -602,6 +630,7 @@ export type coinUncheckedUpdateWithoutSocialsInput = {
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUncheckedUpdateOneWithoutCoinNestedInput;
 };
 export type coinCreateWithoutTokenHashInput = {
@@ -614,6 +643,7 @@ export type coinCreateWithoutTokenHashInput = {
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsCreateNestedOneWithoutCoinInput;
 };
 export type coinUncheckedCreateWithoutTokenHashInput = {
@@ -626,6 +656,7 @@ export type coinUncheckedCreateWithoutTokenHashInput = {
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
+    messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
     socials?: Prisma.socialsUncheckedCreateNestedOneWithoutCoinInput;
 };
 export type coinCreateOrConnectWithoutTokenHashInput = {
@@ -651,6 +682,7 @@ export type coinUpdateWithoutTokenHashInput = {
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUpdateOneWithoutCoinNestedInput;
 };
 export type coinUncheckedUpdateWithoutTokenHashInput = {
@@ -663,7 +695,73 @@ export type coinUncheckedUpdateWithoutTokenHashInput = {
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUncheckedUpdateOneWithoutCoinNestedInput;
+};
+export type coinCreateWithoutMessagesInput = {
+    id?: string;
+    address?: string | null;
+    tokenName: string;
+    symbol: string;
+    imageUrl: string;
+    description: string;
+    graduated?: boolean;
+    user: Prisma.userCreateNestedOneWithoutCoinsInput;
+    holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
+    socials?: Prisma.socialsCreateNestedOneWithoutCoinInput;
+    tokenHash?: Prisma.tokenHashCreateNestedOneWithoutCoinInput;
+};
+export type coinUncheckedCreateWithoutMessagesInput = {
+    id?: string;
+    address?: string | null;
+    tokenName: string;
+    symbol: string;
+    imageUrl: string;
+    description: string;
+    userId: string;
+    graduated?: boolean;
+    holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
+    socials?: Prisma.socialsUncheckedCreateNestedOneWithoutCoinInput;
+    tokenHash?: Prisma.tokenHashUncheckedCreateNestedOneWithoutCoinInput;
+};
+export type coinCreateOrConnectWithoutMessagesInput = {
+    where: Prisma.coinWhereUniqueInput;
+    create: Prisma.XOR<Prisma.coinCreateWithoutMessagesInput, Prisma.coinUncheckedCreateWithoutMessagesInput>;
+};
+export type coinUpsertWithoutMessagesInput = {
+    update: Prisma.XOR<Prisma.coinUpdateWithoutMessagesInput, Prisma.coinUncheckedUpdateWithoutMessagesInput>;
+    create: Prisma.XOR<Prisma.coinCreateWithoutMessagesInput, Prisma.coinUncheckedCreateWithoutMessagesInput>;
+    where?: Prisma.coinWhereInput;
+};
+export type coinUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: Prisma.coinWhereInput;
+    data: Prisma.XOR<Prisma.coinUpdateWithoutMessagesInput, Prisma.coinUncheckedUpdateWithoutMessagesInput>;
+};
+export type coinUpdateWithoutMessagesInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
+    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
+    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
+    holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
+    socials?: Prisma.socialsUpdateOneWithoutCoinNestedInput;
+    tokenHash?: Prisma.tokenHashUpdateOneWithoutCoinNestedInput;
+};
+export type coinUncheckedUpdateWithoutMessagesInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    tokenName?: Prisma.StringFieldUpdateOperationsInput | string;
+    symbol?: Prisma.StringFieldUpdateOperationsInput | string;
+    imageUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    userId?: Prisma.StringFieldUpdateOperationsInput | string;
+    graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
+    socials?: Prisma.socialsUncheckedUpdateOneWithoutCoinNestedInput;
+    tokenHash?: Prisma.tokenHashUncheckedUpdateOneWithoutCoinNestedInput;
 };
 export type coinCreateManyUserInput = {
     id?: string;
@@ -683,6 +781,7 @@ export type coinUpdateWithoutUserInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUpdateOneWithoutCoinNestedInput;
 };
@@ -695,6 +794,7 @@ export type coinUncheckedUpdateWithoutUserInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
+    messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
     socials?: Prisma.socialsUncheckedUpdateOneWithoutCoinNestedInput;
     tokenHash?: Prisma.tokenHashUncheckedUpdateOneWithoutCoinNestedInput;
 };
@@ -712,9 +812,11 @@ export type coinUncheckedUpdateManyWithoutUserInput = {
  */
 export type CoinCountOutputType = {
     holdings: number;
+    messages: number;
 };
 export type CoinCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     holdings?: boolean | CoinCountOutputTypeCountHoldingsArgs;
+    messages?: boolean | CoinCountOutputTypeCountMessagesArgs;
 };
 /**
  * CoinCountOutputType without action
@@ -731,6 +833,12 @@ export type CoinCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
 export type CoinCountOutputTypeCountHoldingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.holdingWhereInput;
 };
+/**
+ * CoinCountOutputType without action
+ */
+export type CoinCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.messageWhereInput;
+};
 export type coinSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     address?: boolean;
@@ -742,6 +850,7 @@ export type coinSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     graduated?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     holdings?: boolean | Prisma.coin$holdingsArgs<ExtArgs>;
+    messages?: boolean | Prisma.coin$messagesArgs<ExtArgs>;
     socials?: boolean | Prisma.coin$socialsArgs<ExtArgs>;
     tokenHash?: boolean | Prisma.coin$tokenHashArgs<ExtArgs>;
     _count?: boolean | Prisma.CoinCountOutputTypeDefaultArgs<ExtArgs>;
@@ -782,6 +891,7 @@ export type coinOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type coinInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     holdings?: boolean | Prisma.coin$holdingsArgs<ExtArgs>;
+    messages?: boolean | Prisma.coin$messagesArgs<ExtArgs>;
     socials?: boolean | Prisma.coin$socialsArgs<ExtArgs>;
     tokenHash?: boolean | Prisma.coin$tokenHashArgs<ExtArgs>;
     _count?: boolean | Prisma.CoinCountOutputTypeDefaultArgs<ExtArgs>;
@@ -797,6 +907,7 @@ export type $coinPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     objects: {
         user: Prisma.$userPayload<ExtArgs>;
         holdings: Prisma.$holdingPayload<ExtArgs>[];
+        messages: Prisma.$messagePayload<ExtArgs>[];
         socials: Prisma.$socialsPayload<ExtArgs> | null;
         tokenHash: Prisma.$tokenHashPayload<ExtArgs> | null;
     };
@@ -1140,6 +1251,7 @@ export interface Prisma__coinClient<T, Null = never, ExtArgs extends runtime.Typ
     readonly [Symbol.toStringTag]: "PrismaPromise";
     user<T extends Prisma.userDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.userDefaultArgs<ExtArgs>>): Prisma.Prisma__userClient<runtime.Types.Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     holdings<T extends Prisma.coin$holdingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.coin$holdingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$holdingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    messages<T extends Prisma.coin$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.coin$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$messagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     socials<T extends Prisma.coin$socialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.coin$socialsArgs<ExtArgs>>): Prisma.Prisma__socialsClient<runtime.Types.Result.GetResult<Prisma.$socialsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     tokenHash<T extends Prisma.coin$tokenHashArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.coin$tokenHashArgs<ExtArgs>>): Prisma.Prisma__tokenHashClient<runtime.Types.Result.GetResult<Prisma.$tokenHashPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     /**
@@ -1575,6 +1687,29 @@ export type coin$holdingsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
     take?: number;
     skip?: number;
     distinct?: Prisma.HoldingScalarFieldEnum | Prisma.HoldingScalarFieldEnum[];
+};
+/**
+ * coin.messages
+ */
+export type coin$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the message
+     */
+    select?: Prisma.messageSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the message
+     */
+    omit?: Prisma.messageOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.messageInclude<ExtArgs> | null;
+    where?: Prisma.messageWhereInput;
+    orderBy?: Prisma.messageOrderByWithRelationInput | Prisma.messageOrderByWithRelationInput[];
+    cursor?: Prisma.messageWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[];
 };
 /**
  * coin.socials

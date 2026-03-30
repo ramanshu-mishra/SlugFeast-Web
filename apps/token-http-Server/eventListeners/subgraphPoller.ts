@@ -202,7 +202,7 @@ async function handleTokenSolds(rows: any[]) {
         await updateHoldingInfo(
             row.seller,
             row.token,
-            row.amount,
+            BigInt(row.amount),
             "sell",
             Number(row.blockTimestamp ?? row.blockNumber ?? 0),
             Number(row.blockNumber ?? 0),
@@ -375,14 +375,17 @@ async function fetchCursors(){
 
 
 
-async function updateHoldingInfo(userAddress:`0x${string}`, tokenAddress: `0x${string}`, amount: BigInt, action:"buy"|"sell" ,blockTimestamp : number, lastId : number){
+async function updateHoldingInfo(userAddress:`0x${string}`, tokenAddress: `0x${string}`, amount: bigint, action:"buy"|"sell" ,blockTimestamp : number, lastId : number){
     const normalizedTokenAddress = normalizeAddress(tokenAddress);
     const normalizedUserAddress = normalizeAddress(userAddress);
-    const updateAmount = action == "buy" ? amount : -amount;
+
+    if (amount <= 0n) {
+        return;
+    }
 
     try{
-    const tsx = await prisma.$transaction([
-            prisma.user.upsert({
+        await prisma.$transaction(async (tx) => {
+            await tx.user.upsert({
                 where: {
                     publicKey: normalizedUserAddress
                 },
@@ -390,29 +393,47 @@ async function updateHoldingInfo(userAddress:`0x${string}`, tokenAddress: `0x${s
                     publicKey: normalizedUserAddress
                 },
                 update:{}
-            }),
+            });
 
-            prisma.holding.upsert({
-                where:{
-                    // @ts-ignore
-                   coinAddress_userAddress:{
+            if (action === "buy") {
+                await tx.holding.upsert({
+                    where:{
+                        // @ts-ignore
+                       coinAddress_userAddress:{
+                            coinAddress: normalizedTokenAddress,
+                            userAddress: normalizedUserAddress
+                       }
+                    },
+                    create:{
+                        // @ts-ignore
                         coinAddress: normalizedTokenAddress,
-                        userAddress: normalizedUserAddress
-                   }
-                },
-                create:{
-                    // @ts-ignore
-                    coinAddress: normalizedTokenAddress,
-                    userAddress: normalizedUserAddress,
-                    amount: (amount) as bigint
-                },
-                update:{
-                    amount:{
-                        increment: amount as bigint
+                        userAddress: normalizedUserAddress,
+                        amount
+                    },
+                    update:{
+                        amount:{
+                            increment: amount
+                        }
                     }
-                }
-            }),
-            prisma.blockTimeStamps.update({
+                });
+            } else {
+                await tx.$executeRaw`
+                    UPDATE "holding"
+                    SET "amount" = GREATEST("amount" - ${amount}, 0)
+                    WHERE "coinAddress" = ${normalizedTokenAddress}
+                      AND "userAddress" = ${normalizedUserAddress}
+                `;
+
+                await tx.$executeRaw`
+                    UPDATE "holding"
+                    SET "amount" = 0
+                    WHERE "coinAddress" = ${normalizedTokenAddress}
+                      AND "userAddress" = ${normalizedUserAddress}
+                      AND "amount" < 0
+                `;
+            }
+
+            await tx.blockTimeStamps.update({
                 where:{
                     id: "singleton"
                 },
@@ -425,7 +446,7 @@ async function updateHoldingInfo(userAddress:`0x${string}`, tokenAddress: `0x${s
                     tokenSoldsLastId: lastId
                 }
             })
-    ]);
+        });
 }
 catch(e){
     console.log("[Subgraph Poller] Token updation failed");

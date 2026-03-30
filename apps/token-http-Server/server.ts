@@ -8,6 +8,7 @@ import "./routes/getUser.js";
 import "./routes/ImageRouter.js";
 import "./routes/transactions.js";
 import "./routes/getHoldingPattern.js";
+import "./routes/fetchComments.js";
 import "./eventListeners/tokenDeployed.js";
 
 import { startSubgraphPoller } from "./eventListeners/subgraphPoller.js";
@@ -24,7 +25,6 @@ const port  = process.env.PORT || 3000;
 
 app.listen(port, ()=>{
     console.log(`listening at port ${port}`);
-    startWsServer();
     startSubgraphPoller();
 })
 

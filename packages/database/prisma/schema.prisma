@@ -19,6 +19,8 @@ model user{
   coins coin[]
   coinsHeld holding[]
   apiKeys apiKeys[]
+  messages message[]
+  
 }
 
 model holding{
@@ -52,6 +54,7 @@ model coin{
   
   user user @relation(fields: [userId], references: [publicKey])
   holdings holding[]
+  messages message[]
   userId String
   graduated Boolean @default(false)
   socials socials?
@@ -97,6 +100,28 @@ model blockTimeStamps {
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
+}
+
+
+model message{
+  id String @id @default(cuid())
+  message String? 
+  userKey String
+  coinId String
+  coin coin @relation(fields: [coinId], references: [address])
+  user user @relation(fields: [userKey], references: [publicKey])
+  referencedImage messageImage?
+  referencedMessageId String?
+  referencedMessage message? @relation("MessageReplies", fields: [referencedMessageId], references: [id])
+  referees message[] @relation("MessageReplies")
+  dateTime DateTime @updatedAt
+}
+
+model messageImage{
+  id String @id @default(cuid())
+  address String 
+  messageId String @unique
+  message message @relation(fields: [messageId], references: [id])
 }
 
 

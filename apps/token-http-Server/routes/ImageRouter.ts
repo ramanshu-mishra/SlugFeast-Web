@@ -46,6 +46,7 @@ router.post("/uploadImage", checkPublicKey, async (req: Request, res: Response) 
     const fileExtension = fileName.split('.').pop();
     const key = `uploads/${timestamp}-${uniqueId}.${fileExtension}`;
 
+    
     // Create a PutObjectCommand for the presigned URL
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,

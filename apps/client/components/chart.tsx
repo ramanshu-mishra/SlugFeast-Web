@@ -51,6 +51,23 @@ const rangeToHookTimeframe: Record<RangeOption, '1h' | '1d'> = {
 };
 
 const CHART_EDGE_PADDING_SECONDS = 5 * 24 * 60 * 60;
+const CHART_NUMERIC_LIMIT = 90_071_992_547_409.91;
+
+function toChartSafeNumber(value: number) {
+    if (!Number.isFinite(value)) {
+        return 0;
+    }
+
+    if (value > CHART_NUMERIC_LIMIT) {
+        return CHART_NUMERIC_LIMIT;
+    }
+
+    if (value < -CHART_NUMERIC_LIMIT) {
+        return -CHART_NUMERIC_LIMIT;
+    }
+
+    return value;
+}
 
 export function ChartComponent({ token }: { token: string }) {
     const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -81,17 +98,17 @@ export function ChartComponent({ token }: { token: string }) {
     const candles = useMemo<CandlePoint[]>(() => {
         return historicalCandles.map((candle) => ({
             time: candle.timestamp as UTCTimestamp,
-            open: candle.open,
-            high: candle.high,
-            low: candle.low,
-            close: candle.close,
+            open: toChartSafeNumber(candle.open),
+            high: toChartSafeNumber(candle.high),
+            low: toChartSafeNumber(candle.low),
+            close: toChartSafeNumber(candle.close),
         }));
     }, [historicalCandles]);
 
     const volumes = useMemo<VolumePoint[]>(() => {
         return historicalCandles.map((candle) => ({
             time: candle.timestamp as UTCTimestamp,
-            value: candle.volume,
+            value: toChartSafeNumber(candle.volume),
             color: candle.close >= candle.open ? 'rgba(20, 184, 166, 0.45)' : 'rgba(239, 68, 68, 0.45)',
         }));
     }, [historicalCandles]);
@@ -147,11 +164,11 @@ export function ChartComponent({ token }: { token: string }) {
 
         const change = lastCandle.open === 0 ? 0 : ((lastCandle.close - lastCandle.open) / lastCandle.open) * 100;
         setHeaderState({
-            open: lastCandle.open,
-            high: lastCandle.high,
-            low: lastCandle.low,
-            close: lastCandle.close,
-            volume: lastCandle.volume,
+            open: toChartSafeNumber(lastCandle.open),
+            high: toChartSafeNumber(lastCandle.high),
+            low: toChartSafeNumber(lastCandle.low),
+            close: toChartSafeNumber(lastCandle.close),
+            volume: toChartSafeNumber(lastCandle.volume),
             change,
         });
     }, [historicalCandles]);
@@ -228,11 +245,11 @@ export function ChartComponent({ token }: { token: string }) {
             const change = ((candleAtPoint.close - candleAtPoint.open) / candleAtPoint.open) * 100;
 
             setHeaderState({
-                open: candleAtPoint.open,
-                high: candleAtPoint.high,
-                low: candleAtPoint.low,
-                close: candleAtPoint.close,
-                volume: volumeAtPoint?.value ?? 0,
+                open: toChartSafeNumber(candleAtPoint.open),
+                high: toChartSafeNumber(candleAtPoint.high),
+                low: toChartSafeNumber(candleAtPoint.low),
+                close: toChartSafeNumber(candleAtPoint.close),
+                volume: toChartSafeNumber(volumeAtPoint?.value ?? 0),
                 change,
             });
         };

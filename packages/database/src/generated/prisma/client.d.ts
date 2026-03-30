@@ -54,4 +54,14 @@ export type apiKeys = Prisma.apiKeysModel;
  *
  */
 export type blockTimeStamps = Prisma.blockTimeStampsModel;
+/**
+ * Model message
+ *
+ */
+export type message = Prisma.messageModel;
+/**
+ * Model messageImage
+ *
+ */
+export type messageImage = Prisma.messageImageModel;
 //# sourceMappingURL=client.d.ts.map
