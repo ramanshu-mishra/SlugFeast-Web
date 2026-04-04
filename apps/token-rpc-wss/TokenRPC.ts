@@ -1,10 +1,9 @@
-import { EventType, TransactionEvents } from "./share/enum";
 import WebSocket from "ws";
-
-const CombinedEnum  =  {...EventType, ...TransactionEvents};
+import { MessageResponse } from "./interfaces/messageInterface";
 
 export class TokenRPC{
-   subscribers = new Map<keyof typeof CombinedEnum, Set<WebSocket>>;
+   subscribers = new Map<`0x${string}`, Set<WebSocket>>();
+   subscribedAll = new Set<WebSocket>;
    static singleTon:TokenRPC|null = null;
     static getTokenRPC(){
         if(this.singleTon == null){
@@ -13,39 +12,51 @@ export class TokenRPC{
         return this.singleTon;
    }
 
-   broadCast(eventType: keyof typeof CombinedEnum, message: Object){ 
-        this.subscribers.get(eventType)?.forEach(ws=>{
+   broadCast(coinAddress: `0x${string}`, message: MessageResponse){
+        this.subscribers.get(coinAddress)?.forEach(ws=>{
             if(ws.readyState == ws.OPEN){
-                ws.send(message);
+                ws.send(JSON.stringify(message));
             }
         })
    }
 
-   subscribeEvent(eventType: keyof typeof CombinedEnum, ws:WebSocket){
-        let sockets = this.subscribers.get(eventType);
+   subscribe(coinAddress: `0x${string}`, ws:WebSocket){
+        let sockets = this.subscribers.get(coinAddress);
         if(!sockets){
             sockets = new Set();
-            this.subscribers.set(eventType, sockets);
+            this.subscribers.set(coinAddress, sockets);
         }
         sockets.add(ws);
    }    
 
-   unsubscribeEvent(eventType: keyof typeof CombinedEnum, ws: WebSocket){
-        const sockets = this.subscribers.get(eventType);
+   unsubscribe(coinAddress: `0x${string}`, ws: WebSocket){
+        const sockets = this.subscribers.get(coinAddress);
         if(!sockets)return;
+
         sockets.delete(ws);
+
+        if (sockets.size === 0) {
+            this.subscribers.delete(coinAddress);
+        }
+        ws.close();
    }
 
-   subscribeAll(ws:WebSocket){
-        Object.keys(CombinedEnum).forEach(k=>{
-            this.subscribeEvent(k as keyof typeof CombinedEnum, ws);
-        });
+   subscribeAll(ws: WebSocket){
+        this.subscribedAll.add(ws);
    }
+
 
    unsubscribeAll(ws:WebSocket){
-        Object.keys(CombinedEnum).forEach(k=>{
-            this.unsubscribeEvent(k as keyof typeof CombinedEnum, ws);
-        })
+        this.subscribers.forEach((sockets, coinAddress) => {
+            sockets.delete(ws);
+            if (sockets.size === 0) {
+                this.subscribers.delete(coinAddress);
+            }
+        });
+
+        this.subscribedAll.delete(ws);
+        ws.close();
    }
 
 }
+

@@ -5,7 +5,10 @@ import {prisma} from "@repo/database/client";
 
 export async function validateConnection(ws: WebSocket, req: IncomingMessage){
     const ip = req.socket.remoteAddress;
-        const token = req.headers.authorization;
+        const rawProtocolHeader = req.headers["sec-websocket-protocol"];
+        const token = Array.isArray(rawProtocolHeader)
+            ? rawProtocolHeader[0]
+            : rawProtocolHeader?.split(",")[0]?.trim();
         const storedToken = (await prisma.apiKeys.findFirst({}))?.apiKey;
 
         if (!token || !storedToken) {
@@ -13,13 +16,23 @@ export async function validateConnection(ws: WebSocket, req: IncomingMessage){
             ws.close();
             return;
         }
-
+        
+        try{
         const isValid = await bcrypt.compare(token, storedToken);
         if (!isValid) {
-            sendMessage(ws, { success: false, message: "Invalid Api Key" });
+            sendMessage(ws, { success: false, message: "Invalid Api Key", token });
             ws.close();
             return;
         }
+    }
+    catch{
+        sendMessage(ws, {
+            success: false,
+            message: "Invalid API Key"
+        });
+        ws.close();
+        return;
+    }
 
         console.log(`[WsServer] client connected: ${ip}`);
 }

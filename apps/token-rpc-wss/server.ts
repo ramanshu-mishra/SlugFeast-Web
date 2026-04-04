@@ -3,12 +3,13 @@ import { ActionEnum, CombinedInterface } from "./share/enum";
 import type {IncomingMessage} from "http";
 import {validateConnection} from "@repo/wss-utilities/utilities"
 import { TokenRPC } from "./TokenRPC";
-
+import {createClient, RedisClientType} from "redis";
+import "dotenv/config";
 
 
 interface messageInterface{
-    event: keyof typeof CombinedInterface
-    action: ActionEnum
+    action: ActionEnum,
+    coinAddress?: `0x${string}`
 }
 
 interface responseInterface{
@@ -21,15 +22,27 @@ interface responseInterface{
 
 const tokenRpc = TokenRPC.getTokenRPC();
 
+let wss: Server;
+let client: RedisClientType;
 
-const wss = new Server({
+
+async function main(){
+     wss = new Server({
     port :  Number(process.env.TOKEN_RPC_PORT as string) || 8011
 }, 
 ()=>{
     console.log("[Token RPC Server] Running at port ", wss.options.port);
-});
+}); 
 
-wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
+
+    client = createClient({
+        url: process.env.REDIS_CLIENT_URL || "redis://localhost:6379"
+    });
+
+    await client.connect();
+
+
+    wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
     await validateConnection(ws, req);
 
     if(ws.readyState !== WebSocket.OPEN){
@@ -115,6 +128,12 @@ wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
         console.log(`> ${req.socket.remoteAddress} disconnected`);
     });
 })
+}
+
+
+
+main();
+
 
 
 function sendMessage(ws: WebSocket, message: responseInterface){

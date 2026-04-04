@@ -360,3 +360,49 @@
 15:55:15.768813 version@stat F·[1 1] S·16KiB[7KiB 9KiB] Sc·[0.25 0.00]
 15:55:15.771031 db@janitor F·4 G·0
 15:55:15.771063 db@open done T·7.34475ms
+=============== Mar 31, 2026 (UTC) ===============
+14:13:19.864598 db@close closing
+14:13:19.866535 db@close done T·1.83956ms
+=============== Apr 1, 2026 (UTC) ===============
+04:52:50.340881 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+04:52:50.342069 version@stat F·[1 1] S·16KiB[7KiB 9KiB] Sc·[0.25 0.00]
+04:52:50.342213 db@open opening
+04:52:50.342319 journal@recovery F·1
+04:52:50.344051 journal@recovery recovering @85
+04:52:50.348609 memdb@flush created L0@87 N·46 S·7KiB "/F5..A2I,v1246":"/pr..IGS,v1229"
+04:52:50.350963 version@stat F·[2 1] S·24KiB[15KiB 9KiB] Sc·[0.50 0.00]
+04:52:50.354394 db@janitor F·5 G·0
+04:52:50.354463 db@open done T·12.21977ms
+=============== Apr 2, 2026 (UTC) ===============
+08:37:08.551244 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+08:37:08.552631 version@stat F·[2 1] S·24KiB[15KiB 9KiB] Sc·[0.50 0.00]
+08:37:08.552755 db@open opening
+08:37:08.552806 journal@recovery F·1
+08:37:08.554683 journal@recovery recovering @88
+08:37:08.556955 memdb@flush created L0@90 N·82 S·7KiB "/F5..A2I,v1249":"/pr..IGS,v1253"
+08:37:08.557252 version@stat F·[3 1] S·31KiB[22KiB 9KiB] Sc·[0.75 0.00]
+08:37:08.559403 db@janitor F·6 G·0
+08:37:08.559425 db@open done T·6.661ms
+15:23:51.688910 db@close closing
+15:23:51.690841 db@close done T·1.941003ms
+=============== Apr 3, 2026 (UTC) ===============
+06:27:06.465292 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+06:27:06.466905 version@stat F·[3 1] S·31KiB[22KiB 9KiB] Sc·[0.75 0.00]
+06:27:06.467139 db@open opening
+06:27:06.467212 journal@recovery F·1
+06:27:06.470529 journal@recovery recovering @91
+06:27:06.475012 memdb@flush created L0@93 N·44 S·7KiB "/F5..A2I,v1374":"/pr..IGS,v1360"
+06:27:06.475387 version@stat F·[4 1] S·39KiB[29KiB 9KiB] Sc·[1.00 0.00]
+06:27:06.488018 db@janitor F·7 G·0
+06:27:06.488110 db@open done T·20.946536ms
+06:27:06.488251 table@compaction L0·4 -> L1·1 S·39KiB Q·1375
+06:27:06.493578 table@build created L1@96 N·73 S·9KiB "/F5..A2I,v1374":"/pr..IGS,v1360"
+06:27:06.493640 version@stat F·[0 1] S·9KiB[0B 9KiB] Sc·[0.00 0.00]
+06:27:06.496792 table@compaction committed F-4 S-29KiB Ke·0 D·216 T·8.482282ms
+06:27:06.496873 table@remove removed @93
+06:27:06.496919 table@remove removed @90
+06:27:06.497105 table@remove removed @87
+06:27:06.497281 table@remove removed @84
+06:27:06.497428 table@remove removed @83
+12:21:33.231266 db@close closing
+12:21:33.232060 db@close done T·795.455µs

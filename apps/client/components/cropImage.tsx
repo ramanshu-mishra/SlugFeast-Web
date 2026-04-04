@@ -50,11 +50,12 @@ async function getCroppedImg(
 // Image Crop Modal Component
 interface ImageCropModalProps {
   imageSrc: string;
+  originalFile?: File | null;
   onClose: () => void;
   onCropComplete: (croppedImage: File) => void;
 }
 
-export function ImageCropModal({ imageSrc, onClose, onCropComplete }: ImageCropModalProps) {
+export function ImageCropModal({ imageSrc, originalFile, onClose, onCropComplete }: ImageCropModalProps) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -72,6 +73,12 @@ export function ImageCropModal({ imageSrc, onClose, onCropComplete }: ImageCropM
   }, []);
 
   const handleCropSave = async () => {
+    if (originalFile?.type === "image/gif") {
+      onCropComplete(originalFile);
+      onClose();
+      return;
+    }
+
     if (!croppedAreaPixels) return;
 
     try {
@@ -139,7 +146,7 @@ export function ImageCropModal({ imageSrc, onClose, onCropComplete }: ImageCropM
             className="px-6 py-2 rounded-lg bg-mint hover:bg-mint transition-colors flex items-center gap-2"
           >
             <Check className="w-4 h-4" />
-            Apply Crop
+            {originalFile?.type === "image/gif" ? "Use GIF" : "Apply Crop"}
           </button>
         </div>
       </div>

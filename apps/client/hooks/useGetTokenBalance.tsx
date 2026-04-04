@@ -15,9 +15,6 @@ export function useGetTokenBalance({
     const validAccountAddress = accountAddress && isAddress(accountAddress) ? (accountAddress as `0x${string}`) : zeroAddress;
     const enabled = validTokenAddress !== zeroAddress && validAccountAddress !== zeroAddress;
 
-    if(!enabled)return null;
-    console.log("token address is, :" ,validTokenAddress);
-    console.log("account address is : ", validAccountAddress);
     const { data, error, isLoading, refetch } = useReadContract({
         abi,
         address: validTokenAddress,
@@ -28,6 +25,6 @@ export function useGetTokenBalance({
             refetchInterval: 3000,
         },
     });
-    console.log("token balance is : ", data);
+
     return { data, error, isLoading, refetch };
 }

@@ -32,7 +32,7 @@ export function useGetHoldingPattern({coinAddress}:{coinAddress: `0x${string}`})
     const {data, error, isLoading} = useQuery({
         queryKey: ["HoldingPattern"],
         queryFn : ()=>getHoldingPattern(coinAddress),
-        refetchInterval : 20000,
+        refetchInterval : 5000,
         refetchOnReconnect: true
     });
 

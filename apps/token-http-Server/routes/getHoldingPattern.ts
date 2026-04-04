@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { router } from "./SingleRouter";
 import { prisma } from "@repo/database/client";
 import { isAddress } from "ethers";
+import { normalizeAddress } from "../utility/normalizeAddress";
 
 
 interface holdingInterface{
@@ -19,9 +20,11 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
         })
         return;
     }
+    const normalizedTokenAddress = normalizeAddress(tokenAddress);
+
     const coinWithHoldings = await prisma.coin.findFirst({
         where:{
-            address : tokenAddress as string
+            address : normalizedTokenAddress
         },
         select:{
             holdings: true,
@@ -50,15 +53,25 @@ router.get("/getHoldings/:tokenAddress", async(req:Request, res:Response)=>{
 
 
 function generateHoldingMapping(holding : holdingInterface[]){
-    const TOTAL_COINS = 800 * 10 ** 6 * 10 ** 6;
-    const distributedSupply = holding.reduce((acc, entry) => acc + Number(entry.amount ?? 0), 0);
-    const liquidityPoolAmount = Math.max(0, TOTAL_COINS - distributedSupply);
+    const TOTAL_COINS = 800_000_000n * 10n ** 6n;
+    const distributedSupply = holding.reduce((acc, entry) => acc + BigInt(entry.amount ?? 0), 0n);
+    const liquidityPoolAmount = TOTAL_COINS > distributedSupply ? TOTAL_COINS - distributedSupply : 0n;
+
+    console.log(holding);
+    console.log("___________________");
 
     return [...holding, {coinId: "liquidity-pool", userAddress: "Liquidity Pool", amount: liquidityPoolAmount}]
-        .sort((a, b) => Number(b.amount) - Number(a.amount))
+        .sort((a, b) => {
+            const left = BigInt(a.amount);
+            const right = BigInt(b.amount);
+            if (left === right) return 0;
+            return left > right ? -1 : 1;
+        })
         .map((entry) => ({
             userAddress: entry.userAddress,
             amount: Number(entry.amount),
-            percentageofHolding: (Number(entry.amount) / TOTAL_COINS) * 100,
+            percentageofHolding: (Number(entry.amount) / Number(TOTAL_COINS)) * 100,
         }));
+
+    
 }

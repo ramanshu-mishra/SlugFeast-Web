@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import {prisma} from "@repo/database/client";
-const secret = "ramanshuisprettygeniousinhiswork";
+const secret = "ramanshuisprettygeniousinhisworkisntHeHuh*";
 
 const publicKey = "0xE9b153007ba7a756C22BBc6Fb221D283845f86F9";
 const role = "maalik"

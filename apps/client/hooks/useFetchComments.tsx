@@ -1,5 +1,6 @@
 "use client"
 
+import { StoredMessage } from "@repo/messaging/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query"
 import {  RefObject, useCallback, useEffect, useMemo} from "react"
 
@@ -24,6 +25,67 @@ interface CommentsRouteResponse {
     success: boolean;
     data: CommentsRoutePayload;
     message?: string;
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null;
+}
+
+function toStoredMessage(raw: unknown): StoredMessage | null {
+    if (!isObject(raw)) {
+        return null;
+    }
+
+    const id = typeof raw.id === "string" ? raw.id : null;
+    const userKey = typeof raw.userKey === "string" ? raw.userKey : null;
+    const coinId = typeof raw.coinId === "string" ? raw.coinId : null;
+    const dateTime = typeof raw.dateTime === "string" ? raw.dateTime : null;
+
+    if (!id || !userKey || !coinId || !dateTime) {
+        return null;
+    }
+
+    const referencedImage = isObject(raw.referencedImage)
+        && typeof raw.referencedImage.id === "string"
+        && typeof raw.referencedImage.address === "string"
+        && typeof raw.referencedImage.messageId === "string"
+        ? {
+            id: raw.referencedImage.id,
+            address: raw.referencedImage.address,
+            messageId: raw.referencedImage.messageId,
+        }
+        : null;
+
+    const referencedMessage = isObject(raw.referencedMessage)
+        && typeof raw.referencedMessage.id === "string"
+        && (typeof raw.referencedMessage.message === "string" || raw.referencedMessage.message === null)
+        && typeof raw.referencedMessage.userKey === "string"
+        && typeof raw.referencedMessage.coinId === "string"
+        && (typeof raw.referencedMessage.referencedMessageId === "string" || raw.referencedMessage.referencedMessageId === null)
+        && typeof raw.referencedMessage.dateTime === "string"
+        ? {
+            id: raw.referencedMessage.id,
+            message: raw.referencedMessage.message,
+            userKey: raw.referencedMessage.userKey,
+            coinId: raw.referencedMessage.coinId,
+            referencedMessageId: raw.referencedMessage.referencedMessageId,
+            dateTime: raw.referencedMessage.dateTime,
+        }
+        : null;
+
+    return {
+        id,
+        message: typeof raw.message === "string" || raw.message === null ? raw.message : null,
+        userKey,
+        coinId,
+        referencedMessageId:
+            typeof raw.referencedMessageId === "string" || raw.referencedMessageId === null
+                ? raw.referencedMessageId
+                : null,
+        dateTime,
+        referencedImage,
+        referencedMessage,
+    };
 }
 
 async function fetchComments({
@@ -115,8 +177,10 @@ export function useFetchComments({
         };
     }, [handleScroll, scrollContainerRef]);
 
-    const flattenedComments = useMemo(() => {
-        return data?.pages.flatMap((page) => page.comments) ?? [];
+    const flattenedComments = useMemo<StoredMessage[]>(() => {
+        return (data?.pages.flatMap((page) => page.comments) ?? [])
+            .map(toStoredMessage)
+            .filter((comment): comment is StoredMessage => comment !== null);
     }, [data]);
 
     const latestPage = data?.pages[data.pages.length - 1];

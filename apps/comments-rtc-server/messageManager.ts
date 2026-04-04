@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@repo/database/client";
 import WebSocket  from "ws";
 
@@ -13,10 +11,7 @@ type StoreMessageInput = {
     messageType: MessageType | string;
     message?: string;
     referencedMessageId?: string;
-    imageFile?: Express.Multer.File;
-    imageBase64?: string;
-    imageMimeType?: string;
-    imageName?: string;
+    imageUrl?: string;
 };
 
 export type { StoreMessageInput };
@@ -37,22 +32,7 @@ const isValidMessageType = (value: string): value is MessageType => {
 export class MessageManager {
     private users : Set<WebSocket> = new Set();
     private static instance: MessageManager | null = null;
-    private readonly s3Client: S3Client;
-    private readonly bucketName: string;
-    private readonly region: string;
-
-    private constructor() {
-        this.region = process.env.AWS_REGION || "ap-southeast-2";
-        this.bucketName = process.env.AWS_S3_BUCKET || "slugfeast-bucket";
-
-        this.s3Client = new S3Client({
-            region: this.region,
-            credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-            },
-        });
-    }
+    private constructor() {}
 
     static getMessageManager() {
         if (MessageManager.instance == null) {
@@ -75,10 +55,18 @@ export class MessageManager {
         }
 
         const hasText = Boolean(input.message?.trim());
-        const hasImage = Boolean(input.imageFile);
+        const hasImage = Boolean(input.imageUrl?.trim());
 
         if (!input.userKey || !input.coinId || !input.messageType) {
             throw new MessageManagerError("userKey, coinId and messageType are required", 400);
+        }
+
+        if (hasImage) {
+            try {
+                new URL(input.imageUrl!);
+            } catch {
+                throw new MessageManagerError("imageUrl must be a valid URL", 400);
+            }
         }
 
         if (input.messageType === "text") {
@@ -92,7 +80,7 @@ export class MessageManager {
 
         if (input.messageType === "image") {
             if (!hasImage) {
-                throw new MessageManagerError("Image file is required for messageType=image", 400);
+                throw new MessageManagerError("imageUrl is required for messageType=image", 400);
             }
             if (hasText) {
                 throw new MessageManagerError("Text is not allowed for messageType=image. Use hybrid instead", 400);
@@ -104,84 +92,42 @@ export class MessageManager {
         }
     }
 
-    private parseBase64Payload(imageBase64: string) {
-        const trimmedInput = imageBase64.trim();
-        const dataUrlMatch = trimmedInput.match(/^data:(.+?);base64,(.+)$/s);
-
-        if (dataUrlMatch) {
-            return {
-                mimeTypeFromPayload: dataUrlMatch[1],
-                rawBase64: dataUrlMatch[2] || "",
-            };
-        }
-
-        return {
-            mimeTypeFromPayload: undefined,
-            rawBase64: trimmedInput,
-        };
-    }
-
-    private base64ToImageFile(input: StoreMessageInput): Express.Multer.File | undefined {
-        if (input.imageFile) {
-            return input.imageFile;
-        }
-
-        if (!input.imageBase64) {
-            return undefined;
-        }
-
-        const { mimeTypeFromPayload, rawBase64 } = this.parseBase64Payload(input.imageBase64);
-        let buffer: Buffer;
-
-        try {
-            buffer = Buffer.from(rawBase64, "base64");
-        } catch {
-            throw new MessageManagerError("Invalid base64 image payload", 400);
-        }
-
-        if (!buffer.length) {
-            throw new MessageManagerError("Invalid base64 image payload", 400);
-        }
-
-        const mimetype = input.imageMimeType || mimeTypeFromPayload || "application/octet-stream";
-        const extension = mimetype.includes("/") ? mimetype.split("/")[1] : "bin";
-        const originalname = input.imageName?.trim() || `upload.${extension}`;
-
-        return {
-            originalname,
-            mimetype,
-            buffer,
-        } as Express.Multer.File;
-    }
-
-    private async uploadImageToS3(file: Express.Multer.File) {
-        if (!file.buffer || file.buffer.length === 0) {
-            throw new MessageManagerError("Image file payload is empty", 400);
-        }
-
-        const fileNameParts = file.originalname.split(".");
-        const extension = fileNameParts.length > 1 ? fileNameParts[fileNameParts.length - 1] : "bin";
-        const key = `messages/${Date.now()}-${randomUUID()}.${extension}`;
-
-        await this.s3Client.send(
-            new PutObjectCommand({
-                Bucket: this.bucketName,
-                Key: key,
-                Body: file.buffer,
-                ContentType: file.mimetype,
-            })
-        );
-
-        return `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${key}`;
-    }
-
     async storeMessage(input: StoreMessageInput) {
         const normalizedInput: StoreMessageInput = {
             ...input,
-            imageFile: this.base64ToImageFile(input),
+            userKey: input.userKey?.trim(),
+            coinId: input.coinId?.trim(),
+            message: input.message?.trim(),
+            referencedMessageId: input.referencedMessageId?.trim(),
+            imageUrl: input.imageUrl?.trim(),
         };
 
         this.validateInput(normalizedInput);
+
+        // @ts-ignore
+        const coinExists = await prisma.coin.findFirst({
+            where: {
+                address: normalizedInput.coinId,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!coinExists) {
+            throw new MessageManagerError("coinId does not exist", 400);
+        }
+
+        await prisma.user.upsert({
+            // @ts-ignore
+            where: {
+                publicKey: normalizedInput.userKey,
+            },
+            update: {},
+            create: {
+                publicKey: normalizedInput.userKey,
+            },
+        });
 
         if (normalizedInput.referencedMessageId) {
             // @ts-ignore
@@ -191,16 +137,21 @@ export class MessageManager {
                 },
                 select: {
                     id: true,
+                    coinId: true,
                 },
             });
 
             if (!referencedMessageExists) {
                 throw new MessageManagerError("Referenced message does not exist", 400);
             }
+
+            if (referencedMessageExists.coinId !== normalizedInput.coinId) {
+                throw new MessageManagerError("Referenced message does not belong to this coin", 400);
+            }
         }
 
-        const imageAddress = normalizedInput.imageFile ? await this.uploadImageToS3(normalizedInput.imageFile) : null;
-        const normalizedMessage = normalizedInput.message?.trim() || null;
+        const normalizedMessage = normalizedInput.message || null;
+        const imageAddress = normalizedInput.imageUrl || null;
 
         return prisma.$transaction(async (tx) => {
             // @ts-ignore
