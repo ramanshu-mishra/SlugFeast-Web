@@ -14,6 +14,4 @@ export enum ActionEnum {
     UNSUBSCRIBE_ALL = "UNSUBSCRIBE_ALL"
 }
 
-export const CombinedInterface = {
-    ...EventType, ...TransactionEvents
-}
+

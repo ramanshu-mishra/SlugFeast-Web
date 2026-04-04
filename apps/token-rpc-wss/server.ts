@@ -1,10 +1,12 @@
 import WebSocket, {Server} from "ws";
-import { ActionEnum, CombinedInterface } from "./share/enum";
+import { ActionEnum } from "./share/enum";
+import { EventTypes } from "./interfaces/eventsInterface";
 import type {IncomingMessage} from "http";
 import {validateConnection} from "@repo/wss-utilities/utilities"
 import { TokenRPC } from "./TokenRPC";
 import {createClient, RedisClientType} from "redis";
 import "dotenv/config";
+import { MessageResponse } from "./interfaces/messageInterface";
 
 
 interface messageInterface{
@@ -14,10 +16,11 @@ interface messageInterface{
 
 interface responseInterface{
     success: boolean,
-    event?: keyof typeof CombinedInterface,
+    event?: EventTypes,
     action?: ActionEnum,
     message?: string,
-    error ?: string
+    error ?: string,
+    data?: MessageResponse
 }
 
 const tokenRpc = TokenRPC.getTokenRPC();
@@ -62,8 +65,8 @@ async function main(){
             return;
         }
 
-        const event = data.event;
         const action = data.action;
+        const coinAddress = data.coinAddress;
 
         if(!action){
             sendMessage(ws, {
@@ -72,13 +75,12 @@ async function main(){
             })
         }
 
-        if(action == ActionEnum.SUBSCRIBE && event ){
-            tokenRpc.subscribeEvent(event, ws);
+        if(action == ActionEnum.SUBSCRIBE && coinAddress ){
+            tokenRpc.subscribe(coinAddress, ws);
             sendMessage(ws, {
                 success: true,
                 action,
-                event,
-                message: `Subscribed to ${event}`
+                message: `Subscribed to ${coinAddress}`
             });
         }
         else if(action == ActionEnum.SUBSCRIBE_ALL){
@@ -89,13 +91,12 @@ async function main(){
                 message: "Subscribed to all events"
             });
         }
-        else if(action == ActionEnum.UNSUBSCRIBE && event){
-            tokenRpc.unsubscribeEvent(event, ws);
+        else if(action == ActionEnum.UNSUBSCRIBE && coinAddress){
+            tokenRpc.unsubscribe(coinAddress, ws);
             sendMessage(ws, {
                 success: true,
                 action,
-                event,
-                message: `Unsubscribed from ${event}`
+                message: `Unsubscribed from ${coinAddress}`
             });
         }
         else if(action == ActionEnum.UNSUBSCRIBE_ALL){

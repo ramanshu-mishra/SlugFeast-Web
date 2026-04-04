@@ -2,9 +2,9 @@ import WebSocket from "ws";
 import { MessageResponse } from "./interfaces/messageInterface";
 
 export class TokenRPC{
-   subscribers = new Map<`0x${string}`, Set<WebSocket>>();
-   subscribedAll = new Set<WebSocket>;
-   static singleTon:TokenRPC|null = null;
+   private subscribers = new Map<`0x${string}`, Set<WebSocket>>();
+   private subscribedAll = new Set<WebSocket>;
+   private static singleTon:TokenRPC|null = null;
     static getTokenRPC(){
         if(this.singleTon == null){
             this.singleTon = new TokenRPC();
