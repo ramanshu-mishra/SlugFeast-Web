@@ -1,9 +1,12 @@
 import { prisma } from "@repo/database/client";
 import { EventType, TransactionEvents } from "./share/enum.js";
 import { TokenRPC } from "./TokenRPC.js";
+import { parseMessageResponse } from "./utilities/parseMessageResponse.js";
+import { RedisClient } from "./server.js";
+import { parseRedisEvent } from "./utilities/parseRedisEvent.js";
+import { polledData } from "./interfaces/messageInterface.js";
 
-
-const TokenManager = TokenRPC.getTokenRPC();
+const TokenManager:TokenRPC = TokenRPC.getTokenRPC(RedisClient);
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_HEADER = `Bearer ${process.env.SUBGRAPH_API_KEY}`;
 const POLL_INTERVAL_MS = 2_000;
@@ -126,7 +129,9 @@ async function handleTokenGraduateds(rows: any[]) {
 
 async function handleTokenBoughts(rows: any[]) {
     for (const row of rows) {
-        TokenManager.broadCast(TransactionEvents.tokenBought, row);
+        const parsedMessage = parseMessageResponse(row)
+        TokenManager.broadCast(row.token, parsedMessage);
+        TokenRPC.pushRedisEvent(row.token,parseRedisEvent(row , "buy"));
         console.log(
             JSON.stringify({
                 event: "TokenBought",
@@ -145,7 +150,9 @@ async function handleTokenBoughts(rows: any[]) {
 
 async function handleTokenSolds(rows: any[]) {
     for (const row of rows) {
-        TokenManager.broadCast(TransactionEvents.tokenSold, row);
+        const parsedMessage = parseMessageResponse(row)
+        TokenManager.broadCast(row.token, parsedMessage);
+        TokenRPC.pushRedisEvent(row.token,parseRedisEvent(row , "sell"));
         console.log(
             JSON.stringify({
                 event: "TokenSold",

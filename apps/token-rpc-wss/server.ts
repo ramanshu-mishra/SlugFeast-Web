@@ -23,7 +23,7 @@ interface responseInterface{
     data?: MessageResponse
 }
 
-const tokenRpc = TokenRPC.getTokenRPC();
+let tokenRpc:TokenRPC|null = null;
 
 let wss: Server;
 let client: RedisClientType;
@@ -43,6 +43,8 @@ async function main(){
     });
 
     await client.connect();
+
+    tokenRpc = TokenRPC.getTokenRPC(client);
 
 
     wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
@@ -76,7 +78,7 @@ async function main(){
         }
 
         if(action == ActionEnum.SUBSCRIBE && coinAddress ){
-            tokenRpc.subscribe(coinAddress, ws);
+            tokenRpc?.subscribe(coinAddress, ws);
             sendMessage(ws, {
                 success: true,
                 action,
@@ -84,7 +86,7 @@ async function main(){
             });
         }
         else if(action == ActionEnum.SUBSCRIBE_ALL){
-            tokenRpc.subscribeAll(ws);
+            tokenRpc?.subscribeAll(ws);
             sendMessage(ws, {
                 success: true,
                 action,
@@ -92,7 +94,7 @@ async function main(){
             });
         }
         else if(action == ActionEnum.UNSUBSCRIBE && coinAddress){
-            tokenRpc.unsubscribe(coinAddress, ws);
+            tokenRpc?.unsubscribe(coinAddress, ws);
             sendMessage(ws, {
                 success: true,
                 action,
@@ -100,7 +102,7 @@ async function main(){
             });
         }
         else if(action == ActionEnum.UNSUBSCRIBE_ALL){
-            tokenRpc.unsubscribeAll(ws);
+            tokenRpc?.unsubscribeAll(ws);
             sendMessage(ws, {
                 success: true,
                 action,
@@ -125,7 +127,7 @@ async function main(){
     })
 
     ws.on("close", ()=>{
-        tokenRpc.unsubscribeAll(ws);
+        tokenRpc?.unsubscribeAll(ws);
         console.log(`> ${req.socket.remoteAddress} disconnected`);
     });
 })
@@ -142,3 +144,5 @@ function sendMessage(ws: WebSocket, message: responseInterface){
         ws.send(JSON.stringify(message));
     }
 }
+
+export {client as RedisClient};

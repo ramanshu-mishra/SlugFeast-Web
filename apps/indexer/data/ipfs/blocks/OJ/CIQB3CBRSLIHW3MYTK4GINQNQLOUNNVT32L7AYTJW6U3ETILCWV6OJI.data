@@ -1,0 +1,49 @@
+
+›“dataSources:
+  - kind: ethereum
+    mapping:
+      abis:
+        - file:
+            /: /ipfs/QmTa2JQxrmS3xS4D47TT5iyFGqj2BhFraMNkSyH85mQcB7
+          name: SlugDex
+      apiVersion: 0.0.9
+      entities:
+        - OwnershipTransferred
+        - TokenBought
+        - TokenCreated
+        - TokenSold
+        - poolcreated
+        - tokenDeployed
+        - tokenGraduated
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: TokenBought(indexed address,uint256,uint256,address,uint256,uint256)
+          handler: handleTokenBought
+        - event: TokenCreated(indexed address,string,uint256,uint256)
+          handler: handleTokenCreated
+        - event: TokenSold(indexed address,uint256,uint256,address,uint256,uint256)
+          handler: handleTokenSold
+        - event: poolcreated(indexed address,uint256,uint256)
+          handler: handlepoolcreated
+        - event: tokenDeployed(indexed address)
+          handler: handletokenDeployed
+        - event: tokenGraduated(indexed address)
+          handler: handletokenGraduated
+      file:
+        /: /ipfs/QmeKgqsLdXeX9wixZ2eb1pC2fPgAjQBCpWBvFzeG4tD2TF
+      kind: ethereum/events
+      language: wasm/assemblyscript
+    name: SlugDex
+    network: sepolia
+    source:
+      abi: SlugDex
+      address: '0x57545b2B8b55a59B28F88837a70D036AC624ea2B'
+      startBlock: 10588545
+indexerHints:
+  prune: auto
+schema:
+  file:
+    /: /ipfs/QmbbdtFPnAv5aMoW6Spmim7kHbmLxJsG5R2wicjJXkGXnv
+specVersion: 1.3.0
+“

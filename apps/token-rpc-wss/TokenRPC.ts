@@ -1,13 +1,19 @@
 import WebSocket from "ws";
-import { MessageResponse } from "./interfaces/messageInterface";
+import { MessageResponse, QueueData } from "./interfaces/messageInterface";
+import {RedisClientType} from "redis";
 
+
+const EVENT_KEY = process.env.REDIS_EVENT_KEY ?? "events";
 export class TokenRPC{
    private subscribers = new Map<`0x${string}`, Set<WebSocket>>();
    private subscribedAll = new Set<WebSocket>;
    private static singleTon:TokenRPC|null = null;
-    static getTokenRPC(){
+   private static redisClient: RedisClientType|null;
+
+    static getTokenRPC(redisClient: RedisClientType){
         if(this.singleTon == null){
             this.singleTon = new TokenRPC();
+            this.redisClient = redisClient;
         }
         return this.singleTon;
    }
@@ -58,5 +64,13 @@ export class TokenRPC{
         ws.close();
    }
 
+   static pushRedisEvent(coinAddress: `0x${string}`, event: QueueData ){
+    if(!this.redisClient)return;
+        this.redisClient.hSet(EVENT_KEY, coinAddress, JSON.stringify(event));
+        console.log("pushed to redis ", coinAddress, event);
+   }
+
 }
+
+
 

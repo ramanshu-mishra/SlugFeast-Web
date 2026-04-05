@@ -20,6 +20,8 @@ services:
       postgres_db: graph-node
       ipfs: "ipfs:5001"
       ethereum: "sepolia:https://eth-sepolia.g.alchemy.com/v2/kx39Lx4SmZsT-LpGfUpuF"
+      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 10
+      GRAPH_ETHEREUM_MAX_EVENT_ONLY_RANGE: 10
       GRAPH_LOG: info
   ipfs:
     image: ipfs/kubo:v0.17.0

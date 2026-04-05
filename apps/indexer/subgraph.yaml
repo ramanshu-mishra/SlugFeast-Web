@@ -8,9 +8,9 @@ dataSources:
     name: SlugDex
     network: sepolia
     source:
-      address: "0x8B6DaEDC21C50043EB14a266012aF92bE74361fD"
+      address: "0x57545b2B8b55a59B28F88837a70D036AC624ea2B"
       abi: SlugDex
-      startBlock: 10490251
+      startBlock: 10588545 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
@@ -29,13 +29,13 @@ dataSources:
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: TokenBought(indexed address,uint256,uint256,address)
+        - event: TokenBought(indexed address,uint256,uint256,address,uint256,uint256)
           handler: handleTokenBought
-        - event: TokenCreated(indexed address,string)
+        - event: TokenCreated(indexed address,string,uint256,uint256)
           handler: handleTokenCreated
-        - event: TokenSold(indexed address,uint256,uint256,address)
+        - event: TokenSold(indexed address,uint256,uint256,address,uint256,uint256)
           handler: handleTokenSold
-        - event: poolcreated(indexed address)
+        - event: poolcreated(indexed address,uint256,uint256)
           handler: handlepoolcreated
         - event: tokenDeployed(indexed address)
           handler: handletokenDeployed

@@ -12,3 +12,25 @@ export interface MessageResponse{
     change_1M?: Number,
     change_1Y?: Number
 }
+
+
+export interface polledData{
+    token: `0x${string}`,
+    VETH: BigInt,
+    amount: BigInt,
+    sender: `0x${string}`,
+    poolTokens: BigInt,
+    poolVETHs: BigInt,
+    blockNumber:  string,
+    txHash: BigInt,
+    internal_id: string,
+    blockTimeStamp: string
+}
+
+export interface QueueData {
+  event: "buy" | "sell";
+  coinAddress: `0x${string}`;
+  poolTokens: Number;
+  poolVETHs: Number;
+  blockTimeStamp: string,
+}

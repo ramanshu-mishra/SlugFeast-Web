@@ -108,7 +108,7 @@ const queries = {
             orderBy: blockTimestamp
             orderDirection: asc
             first: ${PAGE_SIZE}
-        ) { id token poolTokens poolVETHs blockNumber blockTimestamp transactionHash }
+        ) { id token internal_id poolTokens poolVETHs blockNumber blockTimestamp transactionHash }
     }`,
 
     tokenDeployeds: (c: Cursor) => `{
@@ -153,7 +153,7 @@ const queries = {
             orderBy: blockTimestamp
             orderDirection: asc
             first: ${PAGE_SIZE}
-        ) { id tokenA poolAmount poolVETHs blockNumber blockTimestamp transactionHash }
+        ) { id tokenA poolTokens poolVETHs blockNumber blockTimestamp transactionHash }
     }`,
 };
 
@@ -235,7 +235,7 @@ async function handlePoolcreateds(rows: any[]) {
             JSON.stringify({
                 event: "poolcreated",
                 tokenA: row.tokenA,
-                poolAmount: row.poolAmount,
+                    poolTokens: row.poolTokens,
                 poolVETHs: row.poolVETHs,
                 block: row.blockNumber,
             })
@@ -425,8 +425,9 @@ async function fetchCursors() {
         lastTimestamp: parseCursorBigInt(persisted.poolcreatedsTimestamp),
         lastId: parseCursorBigInt(persisted.poolcreatedsLastId),
     };
-
+    
     previousCursorSnapshot = getCursorSnapshot();
+   
 }
 
 async function updateHoldingInfo(
@@ -528,6 +529,7 @@ export async function startSubgraphPoller() {
     }
 
     await fetchCursors();
+    
     console.log(`[SubgraphPoller] starting — polling every ${POLL_INTERVAL_MS}ms`);
 
     const tick = async () => {
@@ -547,5 +549,6 @@ export async function startSubgraphPoller() {
     await tick();
     setInterval(() => {
         tick().catch((error) => console.error("[SubgraphPoller] interval loop error:", error));
+        
     }, POLL_INTERVAL_MS);
 }

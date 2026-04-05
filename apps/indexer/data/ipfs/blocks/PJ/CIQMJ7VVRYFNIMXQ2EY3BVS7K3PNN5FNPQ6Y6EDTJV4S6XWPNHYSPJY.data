@@ -1,0 +1,73 @@
+
+ß×type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenBought @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  VETH: BigInt! # uint256
+  amount: BigInt! # uint256
+  sender: Bytes! # address
+  poolTokens: BigInt! # uint256
+  poolVETHs: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenCreated @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  internal_id: String! # string
+  poolTokens: BigInt! # uint256
+  poolVETHs: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenSold @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  VETH: BigInt! # uint256
+  amount: BigInt! # uint256
+  sender: Bytes! # address
+  poolTokens: BigInt! # uint256
+  poolVETHs: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type poolcreated @entity(immutable: true) {
+  id: Bytes!
+  tokenA: Bytes! # address
+  poolTokens: BigInt! # uint256
+  poolVETHs: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type tokenDeployed @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type tokenGraduated @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+×

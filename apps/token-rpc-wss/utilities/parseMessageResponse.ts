@@ -1,16 +1,57 @@
-import { MessageResponse } from "../interfaces/messageInterface";
+import { MessageResponse, polledData } from "../interfaces/messageInterface";
 
 const totalPoolTokens = Number(process.env.POOL_TOKENS_UNLOCKED) || 800*10**6*10**6;
 const totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6; 
 
-function getBondingCurveProgress(){
 
+
+
+function getBondingCurveProgress(tokenInPool: number){
+    const progress = (((totalPoolTokens - tokenInPool) / totalPoolTokens) * 100).toFixed(2);
+    return progress;
 }
 
-function getMarketCap(){
+function getMarketCap(tokenInPool: Number, VETHinPool: Number){
+    const priceOfToken = getPrice(tokenInPool, VETHinPool);
+    if (priceOfToken === 0) {
+        return "0";
+    }
 
+    const marketCap = priceOfToken * totalTokens;
+    return marketCap.toFixed(6);
 }
 
-function getPrice(){
+function getPrice(tokenInPool: Number, VETHinPool: Number){
+    const token = Number(tokenInPool);
+    const veth = Number(VETHinPool);
+
+    if (!Number.isFinite(token) || !Number.isFinite(veth) || token <= 0) {
+        return 0;
+    }
+
+    const price = veth / token;
+    return Number.isFinite(price) ? price : 0;
+}
+
+
+export function parseMessageResponse(data: polledData){
+    const mc = getMarketCap(Number(data.poolTokens), Number(data.VETH));
+    const bcprogress = getBondingCurveProgress(Number(data.poolTokens));
+
+    const message : MessageResponse = {
+        bondingCurveProgress: Number(bcprogress),
+        marketCap: mc,
+        coinAddress: data.token
+    }
+
+    return message;
+}
+
+
+
+function getDataChange(){
     
 }
+
+
+

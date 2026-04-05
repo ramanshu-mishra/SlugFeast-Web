@@ -157,6 +157,7 @@ router.get("/updateAddress", async(req:Request, res:Response)=>{
     }
     catch(e){
         console.log("Error while token address updation");
+        console.log(e);
         res.status(500).json({
             success: false,
             message: "Error in token address updation"

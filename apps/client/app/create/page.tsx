@@ -305,13 +305,13 @@ export default function Page() {
 
     const coinAddress = token_data.to as string;
 
-    await fetch(`${ServerAddress}/updateAddress`, {
-      method: "GET",
-      headers:{
-        "address": coinAddress,
-        "id" : id.toString()
-      }
-    });
+    // await fetch(`${ServerAddress}/updateAddress`, {
+    //   method: "GET",
+    //   headers:{
+    //     "address": coinAddress,
+    //     "id" : id.toString()
+    //   }
+    // });
     
     } 
     catch(e){

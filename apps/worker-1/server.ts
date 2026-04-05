@@ -19,7 +19,8 @@ async function readAndClearEventsHash(): Promise<void> {
     if (Object.keys(data).length === 0) {
         return;
     }
-    const parsed = JSON.parse(data);
+
+    const parsed = new Map<string, string>(Object.entries(data));
     await updateCoinPool(parsed);
     console.log("Read events:", data);
 
