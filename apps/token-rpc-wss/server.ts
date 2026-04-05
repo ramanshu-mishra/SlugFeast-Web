@@ -7,6 +7,8 @@ import { TokenRPC } from "./TokenRPC";
 import {createClient, RedisClientType} from "redis";
 import "dotenv/config";
 import { MessageResponse } from "./interfaces/messageInterface";
+import { startSubgraphPoller } from "./subgraphPoller";
+
 
 
 interface messageInterface{
@@ -45,6 +47,7 @@ async function main(){
     await client.connect();
 
     tokenRpc = TokenRPC.getTokenRPC(client);
+    await startSubgraphPoller(tokenRpc);
 
 
     wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{

@@ -124,6 +124,7 @@ exports.CoinScalarFieldEnum = {
     description: 'description',
     TokenAmount: 'TokenAmount',
     VETHAmount: 'VETHAmount',
+    ATHPrice: 'ATHPrice',
     userId: 'userId',
     graduated: 'graduated'
 };

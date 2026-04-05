@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "exports": {
-    "./utilities" : "./dist/utilities.js"
+    "./utilities" : "./dist/utilities.js",
+    "./enums" : "./dist/enums.js"
   }
 }

@@ -1,24 +1,56 @@
 import { prisma } from "@repo/database/client";
 import { QueueData } from "../interfaces/queueData";
+import {client} from "../server";
 
 export async function updateCoinPool(data: Map<string, string>): Promise<void> {
     if (data.size === 0) {
         return;
     }
 
-    const updates = Array.from(data.values()).map((value) => {
-        const parsed = JSON.parse(value) as QueueData;
+    const entries = Array.from(data.values()).map((value) => JSON.parse(value) as QueueData);
 
-        return prisma.coin.updateMany({
-            where: {
-                address: parsed.coinAddress,
-            },
-            data: {
-                TokenAmount: parsed.poolTokens.toString(),
-                VETHAmount: parsed.poolVETHs.toString(),
-            } as any,
-        });
+    await prisma.$transaction(async (tx) => {
+        for (const parsed of entries) {
+            const currentPrice = getPrice(Number(parsed.poolTokens), Number(parsed.poolVETHs));
+
+            const coin = await tx.coin.findUnique({
+                where: {
+                    address: parsed.coinAddress,
+                },
+                select: {
+                    // @ts-ignore
+                    ATHPrice: true,
+                },
+            });
+
+            const existingAthPrice = Number((coin as any)?.ATHPrice ?? 0);
+            const nextAthPrice = Math.max(existingAthPrice, currentPrice);
+
+            await tx.coin.update({
+                where: {
+                    address: parsed.coinAddress,
+                },
+                data: {
+                    TokenAmount: parsed.poolTokens.toString(),
+                    VETHAmount: parsed.poolVETHs.toString(),
+                    // @ts-ignore
+                    ATHPrice: nextAthPrice.toString(),
+                } as any,
+            });
+
+            await client.hSet("ATHPrice", parsed.coinAddress, nextAthPrice.toString()); //setting the athprice to be accessed by token-rpc-wss
+        }
     });
+}
 
-    await prisma.$transaction(updates);
+function getPrice(tokenInPool: Number, VETHinPool: Number){
+    const token = Number(tokenInPool);
+    const veth = Number(VETHinPool);
+
+    if (!Number.isFinite(token) || !Number.isFinite(veth) || token <= 0) {
+        return 0;
+    }
+
+    const price = veth / token;
+    return Number.isFinite(price) ? price : 0;
 }

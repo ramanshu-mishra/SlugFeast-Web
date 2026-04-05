@@ -19,6 +19,7 @@ export type CoinMinAggregateOutputType = {
     description: string | null;
     TokenAmount: string | null;
     VETHAmount: string | null;
+    ATHPrice: string | null;
     userId: string | null;
     graduated: boolean | null;
 };
@@ -31,6 +32,7 @@ export type CoinMaxAggregateOutputType = {
     description: string | null;
     TokenAmount: string | null;
     VETHAmount: string | null;
+    ATHPrice: string | null;
     userId: string | null;
     graduated: boolean | null;
 };
@@ -43,6 +45,7 @@ export type CoinCountAggregateOutputType = {
     description: number;
     TokenAmount: number;
     VETHAmount: number;
+    ATHPrice: number;
     userId: number;
     graduated: number;
     _all: number;
@@ -56,6 +59,7 @@ export type CoinMinAggregateInputType = {
     description?: true;
     TokenAmount?: true;
     VETHAmount?: true;
+    ATHPrice?: true;
     userId?: true;
     graduated?: true;
 };
@@ -68,6 +72,7 @@ export type CoinMaxAggregateInputType = {
     description?: true;
     TokenAmount?: true;
     VETHAmount?: true;
+    ATHPrice?: true;
     userId?: true;
     graduated?: true;
 };
@@ -80,6 +85,7 @@ export type CoinCountAggregateInputType = {
     description?: true;
     TokenAmount?: true;
     VETHAmount?: true;
+    ATHPrice?: true;
     userId?: true;
     graduated?: true;
     _all?: true;
@@ -155,6 +161,7 @@ export type CoinGroupByOutputType = {
     description: string;
     TokenAmount: string;
     VETHAmount: string;
+    ATHPrice: string;
     userId: string;
     graduated: boolean;
     _count: CoinCountAggregateOutputType | null;
@@ -176,6 +183,7 @@ export type coinWhereInput = {
     description?: Prisma.StringFilter<"coin"> | string;
     TokenAmount?: Prisma.StringFilter<"coin"> | string;
     VETHAmount?: Prisma.StringFilter<"coin"> | string;
+    ATHPrice?: Prisma.StringFilter<"coin"> | string;
     userId?: Prisma.StringFilter<"coin"> | string;
     graduated?: Prisma.BoolFilter<"coin"> | boolean;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
@@ -193,6 +201,7 @@ export type coinOrderByWithRelationInput = {
     description?: Prisma.SortOrder;
     TokenAmount?: Prisma.SortOrder;
     VETHAmount?: Prisma.SortOrder;
+    ATHPrice?: Prisma.SortOrder;
     userId?: Prisma.SortOrder;
     graduated?: Prisma.SortOrder;
     user?: Prisma.userOrderByWithRelationInput;
@@ -213,6 +222,7 @@ export type coinWhereUniqueInput = Prisma.AtLeast<{
     description?: Prisma.StringFilter<"coin"> | string;
     TokenAmount?: Prisma.StringFilter<"coin"> | string;
     VETHAmount?: Prisma.StringFilter<"coin"> | string;
+    ATHPrice?: Prisma.StringFilter<"coin"> | string;
     userId?: Prisma.StringFilter<"coin"> | string;
     graduated?: Prisma.BoolFilter<"coin"> | boolean;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>;
@@ -230,6 +240,7 @@ export type coinOrderByWithAggregationInput = {
     description?: Prisma.SortOrder;
     TokenAmount?: Prisma.SortOrder;
     VETHAmount?: Prisma.SortOrder;
+    ATHPrice?: Prisma.SortOrder;
     userId?: Prisma.SortOrder;
     graduated?: Prisma.SortOrder;
     _count?: Prisma.coinCountOrderByAggregateInput;
@@ -248,6 +259,7 @@ export type coinScalarWhereWithAggregatesInput = {
     description?: Prisma.StringWithAggregatesFilter<"coin"> | string;
     TokenAmount?: Prisma.StringWithAggregatesFilter<"coin"> | string;
     VETHAmount?: Prisma.StringWithAggregatesFilter<"coin"> | string;
+    ATHPrice?: Prisma.StringWithAggregatesFilter<"coin"> | string;
     userId?: Prisma.StringWithAggregatesFilter<"coin"> | string;
     graduated?: Prisma.BoolWithAggregatesFilter<"coin"> | boolean;
 };
@@ -260,6 +272,7 @@ export type coinCreateInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
@@ -276,6 +289,7 @@ export type coinUncheckedCreateInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
@@ -292,6 +306,7 @@ export type coinUpdateInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
@@ -308,6 +323,7 @@ export type coinUncheckedUpdateInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
@@ -324,6 +340,7 @@ export type coinCreateManyInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
 };
@@ -336,6 +353,7 @@ export type coinUpdateManyMutationInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
 };
 export type coinUncheckedUpdateManyInput = {
@@ -347,6 +365,7 @@ export type coinUncheckedUpdateManyInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
 };
@@ -371,6 +390,7 @@ export type coinCountOrderByAggregateInput = {
     description?: Prisma.SortOrder;
     TokenAmount?: Prisma.SortOrder;
     VETHAmount?: Prisma.SortOrder;
+    ATHPrice?: Prisma.SortOrder;
     userId?: Prisma.SortOrder;
     graduated?: Prisma.SortOrder;
 };
@@ -383,6 +403,7 @@ export type coinMaxOrderByAggregateInput = {
     description?: Prisma.SortOrder;
     TokenAmount?: Prisma.SortOrder;
     VETHAmount?: Prisma.SortOrder;
+    ATHPrice?: Prisma.SortOrder;
     userId?: Prisma.SortOrder;
     graduated?: Prisma.SortOrder;
 };
@@ -395,6 +416,7 @@ export type coinMinOrderByAggregateInput = {
     description?: Prisma.SortOrder;
     TokenAmount?: Prisma.SortOrder;
     VETHAmount?: Prisma.SortOrder;
+    ATHPrice?: Prisma.SortOrder;
     userId?: Prisma.SortOrder;
     graduated?: Prisma.SortOrder;
 };
@@ -496,6 +518,7 @@ export type coinCreateWithoutUserInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
     messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
@@ -511,6 +534,7 @@ export type coinUncheckedCreateWithoutUserInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
     messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
@@ -550,6 +574,7 @@ export type coinScalarWhereInput = {
     description?: Prisma.StringFilter<"coin"> | string;
     TokenAmount?: Prisma.StringFilter<"coin"> | string;
     VETHAmount?: Prisma.StringFilter<"coin"> | string;
+    ATHPrice?: Prisma.StringFilter<"coin"> | string;
     userId?: Prisma.StringFilter<"coin"> | string;
     graduated?: Prisma.BoolFilter<"coin"> | boolean;
 };
@@ -562,6 +587,7 @@ export type coinCreateWithoutHoldingsInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     messages?: Prisma.messageCreateNestedManyWithoutCoinInput;
@@ -577,6 +603,7 @@ export type coinUncheckedCreateWithoutHoldingsInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
     messages?: Prisma.messageUncheckedCreateNestedManyWithoutCoinInput;
@@ -605,6 +632,7 @@ export type coinUpdateWithoutHoldingsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
@@ -620,6 +648,7 @@ export type coinUncheckedUpdateWithoutHoldingsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
@@ -635,6 +664,7 @@ export type coinCreateWithoutSocialsInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
@@ -650,6 +680,7 @@ export type coinUncheckedCreateWithoutSocialsInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
@@ -678,6 +709,7 @@ export type coinUpdateWithoutSocialsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
@@ -693,6 +725,7 @@ export type coinUncheckedUpdateWithoutSocialsInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
@@ -708,6 +741,7 @@ export type coinCreateWithoutTokenHashInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
@@ -723,6 +757,7 @@ export type coinUncheckedCreateWithoutTokenHashInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
@@ -751,6 +786,7 @@ export type coinUpdateWithoutTokenHashInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
@@ -766,6 +802,7 @@ export type coinUncheckedUpdateWithoutTokenHashInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
@@ -781,6 +818,7 @@ export type coinCreateWithoutMessagesInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
     user: Prisma.userCreateNestedOneWithoutCoinsInput;
     holdings?: Prisma.holdingCreateNestedManyWithoutCoinInput;
@@ -796,6 +834,7 @@ export type coinUncheckedCreateWithoutMessagesInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     userId: string;
     graduated?: boolean;
     holdings?: Prisma.holdingUncheckedCreateNestedManyWithoutCoinInput;
@@ -824,6 +863,7 @@ export type coinUpdateWithoutMessagesInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     user?: Prisma.userUpdateOneRequiredWithoutCoinsNestedInput;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
@@ -839,6 +879,7 @@ export type coinUncheckedUpdateWithoutMessagesInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     userId?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
@@ -854,6 +895,7 @@ export type coinCreateManyUserInput = {
     description: string;
     TokenAmount?: string;
     VETHAmount?: string;
+    ATHPrice?: string;
     graduated?: boolean;
 };
 export type coinUpdateWithoutUserInput = {
@@ -865,6 +907,7 @@ export type coinUpdateWithoutUserInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUpdateManyWithoutCoinNestedInput;
     messages?: Prisma.messageUpdateManyWithoutCoinNestedInput;
@@ -880,6 +923,7 @@ export type coinUncheckedUpdateWithoutUserInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     holdings?: Prisma.holdingUncheckedUpdateManyWithoutCoinNestedInput;
     messages?: Prisma.messageUncheckedUpdateManyWithoutCoinNestedInput;
@@ -895,6 +939,7 @@ export type coinUncheckedUpdateManyWithoutUserInput = {
     description?: Prisma.StringFieldUpdateOperationsInput | string;
     TokenAmount?: Prisma.StringFieldUpdateOperationsInput | string;
     VETHAmount?: Prisma.StringFieldUpdateOperationsInput | string;
+    ATHPrice?: Prisma.StringFieldUpdateOperationsInput | string;
     graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean;
 };
 /**
@@ -938,6 +983,7 @@ export type coinSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     description?: boolean;
     TokenAmount?: boolean;
     VETHAmount?: boolean;
+    ATHPrice?: boolean;
     userId?: boolean;
     graduated?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
@@ -956,6 +1002,7 @@ export type coinSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     description?: boolean;
     TokenAmount?: boolean;
     VETHAmount?: boolean;
+    ATHPrice?: boolean;
     userId?: boolean;
     graduated?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
@@ -969,6 +1016,7 @@ export type coinSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     description?: boolean;
     TokenAmount?: boolean;
     VETHAmount?: boolean;
+    ATHPrice?: boolean;
     userId?: boolean;
     graduated?: boolean;
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
@@ -982,10 +1030,11 @@ export type coinSelectScalar = {
     description?: boolean;
     TokenAmount?: boolean;
     VETHAmount?: boolean;
+    ATHPrice?: boolean;
     userId?: boolean;
     graduated?: boolean;
 };
-export type coinOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "address" | "tokenName" | "symbol" | "imageUrl" | "description" | "TokenAmount" | "VETHAmount" | "userId" | "graduated", ExtArgs["result"]["coin"]>;
+export type coinOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "address" | "tokenName" | "symbol" | "imageUrl" | "description" | "TokenAmount" | "VETHAmount" | "ATHPrice" | "userId" | "graduated", ExtArgs["result"]["coin"]>;
 export type coinInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     user?: boolean | Prisma.userDefaultArgs<ExtArgs>;
     holdings?: boolean | Prisma.coin$holdingsArgs<ExtArgs>;
@@ -1018,6 +1067,7 @@ export type $coinPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         description: string;
         TokenAmount: string;
         VETHAmount: string;
+        ATHPrice: string;
         userId: string;
         graduated: boolean;
     }, ExtArgs["result"]["coin"]>;
@@ -1387,6 +1437,7 @@ export interface coinFieldRefs {
     readonly description: Prisma.FieldRef<"coin", 'String'>;
     readonly TokenAmount: Prisma.FieldRef<"coin", 'String'>;
     readonly VETHAmount: Prisma.FieldRef<"coin", 'String'>;
+    readonly ATHPrice: Prisma.FieldRef<"coin", 'String'>;
     readonly userId: Prisma.FieldRef<"coin", 'String'>;
     readonly graduated: Prisma.FieldRef<"coin", 'Boolean'>;
 }

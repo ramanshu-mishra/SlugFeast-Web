@@ -1,5 +1,4 @@
 import { prisma } from "@repo/database/client";
-import { broadcast } from "../wsLayer/transactions.js";
 import { EventType, TransactionEvents } from "../share/enums.js";
 import { normalizeAddress } from "../utility/normalizeAddress.js";
 
@@ -98,7 +97,17 @@ function whereClause(c: Cursor): string {
     if (c.lastId <= 0n) {
         return `blockTimestamp_gt: "${c.lastTimestamp.toString()}"`;
     }
-    return `blockTimestamp_gte: "${c.lastTimestamp.toString()}", id_gt: "${formatSubgraphId(c.lastId)}"`;
+
+    // Page safely: continue within the same timestamp by id, and include all later timestamps.
+    return `or: [
+        { blockTimestamp_gt: "${c.lastTimestamp.toString()}" },
+        {
+            and: [
+                { blockTimestamp: "${c.lastTimestamp.toString()}" },
+                { id_gt: "${formatSubgraphId(c.lastId)}" }
+            ]
+        }
+    ]`;
 }
 
 const queries = {
@@ -178,12 +187,7 @@ function updateCursorFromRows(entity: CursorDbEntity, rows: any[]) {
     const last = rows[rows.length - 1];
     const lastTimestamp = parseCursorBigInt(last.blockTimestamp);
     const lastId = parseSubgraphId(last.id);
-
-    if (rows.length === PAGE_SIZE) {
-        cursor[entity] = { lastTimestamp, lastId };
-    } else {
-        cursor[entity] = { lastTimestamp, lastId: 0n };
-    }
+    cursor[entity] = { lastTimestamp, lastId };
 }
 
 async function handleTokenCreateds(rows: any[]) {
@@ -199,7 +203,7 @@ async function handleTokenCreateds(rows: any[]) {
             data: { address: row.token },
         });
 
-        broadcast(EventType.tokenCreated, row);
+       
         console.log(JSON.stringify({ event: "TokenCreated", id: row.internal_id, address: row.token, poolTokens: row.poolTokens, poolVETHs:  row.poolVETHs }));
     }
 }
@@ -217,7 +221,7 @@ async function handleTokenGraduateds(rows: any[]) {
             data: { graduated: true },
         });
 
-        broadcast(EventType.tokenGraduated, row);
+ 
         console.log(
             JSON.stringify({
                 event: "tokenGraduated",
@@ -296,17 +300,17 @@ async function pollTradeEntities() {
     ];
 
     merged.sort((a, b) => {
-        if (a._kind !== b._kind) return a._kind === "buy" ? -1 : 1;
         if (a._timestamp < b._timestamp) return -1;
         if (a._timestamp > b._timestamp) return 1;
         if (a._id < b._id) return -1;
         if (a._id > b._id) return 1;
+        if (a._kind !== b._kind) return a._kind === "buy" ? -1 : 1;
         return 0;
     });
 
     for (const row of merged) {
         if (row._kind === "buy") {
-            broadcast(TransactionEvents.tokenBought, row);
+          
             await updateHoldingInfo(
                 row.sender ?? row.buyer,
                 row.token,
@@ -316,7 +320,7 @@ async function pollTradeEntities() {
                 row._id
             );
         } else {
-            broadcast(TransactionEvents.tokenSold, row);
+           
             await updateHoldingInfo(
                 row.sender ?? row.seller,
                 row.token,
@@ -332,6 +336,8 @@ async function pollTradeEntities() {
     sortRowsByTimestampId(sellRows);
     updateCursorFromRows("tokenBoughts", buyRows);
     updateCursorFromRows("tokenSolds", sellRows);
+
+    console.log("holding info updated______ ");
 }
 
 async function pollOnce() {

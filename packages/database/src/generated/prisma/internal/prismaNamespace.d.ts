@@ -989,6 +989,7 @@ export declare const CoinScalarFieldEnum: {
     readonly description: "description";
     readonly TokenAmount: "TokenAmount";
     readonly VETHAmount: "VETHAmount";
+    readonly ATHPrice: "ATHPrice";
     readonly userId: "userId";
     readonly graduated: "graduated";
 };

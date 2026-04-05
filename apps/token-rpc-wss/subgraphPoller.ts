@@ -2,14 +2,13 @@ import { prisma } from "@repo/database/client";
 import { EventType, TransactionEvents } from "./share/enum.js";
 import { TokenRPC } from "./TokenRPC.js";
 import { parseMessageResponse } from "./utilities/parseMessageResponse.js";
-import { RedisClient } from "./server.js";
 import { parseRedisEvent } from "./utilities/parseRedisEvent.js";
 import { polledData } from "./interfaces/messageInterface.js";
 
-const TokenManager:TokenRPC = TokenRPC.getTokenRPC(RedisClient);
+let tokenManager: TokenRPC | null = null;
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_HEADER = `Bearer ${process.env.SUBGRAPH_API_KEY}`;
-const POLL_INTERVAL_MS = 2_000;
+const POLL_INTERVAL_MS = 1_000;
 const SAVE_INTERVAL = 20_000; // 20 seconds
 
 // ─── In-memory cursors ───────────────────────────────────────────────────────
@@ -78,7 +77,17 @@ function formatSubgraphId(value: bigint): string {
 
 function whereClause(c: Cursor): string {
     if (c.lastId <= 0n) return `blockTimestamp_gt: "${c.lastTimestamp.toString()}"`;
-    return `blockTimestamp_gte: "${c.lastTimestamp.toString()}", id_gt: "${formatSubgraphId(c.lastId)}"`;
+
+    // Continue within the same timestamp by id, but also allow all later timestamps.
+    return `or: [
+        { blockTimestamp_gt: "${c.lastTimestamp.toString()}" },
+        {
+            and: [
+                { blockTimestamp: "${c.lastTimestamp.toString()}" },
+                { id_gt: "${formatSubgraphId(c.lastId)}" }
+            ]
+        }
+    ]`;
 }
 
 const queries = {
@@ -129,9 +138,14 @@ async function handleTokenGraduateds(rows: any[]) {
 
 async function handleTokenBoughts(rows: any[]) {
     for (const row of rows) {
-        const parsedMessage = parseMessageResponse(row)
-        TokenManager.broadCast(row.token, parsedMessage);
+        const parsedMessage = await parseMessageResponse(row)
+        const eventTimestamp = Number(row.blockTimestamp ?? Math.floor(Date.now() / 1000));
+        const changes = await TokenRPC.getMarketCapChanges(row.token, parsedMessage.marketCap, eventTimestamp);
+        Object.assign(parsedMessage, changes);
+
+        tokenManager?.broadCast(row.token, parsedMessage);
         TokenRPC.pushRedisEvent(row.token,parseRedisEvent(row , "buy"));
+        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
         console.log(
             JSON.stringify({
                 event: "TokenBought",
@@ -150,9 +164,14 @@ async function handleTokenBoughts(rows: any[]) {
 
 async function handleTokenSolds(rows: any[]) {
     for (const row of rows) {
-        const parsedMessage = parseMessageResponse(row)
-        TokenManager.broadCast(row.token, parsedMessage);
+        const parsedMessage = await parseMessageResponse(row)
+        const eventTimestamp = Number(row.blockTimestamp ?? Math.floor(Date.now() / 1000));
+        const changes = await TokenRPC.getMarketCapChanges(row.token, parsedMessage.marketCap, eventTimestamp);
+        Object.assign(parsedMessage, changes);
+
+        tokenManager?.broadCast(row.token, parsedMessage);
         TokenRPC.pushRedisEvent(row.token,parseRedisEvent(row , "sell"));
+        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
         console.log(
             JSON.stringify({
                 event: "TokenSold",
@@ -185,7 +204,7 @@ async function poll() {
     const entityNames = Object.keys(queries) as (keyof typeof queries)[];
 
     try {
-        await Promise.all(
+        const results = await Promise.allSettled(
             entityNames.map(async (entity) => {
                 const data = await gql<Record<string, any[]>>(
                     queries[entity](cursor[entity] as Cursor)
@@ -198,13 +217,15 @@ async function poll() {
                 const last = rows[rows.length - 1];
                 const lastTimestamp = BigInt(last.blockTimestamp ?? 0);
                 const lastId = parseSubgraphId(last.id);
-                if (rows.length === PAGE_SIZE) {
-                    cursor[entity] = { lastTimestamp, lastId };
-                } else {
-                    cursor[entity] = { lastTimestamp, lastId: 0n };
-                }
+                cursor[entity] = { lastTimestamp, lastId };
             })
         );
+
+        results.forEach((result, index) => {
+            if (result.status === "rejected") {
+                console.error(`[SubgraphPoller] ${entityNames[index]} processing error:`, result.reason);
+            }
+        });
     } catch (err) {
         console.error("[SubgraphPoller] poll error:", err);
     } finally {
@@ -238,7 +259,8 @@ async function fetchCursors(){
 
 
 
-export async function startSubgraphPoller() {
+export async function startSubgraphPoller(manager: TokenRPC) {
+    tokenManager = manager;
     if (!SUBGRAPH_URL) {
         console.error("[SubgraphPoller] SUBGRAPH_URL not set — poller disabled");
         return;

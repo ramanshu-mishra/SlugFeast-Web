@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "coin" ADD COLUMN     "ATHPrice" TEXT NOT NULL DEFAULT '5000';

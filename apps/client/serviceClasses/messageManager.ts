@@ -22,7 +22,7 @@ export class messageManager{
     private readonly apiKey: string | null = null;
     private reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null;
     private hasScheduledReconnect = false;
-
+    
 
      static  getMessageManager(){
         if(this._singleTon == null){

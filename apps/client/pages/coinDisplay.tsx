@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useGetCoins from "../hooks/useGetTokens"
 import { RotateCw } from "lucide-react"
 import { cn } from "../utility/cn";
@@ -9,10 +9,44 @@ import {motion} from "motion/react"
 import { useRouter } from "next/navigation";
 
 import { Coin } from "../interfaces/coinInterface";
+import { globalCoinDataManager } from "../serviceClasses/globalCoinDataManaget";
 
 export default function CoinDisplay() {
     const [page, setPage] = useState<number>(1);
     const { data, error, isLoading, refetch } = useGetCoins(page);
+    const client = useRef<globalCoinDataManager|null>(null);
+
+    useEffect(()=>{
+        const url = process.env.NEXT_PUBLIC_GLOBAL_WS_SERVER_URL as string;
+        const manager = globalCoinDataManager.getGlobalCoinDataManager(url);
+        client.current = manager;
+    },[]);
+
+    useEffect(()=>{
+        if (isLoading || error || !data?.coins?.length || !client.current) {
+            return;
+        }
+
+        const coinAddresses = data.coins.map((coin: Coin) => coin.address);
+
+        try {
+            client.current.subscribe(coinAddresses, false);
+        } catch (err) {
+            console.error("Failed to subscribe to coin updates", err);
+        }
+
+        return () => {
+            if (!client.current) {
+                return;
+            }
+
+            try {
+                client.current.unsubscribe(coinAddresses, false);
+            } catch (err) {
+                console.error("Failed to unsubscribe from coin updates", err);
+            }
+        };
+    }, [data, isLoading, error]);
     
     return (
         <>

@@ -1,8 +1,13 @@
 import { EventTypes } from "./eventsInterface"
 export interface MessageResponse{
-    marketCap: string,
     bondingCurveProgress: Number,
-    coinAddress: `0x${string}`,
+    marketCap: string,
+    currentPrice: string,
+    athPrice: string,
+    athProgress: string,
+
+    coinAddress: `0x${string}`
+
     change_5min?: Number,
     change_15min?: Number,
     change_30min?: Number,
@@ -12,6 +17,7 @@ export interface MessageResponse{
     change_1M?: Number,
     change_1Y?: Number
 }
+
 
 
 export interface polledData{
@@ -25,6 +31,12 @@ export interface polledData{
     txHash: BigInt,
     internal_id: string,
     blockTimeStamp: string
+}
+
+export interface rawData{
+     token: `0x${string}`,
+     poolTokens: BigInt,
+     poolVETHs: BigInt,
 }
 
 export interface QueueData {

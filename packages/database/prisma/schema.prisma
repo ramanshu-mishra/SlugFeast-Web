@@ -53,6 +53,7 @@ model coin{
   description String
   TokenAmount String @default("800000000000000")
   VETHAmount String @default("4000000000000000000")
+  ATHPrice String @default("5000")
 
   user user @relation(fields: [userId], references: [publicKey])
   holdings holding[]

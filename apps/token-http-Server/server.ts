@@ -10,9 +10,10 @@ import "./routes/transactions.js";
 import "./routes/getHoldingPattern.js";
 import "./routes/fetchComments.js";
 import "./eventListeners/tokenDeployed.js";
+import "./routes/getCoinDisplayInfo.js";
 
 import { startSubgraphPoller } from "./eventListeners/subgraphPoller.js";
-import { startWsServer } from "./wsLayer/transactions.js";
+
 
 const app = express();
 app.use(express.json());

@@ -11,3 +11,4 @@ export function parseRedisEvent(data: polledData, event: "buy"|"sell"): QueueDat
     }
     return parsedEvent;
 }
+
