@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0x57545b2B8b55a59B28F88837a70D036AC624ea2B"
       abi: SlugDex
-      startBlock: 10588545 
+      startBlock: 10585834
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9

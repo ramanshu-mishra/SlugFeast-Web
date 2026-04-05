@@ -48,7 +48,7 @@ async function main(){
 
 
     wss.on("connection", async (ws: WebSocket, req: IncomingMessage)=>{
-    await validateConnection(ws, req);
+    await validateConnection(ws, req); // checking valid connection
 
     if(ws.readyState !== WebSocket.OPEN){
         return;
