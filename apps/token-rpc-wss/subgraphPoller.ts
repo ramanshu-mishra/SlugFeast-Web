@@ -138,14 +138,15 @@ async function handleTokenGraduateds(rows: any[]) {
 
 async function handleTokenBoughts(rows: any[]) {
     for (const row of rows) {
-        const parsedMessage = await parseMessageResponse(row)
+        const parsedMessage = await parseMessageResponse(row);
         const eventTimestamp = Number(row.blockTimestamp ?? Math.floor(Date.now() / 1000));
+        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
         const changes = await TokenRPC.getMarketCapChanges(row.token, parsedMessage.marketCap, eventTimestamp);
         Object.assign(parsedMessage, changes);
 
         tokenManager?.broadCast(row.token, parsedMessage);
         TokenRPC.pushRedisEvent(row.token,parseRedisEvent(row , "buy"));
-        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
+        
         console.log(
             JSON.stringify({
                 event: "TokenBought",

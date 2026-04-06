@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { router } from "./SingleRouter";
 import { prisma } from "@repo/database/client";
+import { isAddress } from "ethers";
 
 interface MessageResponse{
-    bondingCurveProgress: Number,
+    bondingCurveProgress: number,
     marketCap: string,
     currentPrice: string,
     athPrice: string,
@@ -12,20 +13,27 @@ interface MessageResponse{
 }
 
 
+
+
 router.get("/getInfo/:coinAddress", async (req:Request, res:Response)=>{
     try {
-        const coinAdress = req.params.coinAddress;
+        const coinAddressParam = req.params.coinAddress;
+        const rawAddress = (Array.isArray(coinAddressParam) ? (coinAddressParam[0] ?? "") : (coinAddressParam ?? "")).trim();
+
+        if (!isAddress(rawAddress)) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid coin address"
+            });
+            return;
+        }
+
+        const coinAddress = rawAddress.toLowerCase() as `0x${string}`;
 
         // fetching the poolData from db
         const poolData = await prisma.coin.findFirst({
             where:{
-                address: coinAdress as string
-            },
-            select:{
-                // @ts-ignore
-                TokenAmount: true,
-                VETHAmount: true,
-                ATHPrice: true
+                address: coinAddress
             }
         });
 
@@ -37,13 +45,16 @@ router.get("/getInfo/:coinAddress", async (req:Request, res:Response)=>{
             return;
         }
 
-        const messageRes = parseMessageResponse({
-            // @ts-ignore
-            poolTokens: poolData.TokenAmount ,
-            // @ts-ignore
-            VETH: poolData.VETHAmount,
-            token: coinAdress as `0x${string}`
-        })
+        const poolTokens = String((poolData as any).TokenAmount ?? "0");
+        const vethAmount = String((poolData as any).VETHAmount ?? "0");
+        const athPrice = String((poolData as any).ATHPrice ?? "0");
+
+        const messageRes = await parseMessageResponse({
+            poolTokens,
+            VETH: vethAmount,
+            athPrice,
+            token: coinAddress
+        });
         
         res.status(200).json({
             success: true,
@@ -71,11 +82,15 @@ const totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6;
 
 
 function getBondingCurveProgress(tokenInPool: number){
+    if (!Number.isFinite(tokenInPool) || tokenInPool < 0 || totalPoolTokens <= 0) {
+        return "0.00";
+    }
+
     const progress = (((totalPoolTokens - tokenInPool) / totalPoolTokens) * 100).toFixed(2);
     return progress;
 }
 
-function getMarketCap(tokenInPool: Number, VETHinPool: Number){
+function getMarketCap(tokenInPool: number, VETHinPool: number){
     const priceOfToken = getPrice(tokenInPool, VETHinPool);
     if (priceOfToken === 0) {
         return "0";
@@ -85,7 +100,7 @@ function getMarketCap(tokenInPool: Number, VETHinPool: Number){
     return marketCap.toFixed(6);
 }
 
-function getPrice(tokenInPool: Number, VETHinPool: Number){
+function getPrice(tokenInPool: number, VETHinPool: number){
     const token = Number(tokenInPool);
     const veth = Number(VETHinPool);
 
@@ -99,30 +114,19 @@ function getPrice(tokenInPool: Number, VETHinPool: Number){
 
 
 export async function parseMessageResponse(data: {
-    poolTokens: Number,
-    VETH: Number,
+    poolTokens: string,
+    VETH: string,
+    athPrice: string,
     token: `0x${string}`
 }){
-    const mc = getMarketCap(Number(data.poolTokens), Number(data.VETH));
-    const bcprogress = getBondingCurveProgress(Number(data.poolTokens));
+    const poolTokens = Number(data.poolTokens);
+    const veth = Number(data.VETH);
+    const athPrice = Number(data.athPrice);
 
-    const athPrice = await prisma.coin.findFirst({
-        where:{
-            address: data.token 
-        },
-        select:{
-            // @ts-ignore
-            ATHPrice: true
-        }
-    })
-
-    if(!athPrice){
-        throw new Error("Coin not found");
-    }
-
-    const currentPrice = getPrice(data.poolTokens, data.VETH);
-    // @ts-ignore
-    const athProgress = ((Number(currentPrice)/Number(athPrice.ATHPrice))*100).toFixed(6);
+    const mc = getMarketCap(poolTokens, veth);
+    const bcprogress = getBondingCurveProgress(poolTokens);
+    const currentPrice = getPrice(poolTokens, veth);
+    const athProgress = athPrice > 0 ? ((currentPrice / athPrice) * 100).toFixed(6) : "0.000000";
 
 
     const message : MessageResponse = {
@@ -131,8 +135,7 @@ export async function parseMessageResponse(data: {
         coinAddress: data.token,
         currentPrice: currentPrice.toString(),
         athProgress,
-        // @ts-ignore
-        athPrice: athPrice.ATHPrice
+        athPrice: Number.isFinite(athPrice) ? athPrice.toString() : "0"
     
     }
 

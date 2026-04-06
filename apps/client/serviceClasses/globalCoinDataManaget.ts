@@ -1,7 +1,8 @@
 
 import {ActionEnum, EventType, TransactionEvents } from "@repo/wss-utilities/enums";
 import type EventTypes from "@repo/wss-utilities/enums";
-import { messageResponse } from "@repo/messaging/interfaces";
+import { MessageResponse } from "../components/athBar";
+
 
 
 
@@ -10,7 +11,7 @@ export class globalCoinDataManager{
     private static _singleton:globalCoinDataManager|null = null;
     private static client:WebSocket|null = null;
     private static  apiKey: string;
-    private listeners: Map<string, Set<(m:messageResponse)=>void>> = new Map();
+    private listeners: Map<string, Set<(m:MessageResponse)=>void>> = new Map();
 
     static getGlobalCoinDataManager(url:string){
         if(!this._singleton){
@@ -76,7 +77,7 @@ export class globalCoinDataManager{
         const client = globalCoinDataManager.client;
         client.onmessage = (event: MessageEvent) => {
             const payload = event.data;
-
+            
             try {
                 const parsed = JSON.parse(payload);
                 console.log("New message:", parsed);
@@ -94,16 +95,20 @@ export class globalCoinDataManager{
     }
 
 
-    addListener(coinAddress:`0x${string}`,callback: (m:messageResponse)=>void){
+    addListener(coinAddress:`0x${string}`,callback: (m:MessageResponse)=>void){
         let st = this.listeners.get(coinAddress);
         if(!st){
             st = new Set();
             this.listeners.set(coinAddress, st);
         }
         st.add(callback);
+
+        return ()=>{
+            this.removeListener(coinAddress, callback);
+        }
     }
 
-    removeListener(coinAddress: `0x${string}` ,callback: (m:messageResponse)=>void){
+    removeListener(coinAddress: `0x${string}` ,callback: (m:MessageResponse)=>void){
        const st = this.listeners.get(coinAddress);
        if(!st)return;
        st.delete(callback);

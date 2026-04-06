@@ -1,5 +1,6 @@
 import { MessageResponse, rawData} from "../interfaces/messageInterface";
 import {prisma} from "@repo/database/client";
+import { RedisClient } from "../server";
 
 const totalPoolTokens = Number(process.env.POOL_TOKENS_UNLOCKED) || 800*10**6*10**6;
 const totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6; 
@@ -38,8 +39,12 @@ function getPrice(tokenInPool: Number, VETHinPool: Number){
 export async function parseMessageResponse(data: rawData){
     const mc = getMarketCap(Number(data.poolTokens), Number(data.poolVETHs));
     const bcprogress = getBondingCurveProgress(Number(data.poolTokens));
+    const currentPrice = getPrice(Number(data.poolTokens), Number(data.poolVETHs));
 
-    const athPrice = await prisma.coin.findFirst({
+    let ATHprice = await getATHfromRedis(data.token);
+    let athPriceRes:any;
+    if(!ATHprice){
+        athPriceRes = await prisma.coin.findFirst({
         where:{
             address: data.token
         },
@@ -50,13 +55,17 @@ export async function parseMessageResponse(data: rawData){
     });
 
 
-    if(!athPrice){
+        if(!athPriceRes){
         throw new Error("Coin not found");
-    }
+        }
+        ATHprice = Math.max(Number(athPriceRes.ATHPrice), currentPrice).toString();
 
-    const currentPrice = getPrice(Number(data.poolTokens), Number(data.poolVETHs));
+        await RedisClient.hSet("ATHPrice", data.token, athPriceRes.ATHPrice);
+    }
+    
+    
     // @ts-ignore
-    const athProgress = ((Number(currentPrice)/Number(athPrice.ATHPrice))*100).toFixed(6);
+    const athProgress = ((Number(currentPrice) / Number(ATHprice ?? athPriceRes?.ATHPrice)) * 100).toFixed(6);
     
 
     const message : MessageResponse = {
@@ -66,17 +75,20 @@ export async function parseMessageResponse(data: rawData){
         athProgress,
         currentPrice: currentPrice.toString(),
         // @ts-ignore
-        athPrice: athPrice.ATHPrice
+        athPrice: String(Number(ATHprice ?? athPriceRes?.ATHPrice))
     }
 
     return message;
 }
 
-
-
-function getDataChange(){
-    
+async function getATHfromRedis(coinAddress: `0x${string}`){
+    const ath = await RedisClient.hGet("ATHPrice", coinAddress);
+    return ath;
 }
+
+
+
+
 
 
 
