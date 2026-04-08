@@ -44,8 +44,8 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
     const [clampedPercentage, setClampedPercentage] = useState(0);
     const [mc, setMc] = useState(4);
     const {usd, conversionError, conversionLoading} = useGetUSDPrice(mc);
-    const [change_1h, setChange_1h] = useState(0);
-    const [change_5m, setChange_5m] = useState(0);
+    const [change_1h, setChange_1h] = useState<number|null>(null);
+    const [change_5m, setChange_5m] = useState<number|null>(null);
 
      const client = useRef<globalCoinDataManager|null>(null);
 
@@ -86,11 +86,11 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
 
 
     return (
-        <div className="flex gap-1">
-            <div>MC</div>
-            <motion.div className="shake">{formatUSDCompact(usd?.usdValue ?? 0)}</motion.div>
+        <div className="flex gap-1 items-center">
+            <div className="text-[0.8rem] text-neutral-400">MC</div>
+            <motion.div className="shake text-[0.8rem]">{formatUSDCompact(usd?.usdValue ?? 0)}</motion.div>
             <ATHCurve clampedPercentage={clampedPercentage}></ATHCurve>
-            <div></div>
+            <div className="w-20 flex justify-center text-[0.8rem]"> {change_5m ? change_5m : ""} </div>
         </div>
     )
 })

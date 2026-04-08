@@ -1,7 +1,8 @@
 import WebSocket from "ws";
-import { MessageResponse, QueueData } from "./interfaces/messageInterface";
+import { MessageResponse, polledData, QueueData, rawData } from "./interfaces/messageInterface";
 import {RedisClientType} from "redis";
 import { parseMessageResponse } from "./utilities/parseMessageResponse";
+import {prisma} from "@repo/database/client";
 
 
 
@@ -34,9 +35,12 @@ export class TokenRPC{
    private subscribedAll = new Set<WebSocket>;
    private static singleTon:TokenRPC|null = null;
    private static redisClient: RedisClientType|null;
-    private static loopStarted = false;
-    private static loopInProgress = false;
-    private static loopIntervalMs = Number(process.env.LOOP_INTERVAL_MS) || 3000;
+   private static loopStarted = false;
+   private static loopInProgress = false;
+   private static loopIntervalMs = Number(process.env.LOOP_INTERVAL_MS) || 3000;
+   private totalPoolTokens = Number(process.env.POOL_TOKENS_UNLOCKED) || 800*10**6*10**6;
+   private totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6; 
+    
   
 
     static getTokenRPC(redisClient: RedisClientType){
@@ -67,7 +71,8 @@ export class TokenRPC{
                     coinAddresses.map(async (coinAddress) => {
                         const raw = await redisClient.hGet(EVENT_KEY, coinAddress);
                         if (!raw) return;
-
+                        console.log("we got some raw: ", raw);
+                        
                         let event: QueueData;
                         try {
                             event = JSON.parse(raw) as QueueData;
@@ -86,6 +91,9 @@ export class TokenRPC{
                         Object.assign(message, changes);
 
                         this.broadCast(coinAddress, message);
+
+                        
+                        
                     })
                 );
             } catch (error) {
@@ -93,6 +101,8 @@ export class TokenRPC{
             } finally {
                 TokenRPC.loopInProgress = false;
             }
+            // const keys = await (TokenRPC.redisClient as RedisClientType).hKeys(EVENT_KEY);
+            // console.log(keys);
         }, TokenRPC.loopIntervalMs);
    }
 
@@ -141,10 +151,33 @@ export class TokenRPC{
         this.subscribedAll.delete(ws);
    }
 
+   async updateClients(row:any){
+        const parsedMessage = await parseMessageResponse(row);
+        const eventTimestamp = Number(row.blockTimestamp ?? Math.floor(Date.now() / 1000));
+        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
+        const changes = await TokenRPC.getMarketCapChanges(row.token, parsedMessage.marketCap, eventTimestamp);
+        Object.assign(parsedMessage, changes);
+        
+        this.broadCast(row.token, parsedMessage);
+        TokenRPC.pushRedisEvent(row.token, this.parseRedisEvent(row , "sell"));
+   }
+
    static pushRedisEvent(coinAddress: `0x${string}`, event: QueueData ){
     if(!this.redisClient)return;
         this.redisClient.hSet(EVENT_KEY, coinAddress, JSON.stringify(event));
         console.log("pushed to redis ", coinAddress, event);
+   }
+
+
+   private parseRedisEvent(data: polledData, event: "buy"|"sell"): QueueData{
+       const parsedEvent: QueueData = {
+           event,
+           coinAddress: data.token,
+           poolTokens: Number(data.poolTokens),
+           poolVETHs: Number(data.poolVETHs),
+           blockTimeStamp: data.blockTimeStamp
+       }
+       return parsedEvent;
    }
 
    static pushMarketCap(
@@ -225,6 +258,84 @@ export class TokenRPC{
 
     return changes;
    }
+
+   private  async parseMessageResponse(data: rawData){
+     const mc = this.getMarketCap(Number(data.poolTokens), Number(data.poolVETHs));
+    const bcprogress = this.getBondingCurveProgress(Number(data.poolTokens));
+    const currentPrice = this.getPrice(Number(data.poolTokens), Number(data.poolVETHs));
+
+    let ATHprice = await this.getATHfromRedis(data.token);
+    let athPriceRes:any;
+    if(!ATHprice){
+        athPriceRes = await prisma.coin.findFirst({
+        where:{
+            address: data.token
+        },
+        select:{
+            // @ts-ignore
+            ATHPrice: true
+        }
+    });
+
+
+        if(!athPriceRes){
+        throw new Error("Coin not found");
+        }
+        ATHprice = Math.max(Number(athPriceRes.ATHPrice), currentPrice).toString();
+
+        await (TokenRPC.redisClient as RedisClientType).hSet("ATHPrice", data.token, athPriceRes.ATHPrice);
+    }
+    
+    
+    // @ts-ignore
+    const athProgress = ((Number(currentPrice) / Number(ATHprice ?? athPriceRes?.ATHPrice)) * 100).toFixed(6);
+    
+
+    const message : MessageResponse = {
+        bondingCurveProgress: Number(bcprogress),
+        marketCap: mc,
+        coinAddress: data.token,
+        athProgress,
+        currentPrice: currentPrice.toString(),
+        // @ts-ignore
+        athPrice: String(Number(ATHprice ?? athPriceRes?.ATHPrice))
+    }
+
+    return message;
+   }
+
+
+    getBondingCurveProgress(tokenInPool: number){
+    const progress = (((this.totalPoolTokens - tokenInPool) / this.totalPoolTokens) * 100).toFixed(2);
+    return progress;
+}
+    private getMarketCap(tokenInPool: Number, VETHinPool: Number){
+    const priceOfToken = this.getPrice(tokenInPool, VETHinPool);
+    if (priceOfToken === 0) {
+        return "0";
+    }
+
+    const marketCap = priceOfToken * this.totalTokens;
+    return marketCap.toFixed(6);
+}
+
+  getPrice(tokenInPool: Number, VETHinPool: Number){
+    const token = Number(tokenInPool);
+    const veth = Number(VETHinPool);
+
+    if (!Number.isFinite(token) || !Number.isFinite(veth) || token <= 0) {
+        return 0;
+    }
+
+    const price = veth / token;
+    return Number.isFinite(price) ? price : 0;
+}
+
+    private async getATHfromRedis(coinAddress: `0x${string}`){
+        if(!TokenRPC.redisClient)return 0;
+    const ath = await (TokenRPC.redisClient as RedisClientType).hGet("ATHPrice", coinAddress);
+    return ath;
+}
 }
 
 
