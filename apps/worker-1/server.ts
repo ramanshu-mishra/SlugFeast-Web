@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import { updateCoinPool } from "./routes/updateCoinPool";
+import "dotenv/config";
 
 const EVENTS_HASH_KEY = "events";
 

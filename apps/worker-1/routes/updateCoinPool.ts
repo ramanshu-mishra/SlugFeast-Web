@@ -2,6 +2,8 @@ import { prisma } from "@repo/database/client";
 import { QueueData } from "../interfaces/queueData";
 import {client} from "../server";
 
+const REDIS_ATH_KEY = process.env.REDIS_ATH_KEY || "ATHPrice";
+
 export async function updateCoinPool(data: Map<string, string>): Promise<void> {
     if (data.size === 0) {
         return;
@@ -38,7 +40,8 @@ export async function updateCoinPool(data: Map<string, string>): Promise<void> {
                 } as any,
             });
 
-            await client.hSet("ATHPrice", parsed.coinAddress, nextAthPrice.toString()); //setting the athprice to be accessed by token-rpc-wss
+            await client.hSet(REDIS_ATH_KEY, parsed.coinAddress, nextAthPrice.toString()); //setting the athprice to be accessed by token-rpc-wss
+            console.log(`${REDIS_ATH_KEY} updated`);
         }
     });
 }

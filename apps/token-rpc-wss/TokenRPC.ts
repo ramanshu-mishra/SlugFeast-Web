@@ -1,13 +1,16 @@
 import WebSocket from "ws";
 import { MessageResponse, polledData, QueueData, rawData } from "./interfaces/messageInterface";
 import {RedisClientType} from "redis";
-import { parseMessageResponse } from "./utilities/parseMessageResponse";
 import {prisma} from "@repo/database/client";
+import { RedisClient } from "./server";
 
 
 
 const EVENT_KEY = process.env.REDIS_EVENT_KEY ?? "events";
 const MARKET_CAP_ZSET_PREFIX = process.env.REDIS_MARKET_CAP_ZSET_PREFIX ?? "marketcap";
+const REDIS_ATH_KEY = process.env.REDIS_ATH_KEY ?? "ATHKey";
+
+const REDIS_TOKEN_POOL = process.env.REDIS_TOKEN_POOL_KEY ?? "TOKEN_POOL"
 
 type ChangeKey =
     | "change_5min"
@@ -69,24 +72,49 @@ export class TokenRPC{
 
                 await Promise.all(
                     coinAddresses.map(async (coinAddress) => {
-                        const raw = await redisClient.hGet(EVENT_KEY, coinAddress);
-                        if (!raw) return;
-                        console.log("we got some raw: ", raw);
+                        const latest = await TokenRPC.getLatestMarketCapPoint(coinAddress);
+                        if (!latest) return;
+
+                        const marketCap = latest.marketCap;
+                        const marketCapNumber = Number(marketCap);
+                        if (!Number.isFinite(marketCapNumber) || marketCapNumber <= 0) return;
+
+                        const tokenPool = await TokenRPC.getTokenPool(coinAddress);
+                        const poolTokens = Number(tokenPool?.poolTokens);
+                        const poolVETHs = Number(tokenPool?.poolVETHs);
+
+                        const currentPrice = Number.isFinite(poolTokens)
+                            && Number.isFinite(poolVETHs)
+                            && poolTokens > 0
+                            ? this.getPrice(poolTokens, poolVETHs)
+                            : marketCapNumber / this.totalTokens;
+
+                        const bondingCurveProgress = Number.isFinite(poolTokens) && poolTokens > 0
+                            ? Number(this.getBondingCurveProgress(poolTokens))
+                            : 0;
+
+                        const athFromRedis = await this.getATHfromRedis(coinAddress);
+                        const athPriceNumber = Number(athFromRedis);
+                        const athPrice = Number.isFinite(athPriceNumber) && athPriceNumber > 0
+                            ? athPriceNumber
+                            : currentPrice;
+
+                        const athProgress = athPrice > 0
+                            ? ((currentPrice / athPrice) * 100).toFixed(6)
+                            : "0.000000";
+
+                        const message: MessageResponse = {
+                            bondingCurveProgress,
+                            marketCap,
+                            currentPrice: currentPrice.toString(),
+                            athPrice: athPrice.toString(),
+                            athProgress,
+                            coinAddress,
+                        };
                         
-                        let event: QueueData;
-                        try {
-                            event = JSON.parse(raw) as QueueData;
-                        } catch {
-                            return;
-                        }
+                        
 
-                        const message = await parseMessageResponse({
-                            token: coinAddress,
-                            poolTokens: BigInt(event.poolTokens as unknown as string | number | bigint),
-                            poolVETHs: BigInt(event.poolVETHs as unknown as string | number | bigint),
-                        });
-
-                        const eventTimestamp = Number(event.blockTimeStamp || Math.floor(Date.now() / 1000));
+                        const eventTimestamp = Math.floor(Date.now() / 1000);
                         const changes = await TokenRPC.getMarketCapChanges(coinAddress, message.marketCap, eventTimestamp);
                         Object.assign(message, changes);
 
@@ -101,8 +129,6 @@ export class TokenRPC{
             } finally {
                 TokenRPC.loopInProgress = false;
             }
-            // const keys = await (TokenRPC.redisClient as RedisClientType).hKeys(EVENT_KEY);
-            // console.log(keys);
         }, TokenRPC.loopIntervalMs);
    }
 
@@ -151,15 +177,16 @@ export class TokenRPC{
         this.subscribedAll.delete(ws);
    }
 
-   async updateClients(row:any){
-        const parsedMessage = await parseMessageResponse(row);
+   async updateClients(row:any, event: "buy"|"sell"){
+        const parsedMessage = await this.parseMessageResponse(row);
         const eventTimestamp = Number(row.blockTimestamp ?? Math.floor(Date.now() / 1000));
-        TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
+       await TokenRPC.pushMarketCap(row.token, parsedMessage.marketCap, eventTimestamp, row.transactionHash);
+       await TokenRPC.pushTokenPool(row.token,row.poolTokens,row.poolVETHs);
         const changes = await TokenRPC.getMarketCapChanges(row.token, parsedMessage.marketCap, eventTimestamp);
         Object.assign(parsedMessage, changes);
         
         this.broadCast(row.token, parsedMessage);
-        TokenRPC.pushRedisEvent(row.token, this.parseRedisEvent(row , "sell"));
+        TokenRPC.pushRedisEvent(row.token, this.parseRedisEvent(row , event));
    }
 
    static pushRedisEvent(coinAddress: `0x${string}`, event: QueueData ){
@@ -180,7 +207,7 @@ export class TokenRPC{
        return parsedEvent;
    }
 
-   static pushMarketCap(
+    private static async pushMarketCap(
     coinAddress: `0x${string}`,
     marketCap: string,
     timestamp: number,
@@ -190,21 +217,45 @@ export class TokenRPC{
 
     const key = `${MARKET_CAP_ZSET_PREFIX}:${coinAddress.toLowerCase()}`;
     const value = JSON.stringify({ marketCap, txHash: txHash ?? null });
-    this.redisClient.zAdd(key, [{ score: timestamp, value }]);
+     await this.redisClient.zAdd(key, [{ score: timestamp, value }]);
    }
 
-   private static async getFirstMarketCapInWindow(
+   private static async getLatestMarketCapPoint(
+    coinAddress: `0x${string}`
+   ): Promise<{ marketCap: string; timestamp: number } | null> {
+    if (!this.redisClient) return null;
+
+    const key = `${MARKET_CAP_ZSET_PREFIX}:${coinAddress.toLowerCase()}`;
+    const rows = await this.redisClient.sendCommand(["ZREVRANGE", key, "0", "0", "WITHSCORES"]);
+    const member = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+    const score = Array.isArray(rows) && rows.length > 1 ? rows[1] : null;
+    if (!member || typeof member !== "string" || !score) return null;
+
+    try {
+        const parsed = JSON.parse(member) as { marketCap?: string };
+        const cap = Number(parsed.marketCap);
+        if (!Number.isFinite(cap) || cap <= 0) return null;
+
+        const timestamp = Math.floor(Number(score));
+        if (!Number.isFinite(timestamp) || timestamp <= 0) return null;
+
+        return { marketCap: cap.toFixed(6), timestamp };
+    } catch {
+        return null;
+    }
+   }
+
+   private static async getMarketCapAtOrBefore(
     key: string,
-    startTimestamp: number,
-    endTimestamp: number
+    timestamp: number
    ): Promise<number | null> {
     if (!this.redisClient) return null;
 
     const rows = await this.redisClient.sendCommand([
-        "ZRANGEBYSCORE",
+        "ZREVRANGEBYSCORE",
         key,
-        startTimestamp.toString(),
-        endTimestamp.toString(),
+        timestamp.toString(),
+        "-inf",
         "LIMIT",
         "0",
         "1",
@@ -246,8 +297,8 @@ export class TokenRPC{
     const key = `${MARKET_CAP_ZSET_PREFIX}:${coinAddress.toLowerCase()}`;
 
     for (const window of CHANGE_WINDOWS) {
-        const windowStart = timestamp - window.seconds;
-        const baseline = await this.getFirstMarketCapInWindow(key, windowStart, timestamp);
+        const boundaryTimestamp = timestamp - window.seconds;
+        const baseline = await this.getMarketCapAtOrBefore(key, boundaryTimestamp);
         if (!baseline) continue;
 
         const pct = ((current - baseline) / baseline) * 100;
@@ -283,7 +334,7 @@ export class TokenRPC{
         }
         ATHprice = Math.max(Number(athPriceRes.ATHPrice), currentPrice).toString();
 
-        await (TokenRPC.redisClient as RedisClientType).hSet("ATHPrice", data.token, athPriceRes.ATHPrice);
+        await (TokenRPC.redisClient as RedisClientType).hSet(REDIS_ATH_KEY, data.token, athPriceRes.ATHPrice);
     }
     
     
@@ -333,9 +384,32 @@ export class TokenRPC{
 
     private async getATHfromRedis(coinAddress: `0x${string}`){
         if(!TokenRPC.redisClient)return 0;
-    const ath = await (TokenRPC.redisClient as RedisClientType).hGet("ATHPrice", coinAddress);
+    const ath = await (TokenRPC.redisClient as RedisClientType).hGet(REDIS_ATH_KEY, coinAddress);
     return ath;
 }
+
+    private static async pushTokenPool(coinAddress: `0x${string}`, poolTokens: string | number | bigint, poolVETHs: string | number | bigint){
+        if (!TokenRPC.redisClient) return;
+        await (TokenRPC.redisClient as RedisClientType).hSet(REDIS_TOKEN_POOL, coinAddress, JSON.stringify({
+            poolTokens: poolTokens,
+            poolVETHs: poolVETHs
+        }))
+    }
+
+    private static async getTokenPool(coinAddress: `0x${string}`): Promise<{ poolTokens: string | number; poolVETHs: string | number } | null> {
+        if (!TokenRPC.redisClient) return null;
+
+        const raw = await (TokenRPC.redisClient as RedisClientType).hGet(REDIS_TOKEN_POOL, coinAddress);
+        if (!raw) return null;
+
+        try {
+            const parsed = JSON.parse(raw) as { poolTokens?: string | number; poolVETHs?: string | number };
+            if (parsed.poolTokens == null || parsed.poolVETHs == null) return null;
+            return { poolTokens: parsed.poolTokens, poolVETHs: parsed.poolVETHs };
+        } catch {
+            return null;
+        }
+    }
 }
 
 

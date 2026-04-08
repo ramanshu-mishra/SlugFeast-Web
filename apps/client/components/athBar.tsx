@@ -1,10 +1,11 @@
 "use client";
-import {motion} from "motion/react";
+import {motion, useAnimate} from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useFetchCoinDisplayInfo } from "../hooks/useFetchCoinDisplayInfo";
 import { memo } from "react";
 import { useGetUSDPrice } from "../hooks/useGetUSDPrice";
 import { globalCoinDataManager } from "../serviceClasses/globalCoinDataManaget";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 
 const formatUSDCompact = (value: number): string => {
@@ -46,6 +47,7 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
     const {usd, conversionError, conversionLoading} = useGetUSDPrice(mc);
     const [change_1h, setChange_1h] = useState<number|null>(null);
     const [change_5m, setChange_5m] = useState<number|null>(null);
+    const [scope, animate] = useAnimate();
 
      const client = useRef<globalCoinDataManager|null>(null);
 
@@ -63,6 +65,9 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
             setMc(marketCap);
             setChange_1h(_change_1h);
             setChange_5m(_change_5m);
+            setClampedPercentage(Number(athProgress.toFixed(4)));
+
+           
         });
 
         return ()=>unsubscribe();
@@ -81,35 +86,71 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
             
         }
         
-    }, [data, isLoading, error])
+    }, [data, isLoading, error]);
+
+
+    function shakeAnimation(){
+        animate(
+            "#marketCap",
+            {
+                x: [0, -4, 4, -3, 3, 0],
+                backgroundColor: ["var(--color-neutral-600)", "transparent"]
+            },
+            {
+                duration: 0.2,
+                ease: "linear",
+            }
+        );
+    }
+
+    useEffect(()=>{
+        shakeAnimation();
+    }, [usd?.usdValue])
 
 
 
     return (
-        <div className="flex gap-1 items-center">
-            <div className="text-[0.8rem] text-neutral-400">MC</div>
-            <motion.div className="shake text-[0.8rem]">{formatUSDCompact(usd?.usdValue ?? 0)}</motion.div>
-            <ATHCurve clampedPercentage={clampedPercentage}></ATHCurve>
-            <div className="w-20 flex justify-center text-[0.8rem]"> {change_5m ? change_5m : ""} </div>
+        <div ref={scope} className="flex gap-1 items-center">
+            <motion.div  className="text-[0.8rem] text-neutral-400 ">MC</motion.div>
+            <motion.div  id="marketCap" className=" text-[0.8rem] " style={{
+                backgroundColor: "transparent"
+            }}>{formatUSDCompact(usd?.usdValue ?? 0)}</motion.div>
+            <ATHCurve clampedPercentage={clampedPercentage} change_5m={Number(change_5m? change_5m.toFixed(2) : 0)}></ATHCurve>
+            <motion.div className="w-20 flex justify-center items-center tracking-tight text-[0.8rem]"
+                style={change_5m  && change_5m > 0 ? {
+                    color: "var(--color-emerald-300)"
+                }:
+            {
+                color : "var(--color-red-400)"
+            }}
+            > 
+                
+                {change_5m  && change_5m > 0 ? <ArrowUp className="h-4"></ArrowUp> : <ArrowDown className="h-4"></ArrowDown>} {change_5m ? change_5m.toFixed(2) : "0"}% </motion.div>
         </div>
     )
 })
 
 
 
-const  ATHCurve = memo(({clampedPercentage }: {clampedPercentage: number})=>{
-
+const  ATHCurve = memo(({clampedPercentage, change_5m }: {clampedPercentage: number, change_5m : number})=>{
+    
+    const [pump,setPump] = useState(false);
+   
     useEffect(()=>{
-        console.log(clampedPercentage);
-    },[clampedPercentage])
+        const pmp = clampedPercentage >= 100 && change_5m > 0;
+        console.log(pmp);
+        setPump(pmp);
+    }, [clampedPercentage, change_5m])
+
+
     return (
-        <div className="rounded-full bg-gray-700 w-full h-2 overflow-hidden">
+        <div className="rounded-full bg-gray-700 w-full h-2 overflow-hidden  border border-neutral-700">
             <motion.div
-            style={clampedPercentage<=100 ? {
-                backgroundColor : "var(--color-emerald-400)"
+            style={pump ? {
+                backgroundColor : "var(--color-amber-400)"
             } : 
             {
-                backgroundColor : "var(--color-amber-400)"
+                backgroundColor : "var(--color-emerald-400)"
             }
         }
             className= "rounded-full h-full"

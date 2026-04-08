@@ -3,21 +3,29 @@ import {motion} from "motion/react"
 import { Coin } from "../interfaces/coinInterface";
 import { ATHBar } from "./athBar";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { Ribbon } from "./ribbon";
+import { useState, memo } from "react";
 
 
 
 
 
 
-export function CoinCard({ coin, router }: { coin: Coin, router: AppRouterInstance }) {
+
+export const CoinCard = memo(({ coin, router }: { coin: Coin, router: AppRouterInstance })=>{
     const shortAddress = coin.userId.slice(0, 4) + "..." + coin.userId.slice(-4);
     
-   
+    const [hovered, setHovered] = useState(false);
 
 
 
     return (
-        <motion.div className="flex gap-3 rounded-md bg-muted basis-[23%] h-40 overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors mt-2 mb-2 "
+        <motion.div className="relative flex rounded-md bg-muted basis-[23%] h-40  cursor-pointer hover:bg-muted/80 transition-colors mt-2 mb-2"
+        onHoverStart={()=>setHovered(true)}
+        onHoverEnd={()=>setHovered(false)}
+        >
+            <motion.div className="flex gap-3 rounded-md bg-muted  h-full  overflow-hidden cursor-pointer hover:bg-muted/80 transition-colors  "
+        
         whileHover={{
             scale: 1.02
         }}
@@ -65,7 +73,37 @@ export function CoinCard({ coin, router }: { coin: Coin, router: AppRouterInstan
                 <p className="text-xs text-gray-500  whitespace-normal overflow-hidden">
                     {coin.description}
                 </p>
+                
+            
+                
+
+
+
             </div>
+            
+           
         </motion.div>
+        <motion.div 
+                style={hovered ? {
+                    display: "block",
+                  
+                }:{
+                    display: "none",
+                  
+                }}
+                className="absolute z-10 top-0 right-0"
+            >
+                 <Ribbon onClickHandler={()=>{
+
+                 }} ></Ribbon>
+            </motion.div>
+        </motion.div>
+        
+        
+        
+        
     )
 }
+)
+
+

@@ -18,10 +18,12 @@ export class globalCoinDataManager{
             this._singleton = new globalCoinDataManager();
             this.apiKey =  process.env.NEXT_PUBLIC_SLUGFEAST_API_KEY as string
             this.client = new WebSocket(url, [this.apiKey]);
-            this.init_handlers();
+            this._singleton.init_handlers();
         }
         return this._singleton;
     }
+
+    
 
     subscribe(coins?: string[], all?: boolean){ 
         if(!coins && !all){
@@ -69,7 +71,7 @@ export class globalCoinDataManager{
     }
 
 
-    private static init_handlers(){
+    private  init_handlers(){
         if(!globalCoinDataManager.client){
             throw new Error("WS Client is not initialized");
         }
@@ -79,12 +81,16 @@ export class globalCoinDataManager{
             const payload = event.data;
             
             try {
-                const parsed = JSON.parse(payload);
-                console.log("New message:", parsed);
-                return;
-            } catch {
-                console.log("New message:", payload);
-                return;
+                const parsed = JSON.parse(payload) as MessageResponse;
+                console.log(`[New message] `, parsed);
+                const coinAddress = parsed.coinAddress;
+                const callbacks = this.listeners.get(coinAddress);
+                if(!callbacks){
+                    throw new Error("[stale data] Unsubscribed Coin data "); 
+                }
+                callbacks.forEach(callback => callback(parsed));
+            } catch(e) {
+                console.log(`[handler error] ${e}`);
             }
           
         };

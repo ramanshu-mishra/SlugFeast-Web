@@ -1,9 +1,6 @@
 import { prisma } from "@repo/database/client";
-import { EventType, TransactionEvents } from "./share/enum.js";
 import { TokenRPC } from "./TokenRPC.js";
-import { parseMessageResponse } from "./utilities/parseMessageResponse.js";
-import { parseRedisEvent } from "./utilities/parseRedisEvent.js";
-import { polledData } from "./interfaces/messageInterface.js";
+
 
 let tokenManager: TokenRPC | null = null;
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
@@ -138,7 +135,7 @@ async function handleTokenGraduateds(rows: any[]) {
 
 async function handleTokenBoughts(rows: any[]) {
     for (const row of rows) {
-        tokenManager?.updateClients(row);
+        await tokenManager?.updateClients(row, "buy");
         console.log(
             JSON.stringify({
                 event: "TokenBought",
@@ -157,7 +154,7 @@ async function handleTokenBoughts(rows: any[]) {
 
 async function handleTokenSolds(rows: any[]) {
     for (const row of rows) {
-        await tokenManager?.updateClients(row);
+        await tokenManager?.updateClients(row, "sell");
         console.log(
             JSON.stringify({
                 event: "TokenSold",
@@ -169,6 +166,43 @@ async function handleTokenSolds(rows: any[]) {
                 poolVETHs: row.poolVETHs,
                 block: row.blockNumber,
                 txHash: row.transactionHash,
+            })
+        );
+    }
+}
+
+async function handleTrades(buyRows: any[], sellRows: any[]) {
+    const merged = [
+        ...buyRows.map((row) => ({ event: "buy" as const, row })),
+        ...sellRows.map((row) => ({ event: "sell" as const, row })),
+    ];
+
+    merged.sort((a, b) => {
+        const aTs = BigInt(a.row.blockTimestamp ?? 0);
+        const bTs = BigInt(b.row.blockTimestamp ?? 0);
+        if (aTs < bTs) return -1;
+        if (aTs > bTs) return 1;
+
+        const aId = parseSubgraphId(a.row.id);
+        const bId = parseSubgraphId(b.row.id);
+        if (aId < bId) return -1;
+        if (aId > bId) return 1;
+        return 0;
+    });
+
+    for (const trade of merged) {
+        await tokenManager?.updateClients(trade.row, trade.event);
+        console.log(
+            JSON.stringify({
+                event: trade.event === "buy" ? "TokenBought" : "TokenSold",
+                token: trade.row.token,
+                VETH: trade.row.VETH,
+                amount: trade.row.amount,
+                sender: trade.row.sender,
+                poolTokens: trade.row.poolTokens,
+                poolVETHs: trade.row.poolVETHs,
+                block: trade.row.blockNumber,
+                txHash: trade.row.transactionHash,
             })
         );
     }
@@ -190,28 +224,39 @@ async function poll() {
     const entityNames = Object.keys(queries) as (keyof typeof queries)[];
 
     try {
-        const results = await Promise.allSettled(
+        const dataByEntity = await Promise.all(
             entityNames.map(async (entity) => {
                 const data = await gql<Record<string, any[]>>(
                     queries[entity](cursor[entity] as Cursor)
                 );
-                const rows: any[] = data[entity] ?? [];
-                if (rows.length === 0) return;
-
-                await handlers[entity]?.(rows);
-
-                const last = rows[rows.length - 1];
-                const lastTimestamp = BigInt(last.blockTimestamp ?? 0);
-                const lastId = parseSubgraphId(last.id);
-                cursor[entity] = { lastTimestamp, lastId };
+                return { entity, rows: (data[entity] ?? []) as any[] };
             })
         );
 
-        results.forEach((result, index) => {
-            if (result.status === "rejected") {
-                console.error(`[SubgraphPoller] ${entityNames[index]} processing error:`, result.reason);
-            }
+        const rowsMap = new Map<CursorDbEntity, any[]>();
+        dataByEntity.forEach(({ entity, rows }) => {
+            rowsMap.set(entity as CursorDbEntity, rows);
         });
+
+        const graduatedRows = rowsMap.get("tokenGraduateds") ?? [];
+        if (graduatedRows.length > 0) {
+            await handlers.tokenGraduateds(graduatedRows);
+        }
+
+        const buyRows = rowsMap.get("tokenBoughts") ?? [];
+        const sellRows = rowsMap.get("tokenSolds") ?? [];
+        if (buyRows.length > 0 || sellRows.length > 0) {
+            await handleTrades(buyRows, sellRows);
+        }
+
+        for (const entity of entityNames) {
+            const rows = rowsMap.get(entity as CursorDbEntity) ?? [];
+            if (rows.length === 0) continue;
+            const last = rows[rows.length - 1];
+            const lastTimestamp = BigInt(last.blockTimestamp ?? 0);
+            const lastId = parseSubgraphId(last.id);
+            cursor[entity as CursorDbEntity] = { lastTimestamp, lastId };
+        }
     } catch (err) {
         console.error("[SubgraphPoller] poll error:", err);
     } finally {

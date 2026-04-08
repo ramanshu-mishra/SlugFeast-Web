@@ -5,7 +5,7 @@ import useGetCoins from "../hooks/useGetTokens"
 import { RotateCw } from "lucide-react"
 import { cn } from "../utility/cn";
 import Image from "next/image";
-import {motion} from "motion/react"
+import {motion} from "motion/react";
 import { useRouter } from "next/navigation";
 
 import { Coin } from "../interfaces/coinInterface";
