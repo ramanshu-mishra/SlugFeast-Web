@@ -8,6 +8,8 @@ export interface MessageResponse{
     athPrice: string,
     athPrice_usd:string,
     athProgress: string,
+    athCap: string,
+    athCap_usd : string,
 
     coinAddress: `0x${string}`
 

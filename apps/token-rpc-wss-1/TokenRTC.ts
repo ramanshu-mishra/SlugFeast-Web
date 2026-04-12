@@ -4,14 +4,18 @@ import {RedisClientType} from "redis";
 import {prisma} from "@repo/database/client";
 import { RedisClient } from "./server";
 import { fetchEthUsdConversion } from "./utilities/priceConversion";
+import Big from "big.js";
 
 
 
 const EVENT_KEY = process.env.REDIS_EVENT_KEY ?? "events";
 const MARKET_CAP_ZSET_PREFIX = process.env.REDIS_MARKET_CAP_ZSET_PREFIX ?? "marketcap";
-const REDIS_ATH_KEY = process.env.REDIS_ATH_KEY ?? "ATHKey";
+const REDIS_ATH_KEY = process.env.REDIS_ATH_KEY ?? "ATHPrice";
 
 const REDIS_TOKEN_POOL = process.env.REDIS_TOKEN_POOL_KEY ?? "TOKEN_POOL"
+const PRICE_SCALE_DIVISOR = new Big(10).pow(12);
+const ATH_SCALE_DIVISOR = new Big(10).pow(18);
+const WEI_SCALE = ATH_SCALE_DIVISOR;
 
 type ChangeKey =
     | "change_5min"
@@ -43,8 +47,8 @@ export class TokenRTC{
    private static loopStarted = false;
    private static loopInProgress = false;
    private static loopIntervalMs = Number(process.env.LOOP_INTERVAL_MS) || 3000;
-   private totalPoolTokens = Number(process.env.POOL_TOKENS_UNLOCKED) || 800*10**6*10**6;
-   private totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6; 
+    private totalPoolTokens = new Big(process.env.POOL_TOKENS_UNLOCKED ?? "800000000000000");
+    private totalTokens = new Big(process.env.POOL_TOKENS_TOTAL ?? "1000000000"); 
     
   
 
@@ -87,47 +91,69 @@ export class TokenRTC{
                         if (!latest) return;
 
                         const marketCap = latest.marketCap;
-                        const marketCapNumber = Number(marketCap);
-                        if (!Number.isFinite(marketCapNumber) || marketCapNumber <= 0) return;
+                        const marketCapWei = new Big(marketCap);
+                        if (marketCapWei.lte(0)) return;
 
                         const tokenPool = await TokenRTC.getTokenPool(coinAddress);
-                        const poolTokens = Number(tokenPool?.poolTokens);
-                        const poolVETHs = Number(tokenPool?.poolVETHs);
+                        let poolTokensBig: Big | null = null;
+                        let poolVETHsBig: Big | null = null;
 
-                        const currentPrice = Number.isFinite(poolTokens)
-                            && Number.isFinite(poolVETHs)
-                            && poolTokens > 0
-                            ? this.getPrice(poolTokens, poolVETHs)
-                            : marketCapNumber / this.totalTokens;
+                        try {
+                            if (tokenPool?.poolTokens != null && tokenPool?.poolVETHs != null) {
+                                poolTokensBig = new Big(String(tokenPool.poolTokens));
+                                poolVETHsBig = new Big(String(tokenPool.poolVETHs));
+                            }
+                        } catch {
+                            poolTokensBig = null;
+                            poolVETHsBig = null;
+                        }
 
-                        const bondingCurveProgress = Number.isFinite(poolTokens) && poolTokens > 0
-                            ? Number(this.getBondingCurveProgress(poolTokens))
+                        const currentPrice = poolTokensBig && poolVETHsBig
+                            && poolTokensBig.gt(0)
+                            && poolVETHsBig.gte(0)
+                            ? this.getPrice(poolTokensBig, poolVETHsBig)
+                            : new Big(marketCap).div(this.totalTokens);
+
+                        const bondingCurveProgress = poolTokensBig && poolTokensBig.gt(0)
+                            ? Number(this.getBondingCurveProgress(poolTokensBig))
                             : 0;
 
                         const athFromRedis = await this.getATHfromRedis(coinAddress);
-                        const athPriceNumber = Number(athFromRedis);
-                        const athPrice = Number.isFinite(athPriceNumber) && athPriceNumber > 0
-                            ? athPriceNumber
-                            : currentPrice;
+                        let athPriceWei: Big;
+                        try {
+                            const parsedWei = new Big(String(athFromRedis ?? "0"));
+                            athPriceWei = parsedWei.gt(0)
+                                ? parsedWei
+                                : currentPrice;
+                        } catch {
+                            athPriceWei = currentPrice;
+                        }
 
-                        const athProgress = athPrice > 0
-                            ? ((currentPrice / athPrice) * 100).toFixed(6)
+                        const athPriceEth = athPriceWei.div(ATH_SCALE_DIVISOR);
+
+                        const athProgress = athPriceWei.gt(0)
+                            ? currentPrice.div(athPriceWei).times(100).toFixed(6)
                             : "0.000000";
 
-                        const usd = await fetchEthUsdConversion(marketCapNumber ?? 0);
-                        const usd_ath = await fetchEthUsdConversion(Number(athPrice));
-                        const usd_curr = await fetchEthUsdConversion(Number(currentPrice));
+                        const usd = await fetchEthUsdConversion(Number(marketCapWei.div(WEI_SCALE).toString()));
+                        const usd_ath = await fetchEthUsdConversion(Number(athPriceEth.toString()));
+                        const usd_curr = await fetchEthUsdConversion(Number(currentPrice.div(WEI_SCALE).toString()));
+                        const athCap = athPriceWei.times(this.totalTokens).toString();
+                        const athCapEth = new Big(athCap).div(ATH_SCALE_DIVISOR);
+                        const athCap_usd = await fetchEthUsdConversion(Number(athCapEth.toString()));
 
                         const message: MessageResponse = {
                             bondingCurveProgress,
                             marketCap,
                             marketCap_usd: (usd ? usd.usdValue : 0).toString(),
                             currentPrice: currentPrice.toString(),
-                            athPrice: athPrice.toString(),
+                            athPrice: athPriceWei.toString(),
                             athProgress,
                             coinAddress,
                             currentPrice_usd: (usd_curr ? usd_curr.usdValue : 0).toString(),
-                            athPrice_usd : (usd_ath ? usd_ath.usdValue : 0).toString()
+                            athPrice_usd : (usd_ath ? usd_ath.usdValue : 0).toString(),
+                            athCap,
+                            athCap_usd : (athCap_usd ? athCap_usd.usdValue : 0).toString()
                         };
                         
                         
@@ -331,18 +357,25 @@ export class TokenRTC{
     return changes;
    }
 
-   private  async parseMessageResponse(data: rawData){
-    const mc = this.getMarketCap(Number(data.poolTokens), Number(data.poolVETHs));
-    const bcprogress = this.getBondingCurveProgress(Number(data.poolTokens));
-    const currentPrice = this.getPrice(Number(data.poolTokens), Number(data.poolVETHs));
+     private  async parseMessageResponse(data: rawData){
+        const tokenInPool = new Big(String(data.poolTokens ?? "0"));
+        const vethInPool = new Big(String(data.poolVETHs ?? "0"));
+        const mc = this.getMarketCap(tokenInPool, vethInPool);
+        const bcprogress = this.getBondingCurveProgress(tokenInPool);
+        const currentPrice = this.getPrice(tokenInPool, vethInPool);
 
-    let ATHprice = await this.getATHfromRedis(data.token);
-
-    // @ts-ignore
-    const athProgress = ((Number(currentPrice) / Number(ATHprice)) * 100).toFixed(6);
-    const usd = await fetchEthUsdConversion(Number(mc));
-    const usd_ath = await fetchEthUsdConversion(Number(ATHprice));
-    const usd_curr = await fetchEthUsdConversion(Number(currentPrice));
+        const athPriceRaw = await this.getATHfromRedis(data.token);
+        const athPriceWei = new Big(String(athPriceRaw ?? "0"));
+        const athPriceEth = athPriceWei.div(ATH_SCALE_DIVISOR);
+        const athProgress = athPriceWei.gt(0)
+            ? currentPrice.div(athPriceWei).times(100).toFixed(6)
+            : "0.000000";
+        const usd = await fetchEthUsdConversion(Number(new Big(mc).div(WEI_SCALE).toString()));
+        const usd_ath = await fetchEthUsdConversion(Number(athPriceEth.toString()));
+        const usd_curr = await fetchEthUsdConversion(Number(currentPrice.div(WEI_SCALE).toString()));
+        const athCap = athPriceWei.times(this.totalTokens).toString();
+        const athCapEth = new Big(athCap).div(ATH_SCALE_DIVISOR);
+        const athCap_usd = await fetchEthUsdConversion(Number(athCapEth.toString()));
 
     const message : MessageResponse = {
         bondingCurveProgress: Number(bcprogress),
@@ -353,39 +386,44 @@ export class TokenRTC{
         currentPrice: currentPrice.toString(),
 
         // @ts-ignore
-        athPrice: String(Number(ATHprice)),
+        athPrice: athPriceWei.toString(),
         currentPrice_usd: (usd_curr ? usd_curr.usdValue : 0).toString(),
-        athPrice_usd : (usd_ath ? usd_ath.usdValue : 0).toString()
+        athPrice_usd : (usd_ath ? usd_ath.usdValue : 0).toString(),
+        athCap,
+        athCap_usd: (athCap_usd ? athCap_usd.usdValue : 0).toString()
     }
 
     return message;
    }
 
 
-    getBondingCurveProgress(tokenInPool: number){
-    const progress = (((this.totalPoolTokens - tokenInPool) / this.totalPoolTokens) * 100).toFixed(2);
-    return progress;
+        getBondingCurveProgress(tokenInPool: Big){
+        if (tokenInPool.lt(0) || this.totalPoolTokens.lte(0)) {
+            return "0.00";
+        }
+
+        return this.totalPoolTokens
+            .minus(tokenInPool)
+            .div(this.totalPoolTokens)
+            .times(100)
+            .toFixed(2);
 }
-    private getMarketCap(tokenInPool: Number, VETHinPool: Number){
+        private getMarketCap(tokenInPool: Big, VETHinPool: Big){
     const priceOfToken = this.getPrice(tokenInPool, VETHinPool);
-    if (priceOfToken === 0) {
+        if (priceOfToken.eq(0)) {
         return "0";
     }
 
-    const marketCap = priceOfToken * this.totalTokens;
+        const marketCap = priceOfToken.times(this.totalTokens);
     return marketCap.toFixed(6);
 }
 
-  getPrice(tokenInPool: Number, VETHinPool: Number){
-    const token = Number(tokenInPool);
-    const veth = Number(VETHinPool);
-
-    if (!Number.isFinite(token) || !Number.isFinite(veth) || token <= 0) {
-        return 0;
+    getPrice(tokenInPool: Big, VETHinPool: Big){
+        if (tokenInPool.lte(0) || VETHinPool.lt(0)) {
+                return new Big(0);
     }
 
-    const price = (veth / token)/10**12;
-    return Number.isFinite(price) ? price : 0;
+        return VETHinPool.div(tokenInPool).mul(10**6);
 }
 
     private async getATHfromRedis(coinAddress: `0x${string}`){
@@ -398,6 +436,8 @@ export class TokenRTC{
         const res = await this.getATHfromDB(coinAddress);
         return res;
     }
+
+    return ath;
 }
 
     private async getATHfromDB(coinAddress: `0x${string}`){
@@ -411,13 +451,10 @@ export class TokenRTC{
             }
         });
 
-
-        // @ts-ignore
-        console.log("ath price for ", coinAddress, " is ", res?.ATHPrice);
-        // @ts-ignore
-        await (TokenRTC.redisClient as RedisClientType).hSet(REDIS_ATH_KEY, coinAddress, res?.ATHPrice);
-        // @ts-ignore
-        return res.ATHPrice;
+        const athPrice = String((res as any)?.ATHPrice ?? "0");
+        console.log("ath price for ", coinAddress, " is ", athPrice);
+        await (TokenRTC.redisClient as RedisClientType).hSet(REDIS_ATH_KEY, coinAddress, athPrice);
+        return athPrice;
     }
 
     private static async pushTokenPool(coinAddress: `0x${string}`, poolTokens: string | number | bigint, poolVETHs: string | number | bigint){

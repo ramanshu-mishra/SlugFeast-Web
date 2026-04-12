@@ -11,6 +11,7 @@ import "./routes/getHoldingPattern.js";
 import "./routes/fetchComments.js";
 import "./eventListeners/tokenDeployed.js";
 import "./routes/getCoinDisplayInfo.js";
+import "./routes/tradeEvents.js";
 
 import { startSubgraphPoller } from "./eventListeners/subgraphPoller.js";
 

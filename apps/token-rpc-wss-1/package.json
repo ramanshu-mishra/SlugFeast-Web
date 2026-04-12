@@ -12,6 +12,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@repo/wss-utilities": "*"
+    "@repo/wss-utilities": "*",
+    "@types/big.js": "^6.2.2",
+    "big.js": "^7.0.1"
   }
 }

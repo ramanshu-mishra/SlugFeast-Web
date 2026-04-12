@@ -198,7 +198,7 @@ export function Comments({coinAddress}:{coinAddress : `0x${string}`}){
     }, [sortOrder]);
 
     return (
-        <div>
+        <div className="h-full">
             <InputSection
                 userImage={userImage}
                 onSend={handleSendMessage}

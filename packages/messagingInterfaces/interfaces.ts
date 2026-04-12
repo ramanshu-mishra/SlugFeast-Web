@@ -42,7 +42,8 @@ export interface MessageResponse_TokenData{
     athPrice: string,
     athPrice_usd:string,
     athProgress: string,
-
+    athCap:string,
+    athCap_usd: string,
     coinAddress: `0x${string}`
 
     change_5min?: Number,
@@ -99,4 +100,8 @@ export interface TradePoint {
     marketCapEth: number;
     marketCapUsdt: number;
     volume: number;
-}
+    amountInToken: number;
+    amountInEth:number,
+    txnHash: string,
+    blockTimestamp: string
+}  

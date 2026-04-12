@@ -1,9 +1,11 @@
 "use client"
 
 import { motion } from "motion/react"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useGetTokenReserves from "../hooks/useGetTokenReserves"
 import { Spinner } from "./spinner";
+import { CoinRTCManager } from "../serviceClasses/coinRTCManager";
+import { MessageResponse_TokenData } from "@repo/messaging/interfaces";
 
 
 function calculateProgress(tokenReserves: number){
@@ -14,6 +16,8 @@ function calculateProgress(tokenReserves: number){
 }
 
 export function BondingCurve({address}:{address: `0x${string}`}){
+    const manager = useMemo(() => CoinRTCManager.getCoinRTCManager(), []);
+    const unsubscribeRef = useRef<null | (() => void)>(null);
     const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
     const tokenAddress = address;
     const {data, isLoading} = useGetTokenReserves({key: tokenAddress, address: contractAddress});
@@ -28,6 +32,26 @@ export function BondingCurve({address}:{address: `0x${string}`}){
         setPercent(per);
        
     }, [data]);
+
+     useEffect(()=>{
+            const unsubscribe = manager.add_coin_data_listener( address ,(x:MessageResponse_TokenData)=>{
+                const _percentage = Number(x.bondingCurveProgress);
+                setPercent(_percentage);
+            });
+    
+            unsubscribeRef.current = unsubscribe;
+        }, [manager, address]);
+    
+        useEffect(() => {
+            return () => {
+                if (unsubscribeRef.current) {
+                    unsubscribeRef.current();
+                    unsubscribeRef.current = null;
+                }
+            };
+        }, []);
+
+
 
     return (
         <div className="flex flex-col gap-2 h-fit bg-neutral-900 rounded-xl p-4">

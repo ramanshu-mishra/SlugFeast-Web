@@ -2,12 +2,13 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Comments } from "./comments";
+import { TradeHistory } from "./tradeHistory";
 
 export function Chat_n_Trade({coinAddress}:{coinAddress: `0x${string}`}){
     const [option, setOption] = useState(0);
 
     return (
-        <div className="w-full px-6 pb-2">
+        <div className="w-full px-6 pb-4">
             <div className="w-full bg-neutral-900 py-4 px-3 flex flex-col rounded-xl border border-neutral-800 gap-6">
                  <div className="">
                 <div className="flex gap-10">
@@ -42,10 +43,14 @@ export function Chat_n_Trade({coinAddress}:{coinAddress: `0x${string}`}){
                     </motion.button>
                 </div>
             </div>
-            <div className="w-full">
+            <div className="w-full h-175">
                 {
                     option == 0 && 
                     <Comments coinAddress={coinAddress}></Comments>
+                }
+                {
+                    option == 1 && 
+                    <TradeHistory coinAddress={coinAddress}></TradeHistory>
                 }
                 
             </div>

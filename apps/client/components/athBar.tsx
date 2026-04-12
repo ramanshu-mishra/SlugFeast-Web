@@ -26,6 +26,8 @@ export interface MessageResponse{
     marketCap: string,
     currentPrice: string,
     athPrice: string,
+    athCap: string,
+    athCap_usd: string,
     athProgress: string,
 
     coinAddress: `0x${string}`

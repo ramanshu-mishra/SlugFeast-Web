@@ -16,7 +16,11 @@ export interface TradePoint {
     marketCapEth: number;
     marketCapUsdt: number;
     volume: number;
-}
+    amountInToken: number;
+    amountInEth:number,
+    txnHash: string,
+    blockTimestamp: string
+}   
 
 interface BinanceTickerPriceResponse {
     symbol: string;
@@ -40,7 +44,7 @@ function parseUnixTimestamp(value: string): number | null {
     return parsed;
 }
 
-function getPriceFromTradeInEth(row: polledData): number | null {
+function getPrice(row: polledData): number | null {
     const amountRaw = row.amount.toString();
     const vethRaw = row.VETH.toString();
 
@@ -51,7 +55,7 @@ function getPriceFromTradeInEth(row: polledData): number | null {
         return null;
     }
 
-    const priceInEth = veth.div(amount).div(PRICE_SCALE_DIVISOR).toNumber();
+    const priceInEth = veth.div(amount).mul(10**6).toNumber();
     if (!Number.isFinite(priceInEth) || priceInEth <= 0) {
         return null;
     }
@@ -111,19 +115,22 @@ export async function toTradePoint(
         return null;
     }
 
-    const tradePriceEth = getPriceFromTradeInEth(row);
-    if (tradePriceEth === null) {
+    const tradePrice = getPrice(row); //weith
+    if (tradePrice === null) {
         return null;
     }
 
     const ethUsdtPrice = await getEthUsdtPrice();
-    const tradePriceUsdt = new Big(tradePriceEth).times(ethUsdtPrice).toNumber();
+    const tradePriceUsdt = new Big(tradePrice).div(10**18).times(ethUsdtPrice).toNumber();
     if (!Number.isFinite(tradePriceUsdt) || tradePriceUsdt <= 0) {
         return null;
     }
 
-    const marketCapEth = getMarketCap(tradePriceEth);
+    const marketCapEth = getMarketCap(tradePrice/10**18);
     const marketCapUsdt = getMarketCap(tradePriceUsdt);
+    const timesStamp = row.blockTimestamp ?? Date.now()/1000;
+    const txnHash = row.txHash;
+    
     if (marketCapEth <= 0 || marketCapUsdt <= 0) {
         return null;
     }
@@ -133,6 +140,10 @@ export async function toTradePoint(
         marketCapEth,
         marketCapUsdt,
         volume: amountRawBig.toNumber(),
+        amountInEth: tradePrice,
+        amountInToken : tradePriceUsdt,
+        txnHash: txnHash.toString(),
+        blockTimestamp: timesStamp
     };
 }
 

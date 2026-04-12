@@ -6,6 +6,8 @@ import menu from "../share/menu.json";
 import { ChevronLeft, ChevronRight, Home, UserCircle2, MoreVertical, Coins } from "lucide-react";
 import Image from "next/image";
 import logo from "../public/logo2.png";
+
+
 export function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState<boolean>(
         localStorage.getItem("isCollapsed") === "true"

@@ -4,13 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import { isAddress } from "viem";
 
 type CoinDisplayInfo = {
-    bondingCurveProgress: number;
-    marketCap: string;
-    marketCap_usd:string;
-    currentPrice: string;
-    athPrice: string;
-    athProgress: string;
-    coinAddress: `0x${string}`;
+   bondingCurveProgress: number,
+    marketCap: string,
+    marketCap_usd: string
+    currentPrice: string,
+    currentPrice_usd: string,
+    athPrice: string,
+    athPrice_usd:string,
+    athProgress: string,
+    coinAddress: `0x${string}`,
+    athCap: string,
+    athCap_usd: string,
 };
 
 type CoinDisplayInfoResponse = {
