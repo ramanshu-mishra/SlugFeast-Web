@@ -14,6 +14,10 @@ export async function updateCoinPool(data: Map<string, string>): Promise<void> {
     await prisma.$transaction(async (tx) => {
         for (const parsed of entries) {
             const currentPrice = getPrice(Number(parsed.poolTokens), Number(parsed.poolVETHs));
+                const parsedTimestamp = Number(parsed.blockTimeStamp);
+                const normalizedTimestamp = Number.isFinite(parsedTimestamp)
+                    ? Math.floor(parsedTimestamp).toString()
+                    : Math.floor(Date.now() / 1000).toString();
 
             const coin = await tx.coin.findUnique({
                 where: {
@@ -35,8 +39,9 @@ export async function updateCoinPool(data: Map<string, string>): Promise<void> {
                 data: {
                     TokenAmount: parsed.poolTokens.toString(),
                     VETHAmount: parsed.poolVETHs.toString(),
-                    // @ts-ignore
                     ATHPrice: nextAthPrice.toString(),
+                    // @ts-ignore
+                        lastTimeStamp: normalizedTimestamp
                 } as any,
             });
 
@@ -54,6 +59,6 @@ function getPrice(tokenInPool: Number, VETHinPool: Number){
         return 0;
     }
 
-    const price = veth / token;
+    const price = (veth / token) / 10 ** 12;
     return Number.isFinite(price) ? price : 0;
 }

@@ -98,7 +98,7 @@ async function fetchComments({
     page: number;
 }) {
     const serverAddress = process.env.NEXT_PUBLIC_SERVER_ADDRESS as string;
-    console.log("server address is: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", serverAddress);
+   
     const res = await fetch(`${serverAddress}/comments/${coinAddress}?sort=${sortOrder}&page=${page}`);
 
     if (!res.ok) {

@@ -7,7 +7,7 @@ export function parseRedisEvent(data: polledData, event: "buy"|"sell"): QueueDat
         coinAddress: data.token,
         poolTokens: Number(data.poolTokens),
         poolVETHs: Number(data.poolVETHs),
-        blockTimeStamp: data.blockTimeStamp
+        blockTimeStamp: data.blockTimestamp
     }
     return parsedEvent;
 }

@@ -12,12 +12,18 @@ export enum ActionEnum {
     SUBSCRIBE   = "SUBSCRIBE",
     UNSUBSCRIBE = "UNSUBSCRIBE",
     SUBSCRIBE_ALL = "SUBSCRIBE_ALL",
-    UNSUBSCRIBE_ALL = "UNSUBSCRIBE_ALL"
+    UNSUBSCRIBE_ALL = "UNSUBSCRIBE_ALL",
+    
 }
+
+
 
 const Events = {
     ...ActionEnum,
     ...EventType
 }
 
-export type EventTypes = keyof typeof Events;
+
+
+const E = { ...EventType, ...TransactionEvents };
+export type EventTypes = keyof typeof E;

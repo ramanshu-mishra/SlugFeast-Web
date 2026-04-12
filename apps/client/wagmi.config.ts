@@ -3,7 +3,6 @@ import { etherscan } from '@wagmi/cli/plugins'
 import {sepolia} from "wagmi/chains"
 
 
-console.log(process.env.NEXT_PUBLIC_ETHERSCAN_KEY);
 
 const config = defineConfig({
   out: './src/generated.ts',

@@ -1,9 +1,12 @@
-import { EventTypes } from "./eventsInterface"
+
 export interface MessageResponse{
     bondingCurveProgress: Number,
     marketCap: string,
+    marketCap_usd:string,
     currentPrice: string,
+    currentPrice_usd: string,
     athPrice: string,
+    athPrice_usd:string,
     athProgress: string,
 
     coinAddress: `0x${string}`
@@ -30,7 +33,7 @@ export interface polledData{
     blockNumber:  string,
     txHash: BigInt,
     internal_id: string,
-    blockTimeStamp: string
+    blockTimestamp: string
 }
 
 export interface rawData{

@@ -1,8 +1,8 @@
 import { prisma } from "@repo/database/client";
-import { TokenRPC } from "./TokenRPC.js";
+import { TokenRTC } from "./TokenRTC.js";
 
 
-let tokenManager: TokenRPC | null = null;
+let tokenManager: TokenRTC | null = null;
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_HEADER = `Bearer ${process.env.SUBGRAPH_API_KEY}`;
 const POLL_INTERVAL_MS = 1_000;
@@ -290,7 +290,7 @@ async function fetchCursors(){
 
 
 
-export async function startSubgraphPoller(manager: TokenRPC) {
+export async function startSubgraphPoller(manager: TokenRTC) {
     tokenManager = manager;
     if (!SUBGRAPH_URL) {
         console.error("[SubgraphPoller] SUBGRAPH_URL not set — poller disabled");

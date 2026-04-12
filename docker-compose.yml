@@ -11,5 +11,16 @@ services:
     volumes:
       - redis_data:/data
 
+  redis_2:
+    image: redis
+    container_name: slugfeast-redis-2
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: ["redis-server", "--appendonly", "no", "--save", "20", "1"]
+    volumes:
+      - redis_data_2:/data
+
 volumes:
   redis_data:
+  redis_data_2:

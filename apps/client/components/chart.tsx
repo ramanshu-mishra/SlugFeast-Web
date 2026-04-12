@@ -15,6 +15,7 @@ import {
 } from 'lightweight-charts';
 import { candleStyleConfig, chartConfig } from '../share/config/chartConfig';
 import { QuoteOption, useGetTransactions } from '../hooks/useGetTransactions';
+import { RTCoinInfo } from './RealTimeCoinInfo';
 
 type CandlePoint = CandlestickData<Time>;
 type VolumePoint = HistogramData<Time>;
@@ -314,8 +315,9 @@ export function ChartComponent({ token }: { token: string }) {
     const changeColor = headerState.change >= 0 ? 'text-emerald-400' : 'text-red-400';
 
     return (
-        <div className='px-6'>
-        <div className='w-full rounded-xl border border-neutral-800 bg-neutral-950 p-3 '>
+        
+        <div className='w-full rounded-xl border border-neutral-800 bg-neutral-900 p-3 flex flex-col gap-4 '>
+            <RTCoinInfo coinAddress={token as `0x${string}`}></RTCoinInfo>
             <div className='mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs md:text-sm'>
                 <div className='flex items-center gap-2'>
                     {(['1D', '5D', '1M'] as const).map((range) => {
@@ -366,6 +368,6 @@ export function ChartComponent({ token }: { token: string }) {
                 style={{ position: 'relative', width: '100%' }}
             />
         </div>
-        </div>
+        
     );
 }

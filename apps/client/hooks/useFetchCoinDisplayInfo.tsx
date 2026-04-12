@@ -6,6 +6,7 @@ import { isAddress } from "viem";
 type CoinDisplayInfo = {
     bondingCurveProgress: number;
     marketCap: string;
+    marketCap_usd:string;
     currentPrice: string;
     athPrice: string;
     athProgress: string;

@@ -3,7 +3,7 @@ import { ActionEnum } from "./share/enum";
 import { EventTypes } from "./interfaces/eventsInterface";
 import type {IncomingMessage} from "http";
 import {validateConnection} from "@repo/wss-utilities/utilities"
-import { TokenRPC } from "./TokenRPC";
+import { TokenRTC } from "./TokenRTC";
 import {createClient, RedisClientType} from "redis";
 import "dotenv/config";
 import { MessageResponse } from "./interfaces/messageInterface";
@@ -25,7 +25,7 @@ interface responseInterface{
     data?: MessageResponse
 }
 
-let tokenRpc:TokenRPC|null = null;
+let tokenRpc:TokenRTC|null = null;
 
 let wss: Server;
 let client: RedisClientType;
@@ -41,12 +41,12 @@ async function main(){
 
 
     client = createClient({
-        url: process.env.REDIS_CLIENT_URL || "redis://localhost:6379"
+        url: process.env.REDIS_SERVER_URL || "redis://localhost:6379"
     });
 
     await client.connect();
 
-    tokenRpc = TokenRPC.getTokenRPC(client);
+    tokenRpc = TokenRTC.getTokenRPC(client);
     await startSubgraphPoller(tokenRpc);
 
 
@@ -131,6 +131,7 @@ async function main(){
 
     ws.on("close", ()=>{
         tokenRpc?.unsubscribeAll(ws);
+        tokenRpc?.handleClosedSocket(ws);
         console.log(`> ${req.socket.remoteAddress} disconnected`);
     });
 })

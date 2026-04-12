@@ -12,6 +12,7 @@
   "type": "commonjs",
   "exports": {
     "./utilities" : "./dist/utilities.js",
-    "./enums" : "./dist/enums.js"
+    "./enums" : "./dist/enums.js",
+    "./clientUtilities": "./dist/client_ws_utilities.js"
   }
 }

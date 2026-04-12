@@ -6,11 +6,49 @@ import { isAddress } from "ethers";
 interface MessageResponse{
     bondingCurveProgress: number,
     marketCap: string,
+    marketCap_usd: string
     currentPrice: string,
+    currentPrice_usd: string,
     athPrice: string,
+    athPrice_usd:string,
     athProgress: string,
-    coinAddress: `0x${string}`
+    coinAddress: `0x${string}`,
+
 }
+
+type BinanceTickerPrice = {
+	symbol: string;
+	price: string;
+};
+
+type EthUsdConversion = {
+	ethValue: number;
+	usdValue: number;
+	ethUsdPrice: number;
+};
+
+
+async function fetchEthUsdConversion(ethValue: number): Promise<EthUsdConversion> {
+	const res = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT");
+
+	if (!res.ok) {
+		throw new Error("Could not fetch ETH/USD price from Binance");
+	}
+
+	const data = (await res.json()) as BinanceTickerPrice;
+	const ethUsdPrice = Number(data.price);
+
+	if (!Number.isFinite(ethUsdPrice) || ethUsdPrice <= 0) {
+		throw new Error("Invalid ETH/USD price received from Binance");
+	}
+
+	return {
+		ethValue,
+		ethUsdPrice,
+		usdValue: Number((ethValue * ethUsdPrice).toFixed(6)),
+	};
+}
+
 
 
 
@@ -37,6 +75,7 @@ router.get("/getInfo/:coinAddress", async (req:Request, res:Response)=>{
             }
         });
 
+
         if(!poolData){
             res.status(400).json({
                 success: false,
@@ -48,6 +87,9 @@ router.get("/getInfo/:coinAddress", async (req:Request, res:Response)=>{
         const poolTokens = String((poolData as any).TokenAmount ?? "0");
         const vethAmount = String((poolData as any).VETHAmount ?? "0");
         const athPrice = String((poolData as any).ATHPrice ?? "0");
+        
+
+        
 
         const messageRes = await parseMessageResponse({
             poolTokens,
@@ -108,7 +150,7 @@ function getPrice(tokenInPool: number, VETHinPool: number){
         return 0;
     }
 
-    const price = veth / token;
+    const price = (veth / token)/10**12;
     return Number.isFinite(price) ? price : 0;
 }
 
@@ -127,17 +169,26 @@ export async function parseMessageResponse(data: {
     const bcprogress = getBondingCurveProgress(poolTokens);
     const currentPrice = getPrice(poolTokens, veth);
     const athProgress = athPrice > 0 ? ((currentPrice / athPrice) * 100).toFixed(6) : "0.000000";
+    const usd = await fetchEthUsdConversion(Number(mc));
+    const usd_ath = await fetchEthUsdConversion(Number(athPrice));
+    const usd_curr = await fetchEthUsdConversion(Number(currentPrice));
 
+    
 
     const message : MessageResponse = {
         bondingCurveProgress: Number(bcprogress),
         marketCap: mc,
+        marketCap_usd : usd?.usdValue.toString(),
         coinAddress: data.token,
         currentPrice: currentPrice.toString(),
+        currentPrice_usd: usd_curr?.usdValue.toString(),
         athProgress,
-        athPrice: Number.isFinite(athPrice) ? athPrice.toString() : "0"
-    
+        athPrice: Number.isFinite(athPrice) ? athPrice.toString() : "0",
+        athPrice_usd: usd_ath?.usdValue.toString()
+        
     }
+
+    
 
     return message;
 }

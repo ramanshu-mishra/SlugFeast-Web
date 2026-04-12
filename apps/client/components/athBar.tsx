@@ -6,6 +6,7 @@ import { memo } from "react";
 import { useGetUSDPrice } from "../hooks/useGetUSDPrice";
 import { globalCoinDataManager } from "../serviceClasses/globalCoinDataManaget";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { ATHCurve } from "./athCurve";
 
 
 const formatUSDCompact = (value: number): string => {
@@ -17,6 +18,7 @@ const formatUSDCompact = (value: number): string => {
     if (value >= 1e3) return `$ ${(value / 1e3).toFixed(2)}k`;
 
     return `$ ${value.toFixed(2)}`;
+
 };
 
 export interface MessageResponse{
@@ -53,7 +55,7 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
 
     useEffect(()=>{
         const url = process.env.NEXT_PUBLIC_GLOBAL_WS_SERVER_URL as string;
-        const manager = globalCoinDataManager.getGlobalCoinDataManager(url);
+        const manager = globalCoinDataManager.getGlobalCoinDataManager();
         client.current = manager;
 
         const unsubscribe = client.current.addListener(coinAddress as `0x${string}`,(m:MessageResponse)=>{
@@ -66,8 +68,6 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
             setChange_1h(_change_1h);
             setChange_5m(_change_5m);
             setClampedPercentage(Number(athProgress.toFixed(4)));
-
-           
         });
 
         return ()=>unsubscribe();
@@ -81,7 +81,7 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
             setMc(marketCap);
             setChange_1h(Number(d.data.change_1h ?? 0));
             
-            console.log("progress is : ",athProgress );
+           
             setClampedPercentage(Number(athProgress.toFixed(4)));
             
         }
@@ -132,34 +132,8 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
 
 
 
-const  ATHCurve = memo(({clampedPercentage, change_5m }: {clampedPercentage: number, change_5m : number})=>{
-    
-    const [pump,setPump] = useState(false);
-   
-    useEffect(()=>{
-        const pmp = clampedPercentage >= 100 && change_5m > 0;
-        console.log(pmp);
-        setPump(pmp);
-    }, [clampedPercentage, change_5m])
 
 
-    return (
-        <div className="rounded-full bg-gray-700 w-full h-2 overflow-hidden  border border-neutral-700">
-            <motion.div
-            style={pump ? {
-                backgroundColor : "var(--color-amber-400)"
-            } : 
-            {
-                backgroundColor : "var(--color-emerald-400)"
-            }
-        }
-            className= "rounded-full h-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${clampedPercentage}%`}}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-            </motion.div>
-        </div>
-    )
-})
+
+
 

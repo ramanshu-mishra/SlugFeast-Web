@@ -17,7 +17,7 @@ export function BondingCurve({address}:{address: `0x${string}`}){
     const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
     const tokenAddress = address;
     const {data, isLoading} = useGetTokenReserves({key: tokenAddress, address: contractAddress});
-    console.log("TOKEN ADRESS IS:  ", tokenAddress, " ", contractAddress);
+  
     
     const [percent, setPercent] = useState(0);
 
@@ -26,7 +26,7 @@ export function BondingCurve({address}:{address: `0x${string}`}){
         const tokenReserves = Number(tokenReserveResult?.result ?? 0);
         const per = calculateProgress(tokenReserves);
         setPercent(per);
-        console.log("returned data is ", data);
+       
     }, [data]);
 
     return (

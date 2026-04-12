@@ -223,7 +223,7 @@ export default function Page() {
     const getUrl  = await storeFileToBucket(fileName, fileType);
     let url, key, publicUrl;
     if(!getUrl.success){
-      console.log(getUrl.message);
+      
       return;
     }
     else{
@@ -245,12 +245,12 @@ export default function Page() {
 
 
     if(!res.ok){
-      console.log("something went Wrong");
+      
       alert("something went wrong");
       return;
     }
 
-    console.log("file uploaded to S3");
+    
 
     // sending request to backend to upload metadata;
     setBtnLabel("Checking Chain Status...");
@@ -260,8 +260,7 @@ export default function Page() {
     }
 
     const nonce = Number(data);
-    console.log("raw data is ", data);
-    console.log("data of refetch is", nonce);
+   
 
     setBtnLabel("Uploading coin metadata...");
     const uploadMetadataToBackend = await createToken({
@@ -278,7 +277,7 @@ export default function Page() {
     const hash = uploadMetadataToBackend.hash as string;
     const id = uploadMetadataToBackend.id as string;
 
-    console.log("signature is : ", signature);
+   
 
 
     // send tokenCreation request to Chain
@@ -301,7 +300,7 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ['coins'] });
     }
     
-    console.log(token_data);
+   
 
     const coinAddress = token_data.to as string;
 
@@ -316,7 +315,7 @@ export default function Page() {
     } 
     catch(e){
       const errorMessage = e instanceof Error ? e.message : "Something went Wrong";
-      console.log(errorMessage);
+      
     }
     finally{
       setCreatingCoin(false);

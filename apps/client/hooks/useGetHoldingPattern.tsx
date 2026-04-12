@@ -24,7 +24,7 @@ async function getHoldingPattern(coinAddress: `0x${string}`){
         return;
     }
     const data  = await res.json();
-    console.log("whatup bro : ",data);
+    
     return data;
 }
 

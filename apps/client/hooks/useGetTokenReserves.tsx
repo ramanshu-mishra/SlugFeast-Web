@@ -16,7 +16,7 @@ export default function useGetTokenReserves({key, address}: {key:`0x${string}`, 
     const enabled = validKey !== zeroAddress && validAccount !== zeroAddress && contractAddress !== zeroAddress;
 
 
-    console.log();
+  
 
      const {data, error , isLoading} = useReadContracts({
         contracts: [
@@ -38,7 +38,7 @@ export default function useGetTokenReserves({key, address}: {key:`0x${string}`, 
     account: validAccount,
     query:{
       enabled,
-        refetchInterval: 2000,
+        // refetchInterval: 2000,
         refetchOnReconnect: true,
         refetchOnWindowFocus: true,
         refetchOnMount: true,

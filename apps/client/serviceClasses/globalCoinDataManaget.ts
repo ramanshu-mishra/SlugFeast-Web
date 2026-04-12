@@ -1,6 +1,5 @@
 
-import {ActionEnum, EventType, TransactionEvents } from "@repo/wss-utilities/enums";
-import type EventTypes from "@repo/wss-utilities/enums";
+import {ActionEnum} from "@repo/wss-utilities/enums";
 import { MessageResponse } from "../components/athBar";
 
 
@@ -12,18 +11,23 @@ export class globalCoinDataManager{
     private static client:WebSocket|null = null;
     private static  apiKey: string;
     private listeners: Map<string, Set<(m:MessageResponse)=>void>> = new Map();
+    private static serverAddress :string|null = null;
 
-    static getGlobalCoinDataManager(url:string){
+    static getGlobalCoinDataManager(){
         if(!this._singleton){
+            this.serverAddress = process.env.NEXT_PUBLIC_GLOBAL_WS_SERVER_URL as string;
             this._singleton = new globalCoinDataManager();
             this.apiKey =  process.env.NEXT_PUBLIC_SLUGFEAST_API_KEY as string
-            this.client = new WebSocket(url, [this.apiKey]);
+            this.client = new WebSocket(this.serverAddress, [this.apiKey]);
             this._singleton.init_handlers();
         }
         return this._singleton;
     }
 
     
+    getWSClient(){
+        return globalCoinDataManager.client;
+    }
 
     subscribe(coins?: string[], all?: boolean){ 
         if(!coins && !all){
@@ -52,7 +56,7 @@ export class globalCoinDataManager{
             throw new Error("at least one argument required");
         }
         if(!globalCoinDataManager.client || globalCoinDataManager.client.readyState !== WebSocket.OPEN){
-            throw new Error("WebSocket client is not connected");
+           return;
         }
 
         if(all){
@@ -82,7 +86,7 @@ export class globalCoinDataManager{
             
             try {
                 const parsed = JSON.parse(payload) as MessageResponse;
-                console.log(`[New message] `, parsed);
+        
                 const coinAddress = parsed.coinAddress;
                 const callbacks = this.listeners.get(coinAddress);
                 if(!callbacks){
@@ -90,13 +94,14 @@ export class globalCoinDataManager{
                 }
                 callbacks.forEach(callback => callback(parsed));
             } catch(e) {
-                console.log(`[handler error] ${e}`);
+               
             }
           
         };
 
-        client.onclose = ()=>{
-            console.log("ws client closed")
+        globalCoinDataManager.client.onclose = ()=>{
+            globalCoinDataManager.client = new WebSocket(globalCoinDataManager.serverAddress as string, [globalCoinDataManager.apiKey as string]);
+            this.init_handlers();
         }
     }
 

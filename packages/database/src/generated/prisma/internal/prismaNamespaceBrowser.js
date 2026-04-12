@@ -126,7 +126,8 @@ exports.CoinScalarFieldEnum = {
     VETHAmount: 'VETHAmount',
     ATHPrice: 'ATHPrice',
     userId: 'userId',
-    graduated: 'graduated'
+    graduated: 'graduated',
+    lastTimeStamp: 'lastTimeStamp'
 };
 exports.TokenHashScalarFieldEnum = {
     hash: 'hash',

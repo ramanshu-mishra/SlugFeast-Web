@@ -36,7 +36,7 @@ export function useCreateTokenOnChain() {
 
         // Wait for the transaction to be mined
         const receipt = await publicClient!.waitForTransactionReceipt({ hash: txHash });
-        console.log("reciept is ", receipt);
+        
         return receipt; // receipt.status === "success" | "reverted"
 
     }

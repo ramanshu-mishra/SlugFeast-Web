@@ -1,6 +1,7 @@
 import { MessageResponse, rawData} from "../interfaces/messageInterface";
 import {prisma} from "@repo/database/client";
 import { RedisClient } from "../server";
+import { fetchEthUsdConversion } from "./priceConversion";
 
 const totalPoolTokens = Number(process.env.POOL_TOKENS_UNLOCKED) || 800*10**6*10**6;
 const totalTokens = Number(process.env.POOL_TOKENS_TOTAL) || 1*10**9*10**6; 
@@ -31,7 +32,7 @@ function getPrice(tokenInPool: Number, VETHinPool: Number){
         return 0;
     }
 
-    const price = veth / token;
+    const price = (veth / token)/10**12;
     return Number.isFinite(price) ? price : 0;
 }
 
@@ -66,16 +67,22 @@ export async function parseMessageResponse(data: rawData){
     
     // @ts-ignore
     const athProgress = ((Number(currentPrice) / Number(ATHprice ?? athPriceRes?.ATHPrice)) * 100).toFixed(6);
-    
+
+    const usd = await fetchEthUsdConversion(Number(mc));
+    const usd_ath = await fetchEthUsdConversion(Number(ATHprice));
+    const usd_curr = await fetchEthUsdConversion(Number(currentPrice));
 
     const message : MessageResponse = {
         bondingCurveProgress: Number(bcprogress),
         marketCap: mc,
+        marketCap_usd: (usd ? usd.usdValue : 0).toString(),
         coinAddress: data.token,
         athProgress,
         currentPrice: currentPrice.toString(),
+        currentPrice_usd: (usd_curr ? usd_curr.usdValue : 0).toString(),
         // @ts-ignore
-        athPrice: String(Number(ATHprice ?? athPriceRes?.ATHPrice))
+        athPrice: String(Number(ATHprice ?? athPriceRes?.ATHPrice)),
+        athPrice_usd : (usd_ath ? usd_ath.usdValue : 0).toString()
     }
 
     return message;

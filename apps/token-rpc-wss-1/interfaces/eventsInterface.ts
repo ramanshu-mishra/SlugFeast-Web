@@ -1,4 +1,4 @@
-import { EventType } from "@metamask/sdk";
+import { EventType } from "@repo/wss-utilities/enums";
 import { TransactionEvents } from "../share/enum";
 
 const E = { ...EventType, ...TransactionEvents };

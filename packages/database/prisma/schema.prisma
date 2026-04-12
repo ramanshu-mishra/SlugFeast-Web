@@ -62,6 +62,7 @@ model coin{
   graduated Boolean @default(false)
   socials socials?
   tokenHash tokenHash? 
+  lastTimeStamp String @default("0")
 }
 
 

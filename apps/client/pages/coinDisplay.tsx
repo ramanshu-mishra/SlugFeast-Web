@@ -19,8 +19,7 @@ export default function CoinDisplay() {
     const router = useRouter();
 
     useEffect(()=>{
-        const url = process.env.NEXT_PUBLIC_GLOBAL_WS_SERVER_URL as string;
-        const manager = globalCoinDataManager.getGlobalCoinDataManager(url);
+        const manager = globalCoinDataManager.getGlobalCoinDataManager();
         client.current = manager;
     },[]);
 

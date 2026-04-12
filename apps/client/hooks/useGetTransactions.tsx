@@ -89,6 +89,7 @@ export function useGetTransactions(token: string, timeframe: "1h"|"1d", windowSe
         },
         retry : 1,
         enabled: isValid,
+        refetchInterval: 10000
     });
 
     const candles = useMemo(() => {

@@ -992,6 +992,7 @@ export declare const CoinScalarFieldEnum: {
     readonly ATHPrice: "ATHPrice";
     readonly userId: "userId";
     readonly graduated: "graduated";
+    readonly lastTimeStamp: "lastTimeStamp";
 };
 export type CoinScalarFieldEnum = (typeof CoinScalarFieldEnum)[keyof typeof CoinScalarFieldEnum];
 export declare const TokenHashScalarFieldEnum: {
