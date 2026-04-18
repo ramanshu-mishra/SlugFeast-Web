@@ -132,6 +132,7 @@ export const CommentDisplay = memo(({
                     ) : null}
                   </div>
                   <RepliesDisplay
+              coinAddress={coinAddress}
               messageId={comment.id}
               sortOrder={sortOrder}
               scrollContainerRef={containerRef as RefObject<HTMLDivElement>}

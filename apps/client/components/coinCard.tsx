@@ -5,6 +5,7 @@ import { ATHBar } from "./athBar";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Ribbon } from "./ribbon";
 import { useState, memo } from "react";
+import Link from "next/link";
 
 
 
@@ -105,5 +106,7 @@ export const CoinCard = memo(({ coin, router }: { coin: Coin, router: AppRouterI
     )
 }
 )
+
+
 
 

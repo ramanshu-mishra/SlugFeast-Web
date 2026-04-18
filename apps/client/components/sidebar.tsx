@@ -6,6 +6,8 @@ import menu from "../share/menu.json";
 import { ChevronLeft, ChevronRight, Home, UserCircle2, MoreVertical, Coins } from "lucide-react";
 import Image from "next/image";
 import logo from "../public/logo2.png";
+import { useRouter } from "next/navigation";
+import { useConnection } from "wagmi";
 
 
 export function Sidebar() {
@@ -13,8 +15,9 @@ export function Sidebar() {
         localStorage.getItem("isCollapsed") === "true"
     );
     const [isHovered, setIsHovered] = useState(false);
-
+    const router = useRouter();
     const menuItems = Object.entries(menu);
+    const {isConnected, address} = useConnection();
 
     return (
         <motion.div
@@ -84,18 +87,36 @@ export function Sidebar() {
             <nav className="flex-1 py-4">
                 <ul className="space-y-1 px-3">
                     {menuItems.map(([label, path], index) => (
+                        (index === 1 && !isConnected) ? null : (
                         <li key={label}>
-                            <motion.button
+                            { <motion.button
                                 className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors group relative"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
+                                style={index == 3 ? {
+                                    backgroundColor: "var(--color-emerald-400)", 
+                                    color: "var(--color-neutral-950)",
+                                    fontWeight : "bolder"
+                                }: {}}
+
+                                onClick={()=>{
+                                    if(index == 3){
+                                        router.push("/create")
+                                    }
+                                    if(index == 0){
+                                        router.push("/")
+                                    }
+                                    if(index == 1){
+                                        router.push(`/profile/${address}`)
+                                    }
+                                }}
                             >
                                 {/* Menu Icons */}
                                 <span className="shrink-0 w-6 h-6 flex items-center justify-center">
                                     {index === 0 ? <Home  className="w-5 h-5 text-neutral-50" /> : 
                                      index === 1 ? <UserCircle2 className="w-5 h-5 text-neutral-50" /> : 
                                      index === 2 ? <MoreVertical className="w-5 h-5 text-neutral-50" /> : 
-                                     <Coins className="w-5 h-5 text-neutral-50" />}
+                                     <Coins className="w-5 h-5 text-neutral-950 "/>}
                                 </span>
 
                                 <AnimatePresence>
@@ -123,7 +144,9 @@ export function Sidebar() {
                                     </motion.div>
                                 )}
                             </motion.button>
+}
                         </li>
+                        )
                     ))}
                 </ul>
             </nav>

@@ -96,12 +96,12 @@ data: TradePoint
 }
 
 export interface TradePoint {
-    timestamp: number;
-    marketCapEth: number;
-    marketCapUsdt: number;
-    volume: number;
+    event: "buy"|"sell";
+    timestamp: string;
+    marketCapEth?: number;
+    marketCapUsdt?: number;
+    volume?: number;
     amountInToken: number;
     amountInEth:number,
-    txnHash: string,
-    blockTimestamp: string
+    txnHash: string
 }  

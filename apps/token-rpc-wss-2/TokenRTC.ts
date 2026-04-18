@@ -127,7 +127,7 @@ export class TokenRTC {
 
   async updateClientTrades(row: polledData, event: "buy" | "sell") {
     const coinAddress = row.token;
-    const tradeEvent = await getTradeEvent(row);
+    const tradeEvent = await getTradeEvent(row, event);
     if (!tradeEvent) return;
     this.broadCast(coinAddress, {
       event: "TradeEvent",

@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "coin" ALTER COLUMN "ATHPrice" SET DEFAULT '5000000000000';
+
+-- AlterTable
+ALTER TABLE "message" ALTER COLUMN "dateTime" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "user" ADD COLUMN     "username" TEXT;

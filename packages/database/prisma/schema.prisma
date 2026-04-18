@@ -11,7 +11,8 @@ datasource db {
 
 
 model user{
-  publicKey String @id @unique 
+  publicKey String @id @unique
+  username String?
   name String?
   email String?
   countryCode String?
@@ -118,7 +119,7 @@ model message{
   referencedMessageId String?
   referencedMessage message? @relation("MessageReplies", fields: [referencedMessageId], references: [id])
   referees message[] @relation("MessageReplies")
-  dateTime DateTime @updatedAt
+  dateTime DateTime @default(now()) 
 }
 
 model messageImage{

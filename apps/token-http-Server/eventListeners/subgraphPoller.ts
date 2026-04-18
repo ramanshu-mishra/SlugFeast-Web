@@ -1,5 +1,4 @@
 import { prisma } from "@repo/database/client";
-import { EventType, TransactionEvents } from "../share/enums.js";
 import { normalizeAddress } from "../utility/normalizeAddress.js";
 
 const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;

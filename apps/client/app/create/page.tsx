@@ -24,6 +24,7 @@ import { cn } from "../../utility/cn";
 import { SocialInput } from "../../components/socialInput";
 import { SocialLink } from "../../interfaces/socialInput";
 import { ImageCropModal } from "../../components/cropImage";
+import { CoinCreationInfo } from "../../components/coinCreationInfo";
 import { useAccount, useConnect, useConnection } from "wagmi";
 import { useGetNonce } from "../../hooks/useGetNonce";
 import { useCreateToken } from "../../hooks/useCreateToken";
@@ -333,9 +334,11 @@ export default function Page() {
 
 
   return (
-    <div className="flex w-full flex-wrap justify-center gap-16 px-6 py-8 flex-1 h-full text-neutral-50">
-      <div className="flex flex-col max-w-2xl w-full gap-6">
-        {/* Header */}
+    <>
+      <CoinCreationInfo show={creatingCoin} statusLabel={BtnLabel} />
+      <div className="flex w-full flex-wrap justify-center gap-16 px-6 py-8 flex-1 h-full text-neutral-50">
+        <div className="flex flex-col max-w-2xl w-full gap-6">
+          {/* Header */}
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold">Create New Coin</h1>
           <h2 className="text-md text-neutral-100">Coin Details</h2>
@@ -594,6 +597,7 @@ export default function Page() {
           )}
         </div>
       </div>
+      </div>
       
       {/* Image Crop Modal */}
       {showCropModal && tempImageSrc && (
@@ -606,6 +610,6 @@ export default function Page() {
           onCropComplete={handleCropComplete}
         />
       )}
-    </div>
+    </>
   );
 }

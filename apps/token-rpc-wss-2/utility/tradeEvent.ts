@@ -12,14 +12,14 @@ const TOKEN_DECIMALS_BIG = new Big(TOKEN_DECIMALS);
 const TOTAL_SUPPLY_BIG = new Big(TOTAL_SUPPLY);
 
 export interface TradePoint {
-    timestamp: number;
-    marketCapEth: number;
-    marketCapUsdt: number;
-    volume: number;
+    event: "buy"|"sell";
+    timestamp: string;
+    marketCapEth?: number;
+    marketCapUsdt?: number;
+    volume?: number;
     amountInToken: number;
     amountInEth:number,
-    txnHash: string,
-    blockTimestamp: string
+    txnHash: string
 }   
 
 interface BinanceTickerPriceResponse {
@@ -31,18 +31,7 @@ let cachedEthUsdtPrice: { value: number; fetchedAt: number } = {
     fetchedAt: 0,
 };
 
-function parseUnixTimestamp(value: string): number | null {
-    if (!/^\d+$/.test(value)) {
-        return null;
-    }
 
-    const parsed = Number(value);
-    if (!Number.isSafeInteger(parsed) || parsed < 0) {
-        return null;
-    }
-
-    return parsed;
-}
 
 function getPrice(row: polledData): number | null {
     const amountRaw = row.amount.toString();
@@ -99,8 +88,9 @@ async function getEthUsdtPrice(): Promise<number> {
 
 export async function toTradePoint(
     row: polledData,
+    event: "buy" | "sell",
 ): Promise<TradePoint | null> {
-    const timestamp = parseUnixTimestamp(row.blockTimestamp);
+    const timestamp = row.blockTimestamp
     if (timestamp === null) {
         return null;
     }
@@ -136,6 +126,7 @@ export async function toTradePoint(
     }
 
     return {
+        event,
         timestamp,
         marketCapEth,
         marketCapUsdt,
@@ -143,15 +134,16 @@ export async function toTradePoint(
         amountInEth: tradePrice,
         amountInToken : tradePriceUsdt,
         txnHash: txnHash.toString(),
-        blockTimestamp: timesStamp
+        
     };
 }
 
 export async function getTradeEvent(
     row: polledData,
+    event: "buy" | "sell",
     _intervalSeconds = 1,
 ): Promise<TradePoint | null> {
-    return toTradePoint(row);
+    return toTradePoint(row, event);
 }
 
 

@@ -7,7 +7,6 @@ const SUBGRAPH_URL = process.env.SUBGRAPH_URL as string;
 const SUBGRAPH_API_KEY = process.env.SUBGRAPH_API_KEY;
 
 const PAGE_SIZE = Number(process.env.TRADE_PAGE_SIZE) || 20;
-const TOTAL_SUPPLY = new Big(process.env.POOL_TOKENS_TOTAL ?? "1000000000");
 const TOKEN_DECIMALS = new Big(10).pow(6);
 const WEI_SCALE = new Big(10).pow(18);
 
@@ -160,48 +159,9 @@ function parseSortOrder(value: string | string[] | undefined): SortOrder {
     return "desc";
 }
 
-async function getEthUsdtPrice(): Promise<Big> {
-    const res = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT");
-
-    if (!res.ok) {
-        throw new Error(`Binance HTTP ${res.status}`);
-    }
-
-    const payload = await res.json() as { price?: string };
-    const parsed = new Big(String(payload.price ?? "0"));
-
-    if (parsed.lte(0)) {
-        throw new Error("Invalid ETHUSDT price from Binance");
-    }
-
-    return parsed;
-}
-
-function getTradePriceWei(row: Omit<TradeEventRow, "event">): Big | null {
-    try {
-        const amount = new Big(row.amount);
-        const veth = new Big(row.VETH);
-
-        if (amount.lte(0) || veth.lt(0)) {
-            return null;
-        }
-
-        return veth.div(amount).mul(TOKEN_DECIMALS).round(0, Big.roundHalfUp);
-    } catch {
-        return null;
-    }
-}
-
-function getMarketCap(price: number): number {
-    const marketCap = new Big(price).times(TOTAL_SUPPLY).toNumber();
-    return Number.isFinite(marketCap) && marketCap > 0 ? marketCap : 0;
-}
-
-async function buildTradeEvent(row: Omit<TradeEventRow, "event">): Promise<TradeEvent | null> {
-    const timestamp = Number(row.blockTimestamp);
-    if (!Number.isFinite(timestamp) || timestamp <= 0) {
-        return null;
-    }
+function buildTradeEvent(row: TradeEventRow): TradeEvent | null {
+    const timestamp = row.blockTimestamp 
+    
 
     const amountRawBig = new Big(row.amount);
     if (amountRawBig.lte(0)) {
@@ -213,35 +173,26 @@ async function buildTradeEvent(row: Omit<TradeEventRow, "event">): Promise<Trade
         return null;
     }
 
-    const tradePriceWei = getTradePriceWei(row);
-    if (!tradePriceWei) {
+    const vethRawBig = new Big(row.VETH);
+    if (vethRawBig.lt(0)) {
         return null;
     }
 
-    const ethUsdtPrice = await getEthUsdtPrice();
-    const tradePriceEth = tradePriceWei.div(WEI_SCALE);
-    const tradePriceUsdt = tradePriceEth.times(ethUsdtPrice).toNumber();
-
-    if (!Number.isFinite(tradePriceUsdt) || tradePriceUsdt <= 0) {
+    const tradedVethAmount = vethRawBig.div(WEI_SCALE).toNumber();
+    if (!Number.isFinite(tradedVethAmount) || tradedVethAmount < 0) {
         return null;
     }
 
-    const marketCapEth = getMarketCap(tradePriceEth.toNumber());
-    const marketCapUsdt = getMarketCap(tradePriceUsdt);
 
-    if (marketCapEth <= 0 || marketCapUsdt <= 0) {
-        return null;
-    }
+
+  
 
     const tradePoint: TradePoint = {
+        event: row.event,
         timestamp,
-        marketCapEth,
-        marketCapUsdt,
-        volume: amountRawBig.toNumber(),
-        amountInEth: tradePriceWei.toNumber(),
-        amountInToken: tradePriceUsdt,
+        amountInEth: tradedVethAmount,
+        amountInToken: tokenAmount,
         txnHash: row.transactionHash,
-        blockTimestamp: row.blockTimestamp,
     };
 
     return {
@@ -317,9 +268,7 @@ router.get("/tradeEvents/:coinAddress/:page", async (req: Request, res: Response
                 : right.id.localeCompare(left.id);
         });
 
-        const tradeEvents = await Promise.all(trades.slice(skip, skip + PAGE_SIZE).map(async (tradeRow) => {
-            return buildTradeEvent(tradeRow);
-        }));
+        const tradeEvents = trades.slice(skip, skip + PAGE_SIZE).map((tradeRow) => buildTradeEvent(tradeRow));
 
         const filteredTradeEvents = tradeEvents.filter((tradeEvent): tradeEvent is TradeEvent => tradeEvent !== null);
 

@@ -7,6 +7,7 @@ import { StoredMessage } from "@repo/messaging/interfaces";
 import { messageManager } from "../serviceClasses/messageManager";
 import { RelativeTimeText } from "./RelativeTimeText";
 import { CommentMedia } from "./commentMedia";
+import { useConnection } from "wagmi";
 
 type SortOrder = "newest" | "oldest";
 
@@ -35,16 +36,23 @@ const mergeMessagesById = (messages: StoredMessage[]) => {
 };
 
 export function RepliesDisplay({
+    coinAddress,
     messageId,
     sortOrder,
     scrollContainerRef
 }: {
+    coinAddress: `0x${string}`;
     messageId: string;
     sortOrder: SortOrder;
     scrollContainerRef: RefObject<HTMLDivElement>
 }) {
     const [visible, setVisible] = useState(false);
     const [messages, setMessages] = useState<StoredMessage[]>([]);
+    const [showReplyInput, setShowReplyInput] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [replySubmitError, setReplySubmitError] = useState<string | null>(null);
+    const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+    const { address, isConnected } = useConnection();
 
     const {
         repliesData,
@@ -94,6 +102,50 @@ export function RepliesDisplay({
         setMessages((existingMessages) => sortMessagesByOrder(existingMessages, sortOrder));
     }, [sortOrder]);
 
+    const handleReplySubmit = () => {
+        const trimmedReply = replyText.trim();
+
+        if (!trimmedReply) {
+            setReplySubmitError("Reply cannot be empty");
+            return;
+        }
+
+        if (!isConnected || !address) {
+            setReplySubmitError("Connect wallet to reply");
+            return;
+        }
+
+        const manager = messageManager.getMessageManager();
+
+        setIsSubmittingReply(true);
+        setReplySubmitError(null);
+
+        const didSend = manager.sendMessage({
+            userKey: address,
+            coinId: coinAddress,
+            messageType: "text",
+            message: trimmedReply,
+            referencedMessageId: messageId,
+        });
+
+        setIsSubmittingReply(false);
+
+        if (!didSend) {
+            setReplySubmitError("WebSocket not ready");
+            return;
+        }
+
+        setReplyText("");
+        setShowReplyInput(false);
+    };
+
+    const handleReplyKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleReplySubmit();
+        }
+    };
+
     if (replyError) {
         return (
             <div className="text-red-500 text-sm py-2">
@@ -113,10 +165,50 @@ export function RepliesDisplay({
                         View {messages.length} {messages.length === 1 ? "reply" : "replies"}
                     </button>
                 )}
-                <button className="text-xs text-neutral-400 hover:text-neutral-300">
-                    Reply
-                </button>
+                {!showReplyInput ? (
+                    <button
+                        onClick={() => {
+                            setReplySubmitError(null);
+                            setShowReplyInput(true);
+                        }}
+                        className="text-xs text-neutral-400 hover:text-neutral-300"
+                    >
+                        Reply
+                    </button>
+                ) : (
+                    <div className="flex items-center gap-2 w-full">
+                        <input
+                            value={replyText}
+                            onChange={(event) => setReplyText(event.target.value)}
+                            onKeyDown={handleReplyKeyDown}
+                            placeholder="Write a reply"
+                            className="w-full rounded bg-neutral-800 border border-neutral-700 px-2 py-1 text-xs text-neutral-100 focus:outline-none focus:border-neutral-500"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleReplySubmit}
+                            disabled={isSubmittingReply}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 disabled:text-neutral-500"
+                        >
+                            Submit
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setReplyText("");
+                                setReplySubmitError(null);
+                                setShowReplyInput(false);
+                            }}
+                            className="text-xs text-neutral-400 hover:text-neutral-300"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                )}
             </div>
+            {replySubmitError ? (
+                <p className="text-xs text-red-400">{replySubmitError}</p>
+            ) : null}
 
             {messages.length > 0 && (
                 visible ? (
@@ -159,6 +251,7 @@ export function RepliesDisplay({
                                 </div>
                                 {/* Recursively render nested replies */}
                                 <RepliesDisplay
+                                    coinAddress={coinAddress}
                                     messageId={reply.id}
                                     sortOrder={sortOrder}
                                     scrollContainerRef={scrollContainerRef}
