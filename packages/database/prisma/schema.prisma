@@ -17,6 +17,7 @@ model user{
   email String?
   countryCode String?
   contact String?
+  aura Int @default(0)
   coins coin[]
   coinsHeld holding[]
   apiKeys apiKeys[]

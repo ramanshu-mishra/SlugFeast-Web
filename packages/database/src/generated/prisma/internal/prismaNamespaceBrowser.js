@@ -96,10 +96,12 @@ exports.TransactionIsolationLevel = runtime.makeStrictEnum({
 });
 exports.UserScalarFieldEnum = {
     publicKey: 'publicKey',
+    username: 'username',
     name: 'name',
     email: 'email',
     countryCode: 'countryCode',
-    contact: 'contact'
+    contact: 'contact',
+    aura: 'aura'
 };
 exports.HoldingScalarFieldEnum = {
     coinAddress: 'coinAddress',

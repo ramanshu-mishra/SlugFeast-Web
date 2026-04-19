@@ -96,7 +96,7 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
             "#marketCap",
             {
                 x: [0, -4, 4, -3, 3, 0],
-                backgroundColor: ["var(--color-neutral-600)", "transparent"]
+                backgroundColor: ["var(--color-neutral-600)", "rgba(0, 0, 0, 0)"]
             },
             {
                 duration: 0.2,
@@ -115,7 +115,7 @@ export const ATHBar = memo(({coinAddress}: {coinAddress: `0x${string}`})=>{
         <div ref={scope} className="flex gap-1 items-center">
             <motion.div  className="text-[0.8rem] text-neutral-400 ">MC</motion.div>
             <motion.div  id="marketCap" className=" text-[0.8rem] " style={{
-                backgroundColor: "transparent"
+                backgroundColor: "rgba(0, 0, 0, 0)"
             }}>{formatUSDCompact(usd?.usdValue ?? 0)}</motion.div>
             <ATHCurve clampedPercentage={clampedPercentage} change_5m={Number(change_5m? change_5m.toFixed(2) : 0)}></ATHCurve>
             <motion.div className="w-20 flex justify-center items-center tracking-tight text-[0.8rem]"

@@ -1,23 +1,41 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import menu from "../share/menu.json";
 import { ChevronLeft, ChevronRight, Home, UserCircle2, MoreVertical, Coins } from "lucide-react";
 import Image from "next/image";
 import logo from "../public/logo2.png";
 import { useRouter } from "next/navigation";
 import { useConnection } from "wagmi";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useGetWalletInfo } from "../hooks/useGetWalletInfo";
 
 
 export function Sidebar() {
-    const [isCollapsed, setIsCollapsed] = useState<boolean>(
-        localStorage.getItem("isCollapsed") === "true"
-    );
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+        if (typeof window === "undefined") {
+            return false;
+        }
+
+        return localStorage.getItem("isCollapsed") === "true";
+    });
     const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
     const menuItems = Object.entries(menu);
-    const {isConnected, address} = useConnection();
+    const {address, isConnected, } = useGetWalletInfo();
+    
+
+    
+
+    useEffect(() => {
+        const stored = localStorage.getItem("isCollapsed");
+        if (stored === null) {
+            return;
+        }
+
+        setIsCollapsed(stored === "true");
+    }, []);
 
     return (
         <motion.div
