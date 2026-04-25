@@ -15,6 +15,7 @@ app.use(cors({
     origin: "*"
 }));
 
+
 app.use(uploadImageRouter);
 
 const http_port = Number(process.env.COMMENTS_HTTP_PORT) || 8033;
