@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import {
   Plus,
   X,
@@ -25,7 +25,7 @@ import { SocialInput } from "../../components/socialInput";
 import { SocialLink } from "../../interfaces/socialInput";
 import { ImageCropModal } from "../../components/cropImage";
 import { CoinCreationInfo } from "../../components/coinCreationInfo";
-import { useAccount, useConnect, useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import { useGetNonce } from "../../hooks/useGetNonce";
 import { useCreateToken } from "../../hooks/useCreateToken";
 import { useCreateTokenOnChain } from "../../hooks/useCreateTokenOnChain";
@@ -47,7 +47,7 @@ export default function Page() {
   const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
-  const {isConnected, address} = useConnection();
+  const { isConnected, address } = useAccount();
   const {isPending: noncePending, error: nonceError, data: nonceData, refetch: fetchNonce} = useGetNonce(address as `0x${string}`);
   const {data: tokenData, error: tokenError, loading, createToken} = useCreateToken();
   const {coinOnChain, coinOnChainError, coinOnChainLoading, createTokenOnChain } = useCreateTokenOnChain();

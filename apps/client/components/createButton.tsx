@@ -21,6 +21,9 @@ export default function Create({className}:{className?:string}){
             }}
             whileHover={{
                 scale: 1.03,
+                transition:{
+                    duration: 0.1
+                }
             }}
             whileTap={{
                 scale: 0.98

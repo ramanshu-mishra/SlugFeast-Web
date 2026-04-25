@@ -12,7 +12,7 @@ import { Coin } from "../interfaces/coinInterface";
 import { globalCoinDataManager } from "../serviceClasses/globalCoinDataManaget";
 import { CoinCard } from "../components/coinCard";
 
-export default function CoinDisplay() {
+export  function CoinDisplay() {
     const [page, setPage] = useState<number>(1);
     const { data, error, isLoading, refetch } = useGetCoins(page);
     const client = useRef<globalCoinDataManager|null>(null);

@@ -7,7 +7,7 @@ import { StoredMessage } from "@repo/messaging/interfaces";
 import { messageManager } from "../serviceClasses/messageManager";
 import { RelativeTimeText } from "./RelativeTimeText";
 import { CommentMedia } from "./commentMedia";
-import { useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 
 type SortOrder = "newest" | "oldest";
 
@@ -52,7 +52,7 @@ export function RepliesDisplay({
     const [replyText, setReplyText] = useState("");
     const [replySubmitError, setReplySubmitError] = useState<string | null>(null);
     const [isSubmittingReply, setIsSubmittingReply] = useState(false);
-    const { address, isConnected } = useConnection();
+    const { address, isConnected } = useAccount();
 
     const {
         repliesData,

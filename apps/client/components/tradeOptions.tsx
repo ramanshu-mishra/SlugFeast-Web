@@ -4,7 +4,7 @@ import { useState, memo, useEffect, SetStateAction, Dispatch } from "react";
 import { Coin } from "../interfaces/coinInterface";
 import useGetTokenReserves from "../hooks/useGetTokenReserves";
 import { useGetTokenBalance } from "../hooks/useGetTokenBalance";
-import {  useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import { useGetWalletBalance } from "../hooks/useGetWalletBalance";
 import { cn } from "../utility/cn";
 import eth_symbol from "../public/eth_symbol.png";
@@ -27,7 +27,7 @@ export const TradeOptions = memo(({ coin }: { coin: Coin }) => {
   const [option, setOption] = useState<"Sell" | "Buy">("Buy");
   const [pov, setPov] = useState<"Eth" | string>("Eth");
   const [requiredEth, setRequiredEth] = useState(0);
-  const {address, isConnected} = useConnection();
+  const { address, isConnected } = useAccount();
 
   const [trade, setTrade] = useState<tradeInterface>({
     value: "",

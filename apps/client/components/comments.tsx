@@ -3,7 +3,7 @@
 import {  RefObject, useEffect, useRef, useState } from "react"
 import { CommentDisplay } from "./CommentDisplay";
 import { messageManager, OutgoingMessagePayload } from "../serviceClasses/messageManager";
-import { useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import { StoredMessage } from "@repo/messaging/interfaces";
 import { InputSection, InputSectionSendPayload } from "./inputSection";
 import { useGetPresignedUrl } from "../hooks/useGetPresignedUrl";
@@ -41,7 +41,7 @@ export function Comments({coinAddress}:{coinAddress : `0x${string}`}){
     const _messageManagerRef: RefObject<messageManager|null> = useRef(null);
     const pendingMessageRef = useRef<OutgoingMessagePayload | null>(null);
     const sendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const {address, isConnected} = useConnection();
+    const { address, isConnected } = useAccount();
     const { getPresignedUrl } = useGetPresignedUrl();
 
     const uploadCommentAttachment = async (file: File, publicKey: `0x${string}`) => {

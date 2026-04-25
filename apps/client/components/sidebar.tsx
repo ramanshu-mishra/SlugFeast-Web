@@ -1,15 +1,13 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import menu from "../share/menu.json";
 import { ChevronLeft, ChevronRight, Home, UserCircle2, MoreVertical, Coins } from "lucide-react";
 import Image from "next/image";
 import logo from "../public/logo2.png";
 import { useRouter } from "next/navigation";
-import { useConnection } from "wagmi";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useGetWalletInfo } from "../hooks/useGetWalletInfo";
+import { useAccount } from "wagmi";
 
 
 export function Sidebar() {
@@ -23,7 +21,7 @@ export function Sidebar() {
     const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
     const menuItems = Object.entries(menu);
-    const {address, isConnected, } = useGetWalletInfo();
+    const { address, isConnected } = useAccount();
     
 
     
@@ -63,7 +61,7 @@ export function Sidebar() {
                             setIsCollapsed(next);
                             localStorage.setItem("isCollapsed", next ? "true" : "false");
                         }}
-                        className="absolute -right-3 top-8 z-10 bg-gray-800 hover:bg-neutral-700 text-white rounded-full p-1.5 border border-gray-700 shadow-lg"
+                        className="absolute -right-3 top-8 z-10 bg-gray-800 hover:bg-neutral-700 text-white rounded-full p-1.5 border border-gray-700 shadow-lg cursor-pointer"
                     >
                         {isCollapsed ? (
                             <ChevronRight className="w-4 h-4" />
@@ -108,7 +106,7 @@ export function Sidebar() {
                         (index === 1 && !isConnected) ? null : (
                         <li key={label}>
                             { <motion.button
-                                className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors group relative"
+                                className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors group relative cursor-pointer"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 style={index == 3 ? {
@@ -130,7 +128,7 @@ export function Sidebar() {
                                 }}
                             >
                                 {/* Menu Icons */}
-                                <span className="shrink-0 w-6 h-6 flex items-center justify-center">
+                                <span className="shrink-0 w-6 h-6 flex items-center justify-center ">
                                     {index === 0 ? <Home  className="w-5 h-5 text-neutral-50" /> : 
                                      index === 1 ? <UserCircle2 className="w-5 h-5 text-neutral-50" /> : 
                                      index === 2 ? <MoreVertical className="w-5 h-5 text-neutral-50" /> : 

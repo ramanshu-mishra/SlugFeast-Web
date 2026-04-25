@@ -1,6 +1,8 @@
-import { Navbar } from "../components/navbar"
-import { Sidebar } from "../components/sidebar"
-export function     Home({children}:{children: React.ReactNode}){
+import type { ReactNode } from "react";
+import { Navbar } from "../components/navbar";
+import { Sidebar } from "../components/sidebar";
+
+export function Home({ children }: { children?: ReactNode }) {
     return (
         <div className="min-h-screen min-w-screen h-screen w-screen bg-neutral-950 flex overflow-auto">
             <Sidebar></Sidebar>

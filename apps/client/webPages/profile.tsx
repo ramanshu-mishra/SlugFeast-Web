@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { RefObject, useState } from "react";
-import { useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import { copyTextToClipboard } from "../utility/copyTextToClipboard";
 import { WalletConnect } from "../components/walletConnect";
 import { Copy } from "lucide-react";
@@ -114,9 +114,11 @@ export function Profile(){
 }
 
 
+
+
 export function ProfileSection({className, onEditClick}:{className?: string, onEditClick: ()=>void}){
 
-    const {isConnected, address} = useConnection();
+    const { isConnected, address } = useAccount();
     const [activeTab, setActiveTab] = useState<ProfileTab>("balances");
     const { toast, showToast } = useToast(1800);
 
