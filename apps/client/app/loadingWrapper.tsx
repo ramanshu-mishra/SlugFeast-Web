@@ -3,6 +3,7 @@ import Image from "next/image";
 import logo from "../public/logo2.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { LoadingText } from "../components/LoadingText";
 
 export default function Loading({
   children,
@@ -33,25 +34,16 @@ export default function Loading({
 
   return (
     <>
-      {isLoading && (
-        <div className="flex flex-col items-center justify-center h-screen w-screen bg-neutral-950 gap-4">
-          <Image src={logo} alt="SlugFeast Logo" height={80} />
-          <motion.span
-            className="text-white text-2xl font-semibold tracking-widest"
-            style={{ animation: "fadeInUp 1s ease-in-out forwards" }}
-          >
-            SLUGFEAST
-          </motion.span>
-          <style>{`
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-            `}
-          </style>
-        </div>
-      )}
+      
+      {isLoading && <div className="h-screen w-screen flex justify-center items-center">
+        <div className="rounded-full p-4">
+          <LoadingText/>
+        </div> 
+        </div>}
       {!isLoading && children}
     </>
   );
 }
+
+
+

@@ -4,6 +4,7 @@ interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   thickness?: 'thin' | 'normal' | 'bold';
   className?: string;
+  children?:React.ReactNode
 }
 
 const sizeMap = {
@@ -19,7 +20,7 @@ const thicknessMap = {
   bold: '4',
 };
 
-export function Spinner({ size = 'md', thickness = 'normal', className = '' }: SpinnerProps) {
+export function Spinner({ size = 'md', thickness = 'normal', className = '' , children}: SpinnerProps) {
   const sizeClass = sizeMap[size];
   const strokeWidth = thicknessMap[thickness];
 
@@ -43,6 +44,7 @@ export function Spinner({ size = 'md', thickness = 'normal', className = '' }: S
         fill="currentColor"
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />
+      {children}
     </svg>
   );
 }

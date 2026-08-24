@@ -34,13 +34,13 @@ function BalanceDisplay() {
                         Your Balance
                     </p>
                     <div>
-                        <p className="mt-2 text-3xl font-semibold text-neutral-100 cursor-pointer">${WeithToEth(walletBalance?.value.toString() ?? "")}</p>
+                        <p className="mt-2 text-3xl font-semibold text-neutral-100 cursor-pointer">{WeithToEth(walletBalance?.value.toString() ?? "")} ETH</p>
                         <p className="mt-1 text-xs text-neutral-400"><motion.span
                             whileHover={{
                                 color: "var(--color-neutral-50)",
                                 cursor: "pointer",
                             }}
-                        >0 SOL</motion.span> &nbsp;Available</p>
+                        >{WeithToEth(walletBalance?.value.toString() ?? "")} ETH</motion.span> &nbsp;Available</p>
                     </div>
                   
                 </div>
